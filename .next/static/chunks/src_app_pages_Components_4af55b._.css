@@ -1,0 +1,40 @@
+/* [project]/src/app/pages/Components/Layout/Header/Header.scss.css [app-client] (css) */
+.header {
+  padding: 10px 0;
+}
+
+.header .inner_ {
+  display: flex;
+  justify-content: space-between;
+}
+
+.header .inner_ .navigation ul {
+  display: flex;
+  gap: 20px;
+}
+
+
+/* [project]/src/app/pages/Components/Widgets/category/Categories.scss.css [app-client] (css) */
+.categories_sec ul {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.categories_sec ul li {
+  width: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.categories_sec ul li .img_wrap img {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+}
+
+
+/*# sourceMappingURL=src_app_pages_Components_4af55b._.css.map*/

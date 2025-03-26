@@ -1,0 +1,25 @@
+@use "../../app/variable" as *;
+
+.filter_area{
+    display: flex;
+    gap: 30px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    @media only screen and (max-width: 767px) {
+        gap: 2%;
+        
+    }
+    .filter_item{
+        @media only screen and (max-width: 767px) {
+            width: 48%;
+            margin-bottom: 10px;
+        }
+     .drop_down,input{
+        border: 1px solid $border-color;
+        padding: 0 10px;
+        border-radius: 5px;
+        height: 40px;
+       width: 100%;
+     }   
+    }
+}

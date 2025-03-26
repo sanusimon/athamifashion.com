@@ -1,0 +1,50 @@
+/* [project]/src/Components/HomeBanner/homeBanner.scss.css [app-client] (css) */
+.banner_ {
+  height: calc(100vh - 100px);
+  position: relative;
+}
+
+.banner_ * {
+  height: 100%;
+}
+
+.banner_ .img_wrap {
+  height: 100%;
+}
+
+.banner_ .img_wrap img {
+  object-fit: cover;
+}
+
+.banner_ .banner_btn {
+  position: absolute;
+  bottom: 100px;
+  right: 100px;
+  height: auto;
+  background: #f083b3;
+  border: #f083b3;
+  color: #fff;
+  z-index: 999;
+}
+
+.banner_ .swiper .swiper-pagination {
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  bottom: 20px !important;
+  top: auto !important;
+}
+
+.banner_ .swiper .swiper-pagination .swiper-pagination-bullet {
+  background: #f083b3;
+  opacity: .5;
+}
+
+.banner_ .swiper .swiper-pagination .swiper-pagination-bullet.swiper-pagination-bullet-active {
+  opacity: 1;
+  width: 12px;
+  height: 12px;
+}
+
+/*# sourceMappingURL=src_Components_HomeBanner_homeBanner_scss_b52d8e.css.map*/

@@ -1,0 +1,21 @@
+/* [project]/src/app/Components/Layout/Header/Header.scss.css [app-client] (css) */
+.header {
+  padding: 10px 0;
+}
+
+.header .inner_ {
+  display: flex;
+  justify-content: space-between;
+}
+
+.header .inner_ .navigation ul {
+  display: flex;
+  gap: 20px;
+}
+
+
+/* [project]/src/app/category/Categories.scss.css [app-client] (css) */
+
+
+
+/*# sourceMappingURL=src_app_61b1df._.css.map*/

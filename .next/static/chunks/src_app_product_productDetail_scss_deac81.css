@@ -1,0 +1,27 @@
+/* [project]/src/app/product/productDetail.scss.css [app-client] (css) */
+.product_detail .inner_ {
+  display: flex;
+  gap: 30px;
+}
+
+.product_detail .inner_ .image_sec {
+  width: 50%;
+}
+
+.product_detail .inner_ .content_sec {
+  width: 50%;
+}
+
+.product_detail .inner_ .content_sec .detail_title {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 30px;
+}
+
+.product_detail .inner_ .content_sec .detail_price {
+  font-size: 3.5rem;
+  display: block;
+}
+
+
+/*# sourceMappingURL=src_app_product_productDetail_scss_deac81.css.map*/

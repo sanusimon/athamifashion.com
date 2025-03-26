@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack://[project]/src/app/product/productDetail.scss.css"],"sourcesContent":[".product_detail .inner_{display:flex;gap:30px}.product_detail .inner_ .image_sec{width:50%}.product_detail .inner_ .content_sec{width:50%}.product_detail .inner_ .content_sec .detail_title{font-size:3rem;display:block;margin-bottom:30px}.product_detail .inner_ .content_sec .detail_price{font-size:3.5rem;display:block}"],"names":[],"mappings":"AAAA;;;;;AAA8C;;;;AAA6C;;;;AAA+C;;;;;;AAAmG"}},
+    {"offset": {"line": 24, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
+}

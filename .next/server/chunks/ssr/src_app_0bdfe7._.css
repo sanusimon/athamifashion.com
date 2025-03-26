@@ -1,0 +1,36 @@
+/* [project]/src/app/cart/cart.scss.css [app-client] (css) */
+.cart_page .cart_item {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+}
+
+.cart_page .cart_item > div {
+  flex: 1;
+}
+
+.cart_page .cart_item .cart_item_name {
+  font-weight: 700;
+}
+
+
+/* [project]/src/app/Components/Quantity/Quantity.scss.css [app-client] (css) */
+.quantity .label_ {
+  font-size: 1rem;
+}
+
+.quantity .qnty_btn {
+  font-size: 1rem;
+  margin: 0 10px;
+  cursor: pointer;
+}
+
+.quantity .qnty_txt {
+  border: 1px solid;
+  width: 50px;
+}
+
+
+/*# sourceMappingURL=src_app_0bdfe7._.css.map*/

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack://[project]/src/Components/HomeBanner/homeBanner.scss.css"],"sourcesContent":[".banner_{height:calc(100vh - 100px);position:relative}.banner_ *{height:100%}.banner_ .img_wrap{height:100%}.banner_ .img_wrap img{object-fit:cover}.banner_ .banner_btn{position:absolute;bottom:100px;right:100px;height:auto;background:#f083b3;border:#f083b3;color:#fff;z-index:999}.banner_ .swiper .swiper-pagination{bottom:20px !important;top:auto !important;height:auto;display:flex;align-items:center;justify-content:center}.banner_ .swiper .swiper-pagination .swiper-pagination-bullet{background:#f083b3;opacity:.5}.banner_ .swiper .swiper-pagination .swiper-pagination-bullet.swiper-pagination-bullet-active{opacity:1;width:12px;height:12px}"],"names":[],"mappings":"AAAA;;;;;AAAsD;;;;AAAuB;;;;AAA+B;;;;AAAwC;;;;;;;;;;;AAAqI;;;;;;;;;AAAkJ;;;;;AAA4F"}},
+    {"offset": {"line": 48, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
+}

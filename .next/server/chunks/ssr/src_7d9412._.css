@@ -1,0 +1,47 @@
+/* [project]/src/Components/Filter/Filter.scss.css [app-client] (css) */
+.filter_area {
+  width: 20%;
+}
+
+.filter_area .filter_list li {
+  margin-bottom: 10px;
+}
+
+.filter_area .filter_list li a {
+  font-size: 1.5rem;
+}
+
+
+/* [project]/src/app/category/Categories.scss.css [app-client] (css) */
+.categories_sec ul.cat_list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.categories_sec ul.cat_list li {
+  width: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.categories_sec ul.cat_list li .img_wrap img {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+}
+
+.category_list .inner_ {
+  display: flex;
+  gap: 30px;
+}
+
+.category_list .inner_ .product_list {
+  width: 80%;
+}
+
+
+/*# sourceMappingURL=src_7d9412._.css.map*/

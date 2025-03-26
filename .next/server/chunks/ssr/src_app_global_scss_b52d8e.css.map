@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack://[project]/src/app/global.scss.css"],"sourcesContent":["ul.product_list{display:flex;flex-wrap:wrap}ul.product_list li{width:20%;display:flex;justify-content:center;align-items:center;flex-direction:column;gap:10px;margin-bottom:20px}ul.product_list li .img_wrap img{width:200px;height:200px;border-radius:50%}"],"names":[],"mappings":"AAAA;;;;;AAA4C;;;;;;;;;;AAAsI"}},
+    {"offset": {"line": 21, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
+}

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["file:///Volumes/My%20files/Babyfit/babyfit-next/latest/shoping/src/components/Filter/Filter.scss.css"],"sourcesContent":[".filter_area{display:flex;gap:30px;margin-bottom:20px}.filter_area .filter_item .drop_down,.filter_area .filter_item input{border:1px solid #e3e3e3;padding:0 10px;border-radius:5px;height:40px}"],"names":[],"mappings":"AAAA;;;;;;AAAsD"}},
+    {"offset": {"line": 13, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
+}

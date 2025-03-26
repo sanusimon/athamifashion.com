@@ -1,0 +1,28 @@
+/* [project]/src/Components/Filter/Filter.scss.css [app-client] (css) */
+.filter_area {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+@media only screen and (width <= 767px) {
+  .filter_area {
+    gap: 2%;
+  }
+
+  .filter_area .filter_item {
+    width: 48%;
+    margin-bottom: 10px;
+  }
+}
+
+.filter_area .filter_item .drop_down, .filter_area .filter_item input {
+  border: 1px solid #e3e3e3;
+  padding: 0 10px;
+  border-radius: 5px;
+  height: 40px;
+  width: 100%;
+}
+
+/*# sourceMappingURL=src_Components_Filter_Filter_scss_b52d8e.css.map*/

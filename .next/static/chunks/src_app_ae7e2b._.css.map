@@ -1,0 +1,11 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["file:///Volumes/My%20files/Babyfit/babyfit-next/latest/shoping/src/app/Components/Layout/Header/Header.scss.css"],"sourcesContent":[".header{padding:10px 0}.header .inner_{display:flex;justify-content:space-between}.header .inner_ .navigation ul{display:flex;gap:20px}"],"names":[],"mappings":"AAAA;;;;AAAuB;;;;;AAA2D"}},
+    {"offset": {"line": 14, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}},
+    {"offset": {"line": 17, "column": 0}, "map": {"version":3,"sources":["file:///Volumes/My%20files/Babyfit/babyfit-next/latest/shoping/src/app/category/Categories.scss.css"],"sourcesContent":[""],"names":[],"mappings":""}},
+    {"offset": {"line": 18, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}},
+    {"offset": {"line": 21, "column": 0}, "map": {"version":3,"sources":["file:///Volumes/My%20files/Babyfit/babyfit-next/latest/shoping/src/app/global.scss.css"],"sourcesContent":["ul.product_list{display:flex;flex-wrap:wrap}ul.product_list li{width:20%;display:flex;justify-content:center;align-items:center;flex-direction:column;gap:10px;margin-bottom:20px}ul.product_list li .img_wrap img{width:200px;height:200px;border-radius:50%}"],"names":[],"mappings":"AAAA;;;;;AAA4C;;;;;;;;;;AAAsI"}},
+    {"offset": {"line": 41, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
+}

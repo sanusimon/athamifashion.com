@@ -1,0 +1,136 @@
+@use '../variable' as *;
+
+.product_detail{
+    .inner_{
+        display: flex;
+        gap: 30px;
+        .image_sec{
+            width: 50%;
+            .img_wrap{
+                position: sticky;
+                top: 0;
+                .large_{
+                    margin-bottom: 10px;
+                }
+                .thumb_images{
+                    display: flex;
+                    gap: 10px;
+                    >div{
+                        width: 100px;
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
+        .content_sec{
+            width: 50%;
+            h3{
+                font-weight: 700;
+                font-size: 1.2rem;
+                margin-bottom: 10px;
+            }
+            .detail_title{
+                font-size: 3rem;
+                display: block;
+                margin-bottom: 30px; 
+            }
+            .detail_desc{
+                font-size: 1.3rem;
+                font-weight: 600;
+            }
+            .price_area{
+                margin: 30px 0;
+                .discount_sec{
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                   .persntge{
+                    font-size: 1rem;
+                    color: $green-color;
+                    font-weight: 700;
+                   }
+                }
+                .detail_price{
+                    font-size: 2.8rem;
+                    display: block;
+                    font-weight: 700;
+                    &.line_throw{
+                        font-size: 1.8rem;
+                    }
+                }
+            }
+            .custome_options{
+                margin: 20px 0 30px;
+            .custm_wrap{
+                margin-bottom: 20px;
+                .options_{
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    span{
+                        border: 1px solid $bg-color;
+                        padding: 5px 15px;
+                        transition: all .5s ease;
+                        cursor: pointer;
+                        &.disabled{
+                            opacity: .2;
+                            cursor:not-allowed;
+                        }
+                        &.color_span{
+                            display: block;
+                            border-radius: 50%;
+                            width: 40px;
+                            height: 40px;
+                            position: relative;
+                            box-shadow: 0 0 0 1px #d1d7da;
+                            border: 2px solid $color-white;
+                           
+                            &.disabled{
+                                &:after{
+                                    content: "";
+                                    position: absolute;
+                                    left: 0;
+                                    top: 50%;
+                                    background: black;
+                                    width: 100%;
+                                    height: 2px;
+                                    transform: rotate(45deg);
+                                    }
+                            }
+                            &.selected_{
+                                box-shadow: 0 0 0 3px #827d7d;
+                                width: 45px;
+                                height: 45px;
+                            }
+                            &:hover{
+                                box-shadow: 0 0 0 3px #827d7d;
+                            }
+                        }
+                        &.size_span{
+                            &.selected_{
+                                background-color: $bg-color;
+                                color: $color-white;
+                            }
+                            &:hover{
+                                background-color: $bg-color;
+                                color: $color-white;
+                            }
+                        }
+                    }
+                }
+                
+            }
+        }
+            
+            
+            
+            .additional_info{
+                .info_sec{
+                    margin-bottom: 30px;
+                    line-height: 1.5;
+                   
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "shoping-site",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@wix/ecom": "^1.0.1003",
+    "@wix/sdk": "^1.15.13",
+    "@wix/stores": "^1.0.381",
+    "axios": "^1.8.1",
+    "js-cookie": "^3.0.5",
+    "next": "15.1.7",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "swiper": "^11.2.6",
+    "zustand": "^5.0.3"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "eslint": "^9",
+    "eslint-config-next": "15.1.7",
+    "postcss": "^8",
+    "sass": "^1.85.0",
+    "tailwindcss": "^3.4.1"
+  }
+}

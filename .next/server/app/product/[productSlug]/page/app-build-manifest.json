@@ -1,0 +1,28 @@
+{
+  "pages": {
+    "/product/[productSlug]/page": [
+      "static/chunks/_a91c21._.js",
+      "static/chunks/src_app_favicon_ico_mjs_ddfdf0._.js",
+      "static/chunks/[root of the server]__217b17._.css",
+      "static/chunks/node_modules_next_dist_b075cf._.js",
+      "static/chunks/node_modules_axios_lib_c4c49c._.js",
+      "static/chunks/node_modules_@wix_auto_sdk_stores_products_build_es_499b4b._.js",
+      "static/chunks/node_modules_@wix_auto_sdk_stores_info-sections-v-3_build_es_3a61d5._.js",
+      "static/chunks/node_modules_@wix_auto_sdk_stores_products-v-3_build_es_b080a9._.js",
+      "static/chunks/node_modules_cd68b6._.js",
+      "static/chunks/src_1efc4a._.js",
+      "static/chunks/src_app_layout_61af54.js",
+      "static/chunks/_8faf34._.js",
+      "static/chunks/src_c4d6c9._.css",
+      "static/chunks/src_app_product_[productSlug]_page_b7ae32.js",
+      "static/chunks/node_modules_next_dist_compiled_react-dom_1f56dc._.js",
+      "static/chunks/node_modules_next_dist_compiled_107ce8._.js",
+      "static/chunks/node_modules_next_dist_client_523921._.js",
+      "static/chunks/node_modules_next_dist_4bb10e._.js",
+      "static/chunks/node_modules_@swc_helpers_cjs_00636a._.js",
+      "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_d0a96d._.js",
+      "static/chunks/_e69f0d._.js",
+      "static/chunks/_d95469._.js"
+    ]
+  }
+}

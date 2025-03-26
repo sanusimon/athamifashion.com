@@ -1,0 +1,16 @@
+/* [project]/src/app/Page/Components/Layout/Header/Header.scss.css [app-client] (css) */
+.header {
+  padding: 10px 0;
+}
+
+.header .inner_ {
+  display: flex;
+  justify-content: space-between;
+}
+
+.header .inner_ .navigation ul {
+  display: flex;
+  gap: 20px;
+}
+
+/*# sourceMappingURL=src_app_Page_Components_Layout_Header_Header_scss_b52d8e.css.map*/

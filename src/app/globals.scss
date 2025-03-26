@@ -1,0 +1,200 @@
+@use './variable' as *;
+
+body{
+    font-size: 16px;
+}
+section{
+    padding: 50px 0 0;
+}
+
+.title{
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+img{
+    width: 100%;
+}
+.container{
+    max-width: 1200px;
+    padding: 0 10px;
+    margin: 0 auto;
+  }
+.Home_product_list{
+    a{
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    .img_wrap{
+        position: relative;
+        img{
+        }
+        .ribbon_{
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: $bg-pink;
+            padding: 5px;
+            color: $color-white;
+        }
+    }
+    .name__{
+        flex: 1;
+    }
+    .btm_area{
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        @media only screen and (max-width: 767px) {
+            flex-direction: column;
+        }
+        .cat_price{
+            font-size: 1.3rem;
+            &.line_throw{
+                font-size: 1rem;
+                position: relative;
+                &::before{
+                    position: absolute;
+                    content: "";
+                    left: -5px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    height: 70%;
+                    width: 1px;
+                    background-color: $bg-grey;;
+                }
+            }
+        }
+        .discount_sec{
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+    }
+}
+ul.product_list{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2%;
+    li{
+        width: 23.5%;
+        margin-bottom: 20px;
+        @media only screen and (max-width: 767px) {
+            width: 49%;
+        }
+        a{
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .img_wrap{
+            position: relative;
+            img{
+            }
+            .ribbon_{
+                position: absolute;
+                top: 0;
+                right: 0;
+                background-color: $bg-pink;
+                padding: 5px;
+                color: $color-white;
+            }
+        }
+        .name__{
+            flex: 1;
+        }
+        .btm_area{
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            @media only screen and (max-width: 767px) {
+                flex-direction: column;
+            }
+            .cat_price{
+                font-size: 1.3rem;
+                &.line_throw{
+                    font-size: 1rem;
+                    position: relative;
+                    &::before{
+                        position: absolute;
+                        content: "";
+                        left: -5px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        height: 70%;
+                        width: 1px;
+                        background-color: $bg-grey;;
+                    }
+                }
+            }
+            .discount_sec{
+                display: flex;
+                gap: 10px;
+                align-items: center;
+            }
+        }
+    }
+}
+.add_cart{
+    border: 1px solid $bg-color;
+    padding: 8px 20px;
+    border-radius: 30px;
+    color: $bg-color;
+    transition: all .3s ease;
+    &:hover{
+       background-color: $bg-color;
+       color: $color-white;
+    }
+}
+
+.cmnBtn{
+    border: 1px solid $bg-color;
+    background-color: $bg-color;
+    padding: 8px 20px;
+    border-radius: 30px;
+    color: $color-white;
+    transition: all .3s ease;
+    display: inline-block;
+    &:hover{
+       background-color: $color-white;
+       color: $bg-color;
+    }
+}
+:disabled , .disabled{
+    opacity: .5;
+    pointer-events: none;
+}
+input{
+    border: 1px solid $border-color;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+.cat_name{
+    font-size: 1.5rem;
+    margin: 10px 0;
+    @media only screen and (max-width: 767px) {
+        font-size: 1.2rem;
+    }
+}
+.line_throw{
+    text-decoration: line-through;
+    font-size: 3rem;
+    opacity: .5;
+}
+.home_product{
+    .breadcrumbs{
+        display: none;
+    }
+}
+.breadcrumbs{
+    margin-bottom: 10px;
+    ul{
+        display: flex;
+        gap: 10px;
+        li{
+            &:last-child{
+                pointer-events: none;
+            }
+        }
+    }
+}

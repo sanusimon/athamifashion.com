@@ -1,0 +1,84 @@
+@use '../variable' as *;
+.cart_page{
+    .inner_{
+        display: grid;
+        grid-template-columns: 70% 28%;
+        gap: 2%;
+        border-top: 1px solid $border-color;
+        >div{
+            padding-right: 20px;
+            &:first-child{
+                border-right: 1px solid $border-color;
+            }
+        }
+    }
+    .cart_item{
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        
+      
+       .cart_rgt_{
+        flex: 1;
+        position: relative;
+        padding: 10px 20px;
+        .cart_item_price{
+            font-weight: 700;
+            margin: 15px 0 ;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            sup{
+                display: inline;
+                font-size: 12px;
+                color: $bg-grey;
+            }
+            .line_throw{
+                font-size: .8rem;
+            }
+        }
+        .cat_name{
+            margin: 0 0;
+        }
+        .status_{
+            font-size: 12px;
+            color: $bg-grey;
+        }
+        .delete_cart{
+            position: absolute;
+            right: 20px;
+            top: 0;
+            width: 15px;
+            img{
+                width: 100%;
+                display: block;
+            }
+            
+        }
+        .btm_{
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid $border-color;
+            padding-top: 10px;
+        }
+       }
+    }
+    .checkout_sec{
+        >div{
+            position: sticky;
+            top: 20px;
+        }
+        .title{
+            font-size: 2rem;
+            margin-top: 20px;
+        }
+        .cart_item_price{
+            border-bottom: 1px solid $border-color;
+            padding: 20px 0;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+    }
+}

@@ -1,0 +1,49 @@
+@use "../../app/variable" as *;
+.banner_{
+    height: calc(100vh - 100px);
+    position: relative;
+    *{
+        height: 100%;
+    }
+    .img_wrap{
+        height: 100%;
+        img{
+            object-fit: cover;
+        }
+    }
+    .banner_btn{
+        position: absolute;
+        bottom: 100px;
+        right: 100px;
+        height: auto;
+        background: $bg-pink;
+        border: $bg-pink;
+        color: $color-white;
+        z-index: 999;
+    }
+    
+    .swiper{
+        .swiper-wrapper{
+            .swiper-slide{
+
+            }
+        }
+        .swiper-pagination{
+            bottom: 20px !important;
+            top: auto !important;
+            height: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            .swiper-pagination-bullet {
+                background: $bg-pink;
+                opacity: .5;
+                &.swiper-pagination-bullet-active{
+                    opacity: 1;
+                    width: 12px;
+                    height: 12px;
+                }
+            }
+        }
+    }
+}
