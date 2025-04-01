@@ -38,7 +38,7 @@ const middleware = async (request)=>{
     }
     const wixClient = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$wix$2f$sdk$2f$build$2f$wixClient$2e$js__$5b$middleware$5d$__$28$ecmascript$29$__["createClient"])({
         auth: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$wix$2f$sdk$2f$build$2f$auth$2f$oauth2$2f$OAuthStrategy$2e$js__$5b$middleware$5d$__$28$ecmascript$29$__["OAuthStrategy"])({
-            clientId: ("TURBOPACK compile-time value", "1e386284-b897-4f3a-ae2a-a11d1c6a32c3")
+            clientId: ("TURBOPACK compile-time value", "b6991f05-2e8a-4ed4-8120-4bf79b92045f")
         })
     });
     const tokens = await wixClient.auth.generateVisitorTokens();
