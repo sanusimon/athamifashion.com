@@ -16,15 +16,47 @@
   object-fit: cover;
 }
 
-.banner_ .banner_btn {
+.banner_ .banner_txt {
   position: absolute;
-  bottom: 100px;
-  right: 100px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
   height: auto;
+  text-align: center;
+}
+
+.banner_ .banner_txt h2 {
+  color: #fff;
+  font-size: 3.8em;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.banner_ .banner_txt h2 span {
+  color: #0000;
+  -webkit-text-stroke: 1px #fff;
+}
+
+.banner_ .banner_btn {
   background: #f083b3;
   border: #f083b3;
   color: #fff;
-  z-index: 999;
+}
+
+.banner_ .swiper .swiper-button-next, .banner_ .swiper .swiper-button-prev {
+  display: none;
+}
+
+.banner_ .swiper .swiper-wrapper .swiper-slide:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #00000080;
+  z-index: 1;
 }
 
 .banner_ .swiper .swiper-pagination {

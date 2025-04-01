@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack://[project]/src/Components/AddQuantity/AddQuantity.scss.css"],"sourcesContent":[".quant_cart{display:flex;justify-content:space-between;margin-bottom:30px}.quant_cart>div{flex:1;flex-wrap:wrap}.quant_cart .cart_btn_div{display:flex;align-items:flex-end;flex-direction:column;gap:10px}.quant_cart .quantity .label_{font-size:1rem;margin-bottom:10px;display:block}.quant_cart .quantity .quantity_field{display:flex;gap:20px}.quant_cart .quantity .quantity_field>div{background-color:#f1f1f1;padding:10px 20px;border-radius:30px;display:flex;gap:10px;font-weight:700;width:100px;justify-content:center}.quant_cart .quantity .quantity_field>div .qnty_btn{font-size:1rem;margin:0 10px;cursor:pointer}.quant_cart .quantity .quantity_field>div .qnty_txt{border:1px solid;width:50px}.small_txt{font-size:12px;margin-left:10px}.small_txt span{color:#22bcde;font-weight:700}"],"names":[],"mappings":"AAAA;;;;;;AAA0E;;;;;AAAsC;;;;;;;AAA2F;;;;;;AAA8E;;;;;AAA4D;;;;;;;;;;;AAAiL;;;;;;AAAgG;;;;;AAAgF;;;;;AAA2C"}},
-    {"offset": {"line": 61, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
-}

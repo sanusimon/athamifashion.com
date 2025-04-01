@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///Volumes/My%20files/Babyfit/babyfit-next/latest/shoping/src/Components/CartButton/Button.jsx"],"sourcesContent":["\"use client\";\n\n\n\nimport React, { useState, useEffect } from \"react\";\n\nfunction CartButton({ productId }) {\n\n    // Load product quantity from localStorage on mount\n\n\n    const cartClick = () => {\n        \n    };\n\n    return (\n        <div>\n            <button onClick={cartClick}>Add to Cart</button>\n        </div>\n    );\n}\n\nexport default CartButton;\n"],"names":[],"mappings":";;;;AAIA;AAJA;;;AAMA,SAAS,WAAW,EAAE,SAAS,EAAE;IAE7B,mDAAmD;IAGnD,MAAM,YAAY,KAElB;IAEA,qBACI,8OAAC;kBACG,cAAA,8OAAC;YAAO,SAAS;sBAAW;;;;;;;;;;;AAGxC;uCAEe"}},
-    {"offset": {"line": 34, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
-}

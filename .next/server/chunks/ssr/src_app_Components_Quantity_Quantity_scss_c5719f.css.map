@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["file:///Volumes/My%20files/Babyfit/babyfit-next/latest/shoping/src/app/Components/Quantity/Quantity.scss.css"],"sourcesContent":[".quantity .label_{font-size:1rem}.quantity .qnty_btn{font-size:1rem;margin:0 10px;cursor:pointer}.quantity .qnty_txt{border:1px solid;width:50px}"],"names":[],"mappings":"AAAA;;;;AAAiC;;;;;;AAAgE"}},
-    {"offset": {"line": 15, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
-}

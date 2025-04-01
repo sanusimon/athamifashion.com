@@ -24,6 +24,7 @@
 
 .header .inner_ > div {
   display: flex;
+  align-items: center;
   gap: 20px;
 }
 
@@ -31,9 +32,21 @@
   width: 150px;
 }
 
+.header .inner_ .logo a {
+  cursor: pointer;
+}
+
 .header .inner_ .navigation ul {
   display: flex;
   gap: 20px;
+}
+
+.header .inner_ .navigation ul li {
+  font-weight: 700;
+}
+
+.header .inner_ .navigation ul li.active {
+  color: #f083b3;
 }
 
 .header .inner_ .right_sec {
