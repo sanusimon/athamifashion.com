@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack://[project]/src/Components/Filter/Filter.scss.css"],"sourcesContent":[".filter_area{display:flex;gap:30px;margin-bottom:20px;flex-wrap:wrap}@media only screen and (max-width: 767px){.filter_area{gap:2%}.filter_area .filter_item{width:48%;margin-bottom:10px}}.filter_area .filter_item .drop_down,.filter_area .filter_item input{border:1px solid #e3e3e3;padding:0 10px;border-radius:5px;height:40px;width:100%}"],"names":[],"mappings":"AAAA;;;;;;;AAAqE;EAA0C;;;;EAAoB;;;;;;AAAwD"}},
-    {"offset": {"line": 26, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
-}

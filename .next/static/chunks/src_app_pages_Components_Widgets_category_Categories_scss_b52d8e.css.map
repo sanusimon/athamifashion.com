@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack://[project]/src/app/pages/Components/Widgets/category/Categories.scss.css"],"sourcesContent":[".categories_sec ul{display:flex;flex-wrap:wrap}.categories_sec ul li{width:20%;display:flex;justify-content:center;align-items:center;flex-direction:column;gap:10px;margin-bottom:20px}.categories_sec ul li .img_wrap img{width:200px;height:200px;border-radius:50%}"],"names":[],"mappings":"AAAA;;;;;AAA+C;;;;;;;;;;AAAyI"}},
-    {"offset": {"line": 21, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
-}

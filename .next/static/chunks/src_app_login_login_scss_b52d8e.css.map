@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack://[project]/src/app/login/login.scss.css"],"sourcesContent":[".frgt_txt{font-weight:700;text-decoration:underline;cursor:pointer}.login_page{height:calc(100vh - 98px);padding:0}.login_page .container{height:100%;display:flex;align-items:center;justify-content:center}.login_page .container .login_box{width:300px}.login_page .container .login_box .title{text-align:center;font-size:2rem}.login_page .container .login_box .form_{display:flex;flex-direction:column;gap:20px}.login_page .container .login_box .form_ label{text-align:left;display:block}.login_page .container .login_box .form_ input{width:100%}.login_page .container .login_box .form_ .cmnBtn{border-radius:0}"],"names":[],"mappings":"AAAA;;;;;;AAAmE;;;;;AAAgD;;;;;;;AAA0F;;;;AAA8C;;;;;AAA0E;;;;;;AAAqF;;;;;AAA6E;;;;AAA0D"}},
-    {"offset": {"line": 46, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
-}

@@ -396,6 +396,10 @@ img, video {
   padding: 1rem;
 }
 
+.text-center {
+  text-align: center;
+}
+
 .text-sm {
   font-size: .875rem;
   line-height: 1.25rem;
@@ -451,7 +455,7 @@ img, video {
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-jost);
 }
 
 /*# sourceMappingURL=src_app_globals_b52d8e.css.map*/
