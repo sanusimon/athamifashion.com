@@ -6,8 +6,16 @@ import ProductImage from '@/Components/ProductImage/ProductImage';
 import CustomizeProducts from '@/Components/CustomizeProducts/CustomizeProducts';
 import AddQuantity from '@/Components/AddQuantity/AddQuantity';
 import Breadcrumbs from '@/Components/Breadcrumbs/Breadcrumbs';
+import { JSDOM } from "jsdom";
+import DOMPurify from 'dompurify'; 
+
+
+
+
 
 const DetailPage = async ({params}) =>{
+    const window = new JSDOM("").window;
+    const DOMPurifyServer = DOMPurify(window);
     // const param = useParams(ApiContext);
     // const {productSlug} = param
     const wixClient = await wixClientServer();
@@ -30,8 +38,8 @@ const DetailPage = async ({params}) =>{
                     </div>
                     <div className="content_sec">   
                         <label className="detail_title">{product.name}</label>
-                        <div className='detail_desc'>
-                           <p> {product.description}</p>
+                        <div className='detail_desc' dangerouslySetInnerHTML={{ __html: DOMPurifyServer.sanitize(product.description) }}>
+                            
                         </div>
                         <div className='price_area'>
                             {product.price?.price === product.price?.discountedPrice ? (
@@ -64,9 +72,8 @@ const DetailPage = async ({params}) =>{
                                     <h3>
                                         {section.title}
                                     </h3>
-                                    <p>
-                                        {section.description}
-                                    </p>
+                                    <div dangerouslySetInnerHTML={{ __html: DOMPurifyServer.sanitize(section.description) }}></div>
+                                       
                                 </div>
                             ))}
                         </div>

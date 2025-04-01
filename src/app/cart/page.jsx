@@ -15,7 +15,7 @@ export const Cart = () => {
 
     const wixClient = useWixClient()
     const {cart , isLoading , removeItem ,updateQuantity } = useCartStore();
-    console.log(cart)
+    
 
     // Function to calculate total discount
     const calculateTotalDiscount = () => {
@@ -48,7 +48,7 @@ export const Cart = () => {
                         ) : (
                         <div className='inner_'>
                             <div>
-                            <h2 className='title'>Shoping Cart</h2>
+                            <h2 className='title'>Shopping Cart</h2>
                             {cart.lineItems?.map((item, index) => {
                                 const productSlug = item.url ? item.url.split("/").pop() : "";
                                 const size = item.descriptionLines?.find(line => line.name.original === 'Size')?.plainText?.original || 'N/A';

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Navigation, Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from "swiper";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // Import Swiper styles
 import "swiper/css";
@@ -19,6 +19,7 @@ SwiperCore.use([Navigation, Autoplay]);
 export default function HomeProductList({ categoryId, limit, searchParams }) {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const swiperRef = useRef(null); // ✅ Swiper reference
 
     useEffect(() => {
         if (!categoryId) return;
@@ -61,13 +62,33 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
         <div className="product_page">
             <div className="container">
                 <div className="inner_">
+                {products.length >= 4 && (
+                        <div className="swiper-navigation">
+                            <button className="swiper-button-prev" onClick={() => swiperRef.current?.slidePrev()}>
+                                
+                            </button>
+                            <button className="swiper-button-next" onClick={() => swiperRef.current?.slideNext()}>
+                                
+                            </button>
+                        </div>
+                    )}
+
                     <Swiper
                         className="Home_product_list"
-                        modules={[Navigation, Autoplay]}
+                        modules={[Autoplay, ...(products.length >= 4 ? [Navigation] : [])]} // Dynamically include Navigation module
                         spaceBetween={20}
                         slidesPerView={4}
-                        navigation
+                        onSwiper={(swiper) => (swiperRef.current = swiper)} // ✅ Store Swiper instance
                         autoplay={{ delay: 3000, disableOnInteraction: false }}
+                        
+                        breakpoints={{
+                            320: { slidesPerView: 2 }, // 1 slide on small screens
+                            767: { slidesPerView: 3 }, // 2 slides on medium screens
+                            1024: { slidesPerView: 3 }, // 3 slides on large screens
+                            1280: { slidesPerView: 4 }, // 4 slides on extra-large screens
+                            1600: { slidesPerView: 5 }, // 5 slides on ultra-wide screens
+                        }}
+                        // autoplay={{ delay: 3000, disableOnInteraction: false }}
                     >
                         {products.map((product, index) => (
                             <SwiperSlide className="item" key={index}>
@@ -101,7 +122,23 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
                     ) : null}
 
                     <div className="view-all-btn">
-                        <Link href={`/list?cat=${searchParams?.cat || categoryId}`}>View All</Link>
+
+                    {categoryId === "0e6feb7e-642f-de0e-a58e-807032d990b6"? (
+                        <Link className="add_cart" href={`/list?cat=featured-products`}>
+                            View All
+                        </Link>
+                    ) :  categoryId === "e3bcecfa-aa13-a77a-3368-3fde8607d360" ? 
+                    (
+                    <Link className="add_cart" href={`/list?cat=girls`}>
+                        View All
+                    </Link>) : categoryId === "576b21a3-e21a-c6a7-29e4-397dfba5cd7b" ? 
+                    (
+                    <Link className="add_cart" href={`/list?cat=boys`}>
+                        View All
+                    </Link>) : ""}
+                        
+
+                        
                     </div>
 
                 </div>

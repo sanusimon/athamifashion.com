@@ -1,0 +1,35 @@
+@use '../../app/variable' as *;
+.age_sec{
+    .inner_{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        .age_item_{
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            // background-color: $bg-color;
+            border: 1px solid $border-color;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: $bg-pink;
+            gap: 10px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+           
+            img{
+                width: 100px;
+                transition: all .3s;
+            }
+            &:hover{
+                img{
+                    scale: 1.1;
+                }
+            }
+        }
+    }
+}

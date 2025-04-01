@@ -99,7 +99,6 @@ const LoginPage = () => {
           throw new Error("Invalid mode");
       }
 
-      console.log(response)
 
       switch(response?.loginState){
         case LoginState.SUCCESS:

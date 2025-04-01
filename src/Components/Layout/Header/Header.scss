@@ -14,15 +14,25 @@
         }
         >div{
             display: flex;
+            align-items: center;
             gap: 20px;
         }
         .logo{
             width: 150px;
+            a{
+                cursor: pointer;
+            }
         }
         .navigation{
             ul{
                 display: flex;
-                gap: 20px
+                gap: 20px;
+                li{
+                    font-weight: 700;
+                    &.active{
+                        color: $bg-pink;
+                    }
+                }
             }
         }
         .right_sec{

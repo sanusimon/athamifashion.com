@@ -27,11 +27,16 @@
                 grid-column: 1 / 2;
             }
             .img_wrap{
+                overflow: hidden;
                 img{
                     object-fit: cover;
                     height: 100%;
                     width: 100%;
                     display: block;
+                    transition: all .5s ease-in-out;
+                    &:hover{
+                        transform: scale(1.1);
+                    }
                 }
             }
             .cat_name{
@@ -43,6 +48,7 @@
                 color: $color-white;
                 margin: 0;
                 padding: 10px 20px;
+                display: block;
             }
         }
     }

@@ -2,7 +2,7 @@
 
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 // import CartModal from "./CartModal";
 import Cookies from "js-cookie";
@@ -12,32 +12,33 @@ import { useWixClient } from "@/hooks/useWixClient";
 import { useCartStore } from "@/hooks/useCartStore";
 import SearchBar from "@/Components/SearchBar/SearchBar";
 import Breadcrumbs from "@/Components/Breadcrumbs/Breadcrumbs";
+import { wixClientServer } from "@/lib/wixClientServer";
 
 const Header = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  
+
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+
   const pathName = usePathname();
 
   const wixClient = useWixClient();
+  
 
+  const handleCategoryClick = (slug) => {
+    const params = new URLSearchParams(window.location.search);
+    params.set("cat", slug);
+    router.replace(`/list?${params.toString()}`); // ✅ Updates the category in the URL
+};
 
 
 
   const isLoggedIn = wixClient.auth.loggedIn();
 
-  
-
-  // TEMPORARY
-  // const isLoggedIn = false;
-
-
-// AUTH WITH WIX-MANAGED AUTH
-
-//   const wixClient = useWixClient();
-
- 
   
 
     const {cart, counter, getCart} = useCartStore();
@@ -79,6 +80,25 @@ const handleLogout = async () => {
     
   };
 
+  const [cats, setCats] = useState([]);
+  const selectedCategory = searchParams.get("cat") || "";
+
+  useEffect(() => {
+      const fetchCategories = async () => {
+        try {
+          const wixClient = await wixClientServer();
+          const result = await wixClient.collections.queryCollections().find();
+          setCats(result.items || []);
+          const catNames = result.items.map(cat => cat.name);
+          console.log(catNames)
+        } catch (error) {
+          console.error("Error fetching categories:", error);
+        }
+      };
+  
+      fetchCategories();
+    }, []);
+
   useEffect(() => {
     
   }, [wixClient]);
@@ -95,13 +115,27 @@ const handleLogout = async () => {
                     </h1>
                 </div>
                 <div className='navigation'>
-                    <ul>
-                        {/* <li><Link onClick={login} href={'/'}>Home</Link></li> */}
-                        {/* <li><Link href={'/category/electronics'}>Home</Link></li> */}
-                        {/* <li><Link href={{}}>About</Link></li>
-                        <li><Link href={{}}>Boys</Link></li>
-                        <li><Link href={{}}>Girls</Link></li> */}
-                    </ul>
+                <ul>
+                  {cats.map((category) => (
+                    <li key={category.slug}
+                    className={`item ${selectedCategory === category.slug ? "active" : ""}`}>
+                    <Link
+                      href={`/list?cat=${category.slug}`}
+                      onClick={() => handleCategoryClick(category.slug)}
+                    >
+                      {category.name}
+                    </Link>
+                  </li>
+                  
+                  ))}
+                </ul>
+                    {/* <ul>
+                    {cats.length > 0 && (
+                      <Link className="banner_btn add_cart" href={`/list?cat=${img.categorySlug}`}>
+                        Buy Now
+                      </Link>
+                    )}
+                    </ul> */}
                 </div>
                 </div>
                 <div className="right_sec">

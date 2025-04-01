@@ -6,6 +6,7 @@ import { wixClientServer } from "@/lib/wixClientServer";
 import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from "swiper";
+import DOMPurify from 'dompurify'; 
 
 // Import Swiper styles
 import "swiper/css";
@@ -17,6 +18,7 @@ import "swiper/css/effect-fade"; // Import fade effect
 SwiperCore.use([Navigation, Pagination, Autoplay, EffectFade]);
 
 const HomeBanner = () => {
+      const DOMPurifyServer = DOMPurify(window);
   const [cats, setCats] = useState([]);
 
   useEffect(() => {
@@ -33,13 +35,13 @@ const HomeBanner = () => {
     fetchCategories();
   }, []);
 
-  const imgArray =[
-    { imgPath: "/banner1.jpg", id: "img1" },
-    { imgPath: "/banner2.jpg", id: "img2" },
-    { imgPath: "/banner3.jpg", id: "img3" },
-    { imgPath: "/banner4.jpg", id: "img4" },
-    { imgPath: "/banner5.jpg", id: "img5" }
-  ]
+  const imgArray = [
+    { imgPath: "/banner1.jpg", bannerText:"	Unveiling This Season's<br> <span> Fashion</span>", id: "img1", categorySlug: cats[0]?.slug || "all-products" },
+    { imgPath: "/banner2.jpg",bannerText:"Epitome of the Big<br> <span>Sweater</span>", id: "img2", categorySlug: cats[1]?.slug || "all-products" },
+    { imgPath: "/banner3.jpg",bannerText:"Unveiling This Season's<br> <span> Fashion</span>", id: "This Is A<br> Long Open<br> <span>Robe</span>", categorySlug: cats[2]?.slug || "all-products" },
+    { imgPath: "/banner4.jpg",bannerText:"Epitome of the Big<br> <span>Sweater</span>", id: "img4", categorySlug: cats[3]?.slug || "all-products" },
+    { imgPath: "/banner5.jpg",bannerText:"This Is A Long Open<br> <span>Robe</span>", id: "img5", categorySlug: cats[4]?.slug || "all-products" },
+  ];
 
   return (
     <div className="banner_">
@@ -58,11 +60,15 @@ const HomeBanner = () => {
             <div className="img_wrap">
               <img src={img.imgPath} alt={`Banner ${index + 1}`} />
             </div>
-            {cats.length > 0 && (
-              <Link className="banner_btn add_cart" href={`/list?cat=${cats[0].slug}`}>
+            <div className="banner_txt">
+              <h2 dangerouslySetInnerHTML={{ __html: DOMPurifyServer.sanitize(img.bannerText)}}></h2>
+              {cats.length > 0 && (
+              <Link className="banner_btn add_cart" href={`/list?cat=${img.categorySlug}`}>
                 Buy Now
               </Link>
             )}
+            </div>
+            
           </SwiperSlide>
         ))}
       </Swiper>

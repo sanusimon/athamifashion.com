@@ -45,7 +45,7 @@ function AddQuantity({productId,variantId,stockNumber , isSelected}) {
                     <p>{quantity}</p>
                 <label className='qnty_btn plus' onClick={() => handleQuantity("i")} disabled={quantity === stockNumber}>+</label>
                 </div>
-                {stockNumber < 1 ? (<span className='dont_miss'>Product is out od stock</span>) 
+                {stockNumber < 1 ? (<span className='dont_miss'>Product is out of stock</span>) 
                 :(<span className='small_txt'>Only <span>  {stockNumber} items </span> left! <br />Don't Miss it</span>)} 
             </span>
            
