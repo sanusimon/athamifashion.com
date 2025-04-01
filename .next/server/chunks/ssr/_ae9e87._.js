@@ -242,12 +242,17 @@ async function ProductList({ categoryId, limit, searchParams }) {
             }
         }
         const res = await productQuery.find();
+        console.log(res.items);
+        let filteredProducts = res.items;
+        if (searchParams?.size) {
+            filteredProducts = filteredProducts.filter((product)=>product.variants.some((variant)=>variant.choices?.Size === searchParams.size));
+        }
         if (!res.items || res.items.length === 0) {
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 children: "No products found for this category."
             }, void 0, false, {
                 fileName: "[project]/src/Components/productList/ProductList.jsx",
-                lineNumber: 69,
+                lineNumber: 84,
                 columnNumber: 24
             }, this); // ✅ Return JSX
         }
@@ -274,7 +279,7 @@ async function ProductList({ categoryId, limit, searchParams }) {
                                                             src: product.media?.items[1]?.image?.url
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/Components/productList/ProductList.jsx",
-                                                            lineNumber: 83,
+                                                            lineNumber: 98,
                                                             columnNumber: 45
                                                         }, this),
                                                         product.ribbon && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -282,13 +287,13 @@ async function ProductList({ categoryId, limit, searchParams }) {
                                                             children: product.ribbon
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/Components/productList/ProductList.jsx",
-                                                            lineNumber: 85,
+                                                            lineNumber: 100,
                                                             columnNumber: 49
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/Components/productList/ProductList.jsx",
-                                                    lineNumber: 82,
+                                                    lineNumber: 97,
                                                     columnNumber: 41
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -298,12 +303,12 @@ async function ProductList({ categoryId, limit, searchParams }) {
                                                         children: product.name
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/Components/productList/ProductList.jsx",
-                                                        lineNumber: 91,
+                                                        lineNumber: 106,
                                                         columnNumber: 41
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/Components/productList/ProductList.jsx",
-                                                    lineNumber: 90,
+                                                    lineNumber: 105,
                                                     columnNumber: 41
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -319,7 +324,7 @@ async function ProductList({ categoryId, limit, searchParams }) {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/Components/productList/ProductList.jsx",
-                                                                lineNumber: 97,
+                                                                lineNumber: 112,
                                                                 columnNumber: 53
                                                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                 className: "discount_sec",
@@ -332,7 +337,7 @@ async function ProductList({ categoryId, limit, searchParams }) {
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/Components/productList/ProductList.jsx",
-                                                                        lineNumber: 103,
+                                                                        lineNumber: 118,
                                                                         columnNumber: 57
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
@@ -343,18 +348,18 @@ async function ProductList({ categoryId, limit, searchParams }) {
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/Components/productList/ProductList.jsx",
-                                                                        lineNumber: 104,
+                                                                        lineNumber: 119,
                                                                         columnNumber: 57
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/Components/productList/ProductList.jsx",
-                                                                lineNumber: 102,
+                                                                lineNumber: 117,
                                                                 columnNumber: 53
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/Components/productList/ProductList.jsx",
-                                                            lineNumber: 95,
+                                                            lineNumber: 110,
                                                             columnNumber: 45
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -362,30 +367,30 @@ async function ProductList({ categoryId, limit, searchParams }) {
                                                             children: "Add to Cart"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/Components/productList/ProductList.jsx",
-                                                            lineNumber: 109,
+                                                            lineNumber: 124,
                                                             columnNumber: 45
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/Components/productList/ProductList.jsx",
-                                                    lineNumber: 94,
+                                                    lineNumber: 109,
                                                     columnNumber: 41
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/Components/productList/ProductList.jsx",
-                                            lineNumber: 81,
+                                            lineNumber: 96,
                                             columnNumber: 42
                                         }, this)
                                     }, index, false, {
                                         fileName: "[project]/src/Components/productList/ProductList.jsx",
-                                        lineNumber: 80,
+                                        lineNumber: 95,
                                         columnNumber: 37
                                     }, this);
                                 })
                             }, void 0, false, {
                                 fileName: "[project]/src/Components/productList/ProductList.jsx",
-                                lineNumber: 77,
+                                lineNumber: 92,
                                 columnNumber: 29
                             }, this),
                             searchParams?.cat || searchParams?.name ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Components$2f$Pagination$2f$Pagination$2e$jsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {
@@ -394,28 +399,28 @@ async function ProductList({ categoryId, limit, searchParams }) {
                                 hasNext: res.hasNext()
                             }, void 0, false, {
                                 fileName: "[project]/src/Components/productList/ProductList.jsx",
-                                lineNumber: 117,
+                                lineNumber: 132,
                                 columnNumber: 29
                             }, this) : null
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/Components/productList/ProductList.jsx",
-                        lineNumber: 76,
+                        lineNumber: 91,
                         columnNumber: 25
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/src/Components/productList/ProductList.jsx",
-                    lineNumber: 75,
+                    lineNumber: 90,
                     columnNumber: 21
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/Components/productList/ProductList.jsx",
-                lineNumber: 74,
+                lineNumber: 89,
                 columnNumber: 17
             }, this)
         }, void 0, false, {
             fileName: "[project]/src/Components/productList/ProductList.jsx",
-            lineNumber: 73,
+            lineNumber: 88,
             columnNumber: 17
         }, this);
     } catch (error) {
@@ -427,7 +432,7 @@ async function ProductList({ categoryId, limit, searchParams }) {
             ]
         }, void 0, true, {
             fileName: "[project]/src/Components/productList/ProductList.jsx",
-            lineNumber: 126,
+            lineNumber: 141,
             columnNumber: 20
         }, this); // ✅ Return JSX
     }
