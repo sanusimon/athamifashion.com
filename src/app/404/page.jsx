@@ -3,7 +3,7 @@ import NotFoundContent from './NotFoundContent';
 
 export default function NotFoundPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div>Loading 404...</div>}>
       <NotFoundContent />
     </Suspense>
   );
