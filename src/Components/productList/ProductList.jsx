@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { wixClientServer } from "@/lib/wixClientServer";
 import Link from "next/link";
 import Pagination from "@/Components/Pagination/Pagination";
+import DOMPurify from 'dompurify'; 
 
 const PRODUCT_PER_PAGE = 8;
 
@@ -12,7 +13,8 @@ export default function ProductList({ categoryId, limit }) {
     const searchParams = useSearchParams();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
-    
+    // const window = new JSDOM("").window;
+    const DOMPurifyServer = DOMPurify(window);
     useEffect(() => {
         console.log("Fetching products with filters:", searchParams.toString());
         const fetchProducts = async () => {
@@ -76,21 +78,41 @@ export default function ProductList({ categoryId, limit }) {
     if (loading) return <div>Loading products...</div>;
     if (products.length === 0) return <div>No products found.</div>;
 
+    
+ 
+
     return (
-        <div className="product_page">
-            <div className="container">
+        <>
                 <ul className="product_list">
                     {products.map((product, index) => (
                         <li key={index}>
+                            
                             <Link href={`/${product.slug}?cat=${searchParams.get("cat")}`}>
-                                <div className="img_wrap">
-                                    <img src={product.media?.items[1]?.image?.url} />
-                                    {product.ribbon && <div className="ribbon_">{product.ribbon}</div>}
-                                </div>
+                                <div className="top_area">
+                                        <div className="img_wrap">
+                                            <img src={product.media?.items[0]?.image?.url} alt={product.name} />
+                                            {product.ribbon && <div className="ribbon_">{product.ribbon}</div>}
+                                        </div>
+                                        <button className="add_cart">Add to Cart</button>
+                                    </div>
+                                
+                                <div className="btm_area">
                                 <div className="name__">
                                     <label className="cat_name">{product.name}</label>
+                                    <span dangerouslySetInnerHTML={{ __html: DOMPurifyServer.sanitize(product.description) }}></span>
                                 </div>
-                                <div className="btm_area">
+                                <div className="var_price">
+                                    <div className="variant">
+                                        {product.variants.map((variant, vIndex) => (
+                                        
+                                        <div key={vIndex} className={variant.stock.quantity === 0 ? "disabled" : ""}>
+                                            {console.log(variant.stock.quantity === 0 )}
+                                            {Object.entries(variant.choices).map(([key, value]) => (
+                                                <span key={key}>{value}</span>
+                                            ))}
+                                        </div>
+                                        ))}
+                                        </div>
                                     <div className="price_area">
                                         {product.price?.price === product.price?.discountedPrice ? (
                                             <label className="cat_price">₹{Math.floor(product.price?.price)}</label>
@@ -101,7 +123,8 @@ export default function ProductList({ categoryId, limit }) {
                                             </div>
                                         )}
                                     </div>
-                                    <button className="add_cart">Add to Cart</button>
+                                </div>
+                                   
                                 </div>
                             </Link>
                         </li>
@@ -110,7 +133,6 @@ export default function ProductList({ categoryId, limit }) {
                 {searchParams.get("cat") || searchParams.get("name") ? (
                     <Pagination currentPage={parseInt(searchParams.get("page") || 0)} />
                 ) : null}
-            </div>
-        </div>
+          </>
     );
 }

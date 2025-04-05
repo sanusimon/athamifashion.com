@@ -7,6 +7,7 @@ import { Navigation, Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from "swiper";
 import { useEffect, useRef, useState } from "react";
+import DOMPurify from 'dompurify'; 
 
 // Import Swiper styles
 import "swiper/css";
@@ -20,6 +21,7 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const swiperRef = useRef(null); // ✅ Swiper reference
+    const DOMPurifyServer = DOMPurify(window);
 
     useEffect(() => {
         if (!categoryId) return;
@@ -93,14 +95,30 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
                         {products.map((product, index) => (
                             <SwiperSlide className="item" key={index}>
                                 <Link href={`/${product.slug}?cat=${searchParams?.cat || ''}`}>
-                                    <div className="img_wrap">
-                                        <img src={product.media?.items[0]?.image?.url} alt={product.name} />
-                                        {product.ribbon && <div className="ribbon_">{product.ribbon}</div>}
-                                    </div>
-                                    <div className="name__">
-                                        <label className="cat_name">{product.name}</label>
+                                    <div className="top_area">
+                                        <div className="img_wrap">
+                                            <img src={product.media?.items[0]?.image?.url} alt={product.name} />
+                                            {product.ribbon && <div className="ribbon_">{product.ribbon}</div>}
+                                        </div>
+                                        <button className="add_cart">Add to Cart</button>
                                     </div>
                                     <div className="btm_area">
+                                    <div className="name__">
+                                        <label className="cat_name">{product.name}</label>
+                                        <span dangerouslySetInnerHTML={{ __html: DOMPurifyServer.sanitize(product.description) }}></span>
+                                    </div>
+                                    <div className="var_price">
+                                        <div className="variant">
+                                            {product.variants.map((variant, vIndex) => (
+                                            
+                                            <div key={vIndex} className={variant.stock.quantity === 0 ? "disabled" : ""}>
+                                                {console.log(variant.stock.quantity === 0 )}
+                                                {Object.entries(variant.choices).map(([key, value]) => (
+                                                    <span key={key}>{value}</span>
+                                                ))}
+                                            </div>
+                                            ))}
+                                            </div>
                                         <div className="price_area">
                                             {product.price?.price === product.price?.discountedPrice ? (
                                                 <label className="cat_price">₹{Math.floor(product.price?.price)}</label>
@@ -111,7 +129,9 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
                                                 </div>
                                             )}
                                         </div>
-                                        <button className="add_cart">Add to Cart</button>
+                                    </div>
+                                   
+                                        
                                     </div>
                                 </Link>
                             </SwiperSlide>

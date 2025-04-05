@@ -1,6 +1,5 @@
 /* [project]/src/Components/Layout/Header/Header.scss.css [app-client] (css) */
 .header {
-  padding: 20px 0;
   position: relative;
 }
 
@@ -29,24 +28,66 @@
 }
 
 .header .inner_ .logo {
-  width: 150px;
+  width: 200px;
+  height: 100px;
 }
 
 .header .inner_ .logo a {
   cursor: pointer;
+  display: block;
+  height: 100%;
 }
 
-.header .inner_ .navigation ul {
-  display: flex;
+.header .inner_ .logo a img {
+  height: 100%;
+  object-fit: cover;
+}
+
+.header .inner_ .navigation .menu_btn {
+  font-size: 1.5rem;
+  margin-top: 10px;
+}
+
+.header .inner_ .navigation .close_menu {
+  position: relative;
+  z-index: 5;
+}
+
+.header .inner_ .navigation ul.menu-dropdown {
+  position: fixed;
+  z-index: 2;
   gap: 20px;
+  transform: translateY(-100%);
+  opacity: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all .5s;
 }
 
-.header .inner_ .navigation ul li {
+.header .inner_ .navigation ul.menu-dropdown li {
   font-weight: 700;
+  font-size: 3rem;
+  transition: all .5s;
 }
 
-.header .inner_ .navigation ul li.active {
-  color: #f083b3;
+.header .inner_ .navigation ul.menu-dropdown li.active {
+  color: #d4bd5f;
+}
+
+.header .inner_ .navigation ul.menu-dropdown li:hover {
+  color: #d4bd5f;
+}
+
+.header .inner_ .navigation ul.menu-dropdown.open {
+  transform: none;
+  opacity: 1;
 }
 
 .header .inner_ .right_sec {
@@ -55,7 +96,7 @@
 }
 
 .header .inner_ .right_sec .srch_bar {
-  width: 350px;
+  width: 450px;
   position: relative;
 }
 
@@ -106,7 +147,7 @@
   right: -10px;
   width: 18px;
   height: 18px;
-  background-color: #f083b3;
+  background-color: #d4bd5f;
   color: #fff;
   border-radius: 50%;
   display: flex;

@@ -39,8 +39,8 @@
 }
 
 .banner_ .banner_btn {
-  background: #f083b3;
-  border: #f083b3;
+  background: #d4bd5f;
+  border: #d4bd5f;
   color: #fff;
 }
 
@@ -69,7 +69,7 @@
 }
 
 .banner_ .swiper .swiper-pagination .swiper-pagination-bullet {
-  background: #f083b3;
+  background: #d4bd5f;
   opacity: .5;
 }
 

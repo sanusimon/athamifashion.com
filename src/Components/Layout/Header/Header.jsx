@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 // import CartModal from "./CartModal";
 import Cookies from "js-cookie";
 // import { useCartStore } from "@/hooks/useCartStore";
@@ -17,8 +17,36 @@ import { wixClientServer } from "@/lib/wixClientServer";
 const Header = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [openMenu, setOpenMenu] = useState(false);
+  const menuRef = useRef(null);
+  const buttonRef = useRef(null);
 
-  
+    // Toggle menu
+  const hamburger = () => {
+    setOpenMenu((prev) => !prev);
+  };
+
+  // Close menu when clicking outside (excluding button)
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target)
+      ) {
+        setOpenMenu(false);
+      }
+    };
+
+    if (openMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [openMenu]);
 
   const router = useRouter();
 
@@ -33,6 +61,7 @@ const Header = () => {
     const params = new URLSearchParams(window.location.search);
     params.set("cat", slug);
     router.replace(`/list?${params.toString()}`); // ✅ Updates the category in the URL
+    setOpenMenu(false);
 };
 
 
@@ -110,25 +139,28 @@ const handleLogout = async () => {
             <div className='inner_'>
               <div>
                 <div className='logo'>
-                    <h1>
-                      <Link href={'/'}><img src="./logo.png" /></Link>
-                    </h1>
+                  <Link href={'/'}>
+                      <img src="./logo.png" />
+                    </Link>
                 </div>
                 <div className='navigation'>
-                <ul>
-                  {cats.map((category) => (
-                    <li key={category.slug}
-                    className={`item ${selectedCategory === category.slug ? "active" : ""}`}>
-                    <Link
-                      href={`/list?cat=${category.slug}`}
-                      onClick={() => handleCategoryClick(category.slug)}
-                    >
-                      {category.name}
-                    </Link>
-                  </li>
-                  
-                  ))}
-                </ul>
+                <button onClick={hamburger} className={`menu_btn ${openMenu ? "close_menu" : ""}`}>
+                  {openMenu ? "Close" : "Menu"}
+                </button>
+                <ul ref={menuRef} className={`menu-dropdown ${openMenu ? "open" : ""}`}>
+                    {cats.map((category) => (
+                      <li key={category.slug}
+                      className={`item ${selectedCategory === category.slug ? "active" : ""}`}>
+                      <Link
+                        href={`/list?cat=${category.slug}`}
+                        onClick={() => handleCategoryClick(category.slug)}
+                      >
+                        {category.name}
+                      </Link>
+                    </li>
+                    
+                    ))}
+                  </ul>
                     {/* <ul>
                     {cats.length > 0 && (
                       <Link className="banner_btn add_cart" href={`/list?cat=${img.categorySlug}`}>

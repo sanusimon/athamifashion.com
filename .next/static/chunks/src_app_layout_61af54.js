@@ -16,7 +16,7 @@
     "static/chunks/node_modules_@wix_auto_sdk_ecom_checkout_build_es_aaf5f4._.js",
     "static/chunks/node_modules_@wix_auto_sdk_ecom_draft-orders_build_es_1542e2._.js",
     "static/chunks/node_modules_@wix_auto_sdk_ecom_orders_build_es_804ef2._.js",
-    "static/chunks/node_modules_@wix_62074f._.js",
+    "static/chunks/node_modules_@wix_c62c10._.js",
     "static/chunks/node_modules_778527._.js",
     "static/chunks/src_bf8f8f._.js"
   ],

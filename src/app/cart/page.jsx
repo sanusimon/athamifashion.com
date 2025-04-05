@@ -8,6 +8,7 @@ import { useCartStore } from '@/hooks/useCartStore';
 import {media as wixMedia} from '@wix/sdk'
 import Link from 'next/link';
 import { useWixClient } from '@/hooks/useWixClient';
+import { currentCart } from '@wix/ecom';
 // import Quantity from '../../Components/Quantity/Quantity';
 // import Link from 'next/link';
 
@@ -15,6 +16,28 @@ export const Cart = () => {
 
     const wixClient = useWixClient()
     const {cart , isLoading , removeItem ,updateQuantity } = useCartStore();
+
+    const handleCheckout = async () =>{
+        try{
+            const checkout = await wixClient.currentCart.createCheckoutFromCurrentCart({
+                channelType:currentCart.ChannelType.WEB,
+            });
+            const {redirectSession} = await wixClient.redirects.createRedirectSession({
+                ecomCheckout:{checkoutId:checkout.checkoutId},
+                callbacks:{
+                    postFlowUrl:window.location.origin,
+                    thankyouPage:`${window.location.origin}/success`
+                }
+            });
+            if(redirectSession?.fullUrl){
+                window.location.href = redirectSession.fullUrl
+            }
+        }
+        catch(err){
+            console.log(err)
+        }
+        
+    }
     
 
     // Function to calculate total discount
@@ -166,7 +189,7 @@ export const Cart = () => {
                                     <label className='label'> <b>Net Payment</b></label>
                                     <span>{cart.subtotal?.formattedAmount}</span>
                                 </div>
-                                <button className={isLoading ? "cmnBtn disabled" : "cmnBtn"} disabled={isLoading}>Checkout</button>
+                                <button onClick={handleCheckout} className={isLoading ? "cmnBtn disabled" : "cmnBtn"} disabled={isLoading}>Checkout</button>
                                 </div>
                             </div>
                         </div>

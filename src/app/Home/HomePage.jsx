@@ -13,7 +13,7 @@ const HomePage = async() =>  {
       {/* <Header/> */}
       <HomeBanner />
       <Categories />
-      <AgeFilterHome />
+      {/* <AgeFilterHome /> */}
       <section className="product_page home_product">
         <div className="container">
             <h2 className="title">Featured Product</h2>
@@ -23,16 +23,16 @@ const HomePage = async() =>  {
 
         <section className="product_page home_product">
         <div className="container">
-          <h2 className="title">Girls</h2>
+          <h2 className="title">Kurti</h2>
         </div>
-          <HomeProductList categoryId={process.env.GIRLS_PRODUCTS_CATEGORY_ID} limit={8}/>
+          <HomeProductList categoryId={process.env.KURTIES_PRODUCTS_CATEGORY_ID} limit={8}/>
         </section>
 
         <section className="product_page home_product">
         <div className="container">
-          <h2 className="title">Boys</h2>
+          <h2 className="title">Feeding Kurti</h2>
         </div>
-          <HomeProductList categoryId={process.env.BOYS_PRODUCTS_CATEGORY_ID}  limit={8}/>
+          <HomeProductList categoryId={process.env.FEEDING_KURTIES_PRODUCTS_CATEGORY_ID}  limit={8}/>
         </section>
 
         
