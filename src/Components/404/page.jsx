@@ -1,3 +1,6 @@
+// app/404/page.jsx
+export const dynamic = "force-dynamic"; // 👈 important!
+
 import { Suspense } from "react";
 import NotFoundClient from "./NotFoundClient";
 
