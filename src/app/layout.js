@@ -8,6 +8,7 @@ import CategoryApiContextProvider from "../Context/CategoryApi/CategoryApiContex
 import Header from "../Components/Layout/Header/Header";
 import { WixClientContextProvider } from "@/Context/WixContext/WixContext";
 import Footer from "@/Components/Footer/Footer";
+import { Suspense } from 'react';
 
 
 
@@ -44,9 +45,11 @@ export default function RootLayout({ children }) {
         {/* <ApiContextProvider>
         <CategoryApiContextProvider> */}
         <WixClientContextProvider>
+        <Suspense>
           <Header/>
           {children}
           <Footer />
+          </Suspense>
           </WixClientContextProvider>
           {/* </CategoryApiContextProvider>
         </ApiContextProvider>

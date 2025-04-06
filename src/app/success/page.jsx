@@ -1,8 +1,10 @@
-const SuccessPage =() =>{
-    return(
-        <div className="">
-SuccessPage
-        </div>
-    )
+import { Suspense } from "react";
+import SuccessClient from "./successClient";
+
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SuccessClient />
+    </Suspense>
+  );
 }
-export default SuccessPage

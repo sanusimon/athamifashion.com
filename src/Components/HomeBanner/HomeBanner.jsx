@@ -1,12 +1,12 @@
 "use client";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./homeBanner.scss";
 import { wixClientServer } from "@/lib/wixClientServer";
 import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from "swiper";
-import DOMPurify from 'dompurify'; 
+import createDOMPurify from "dompurify";
 
 // Import Swiper styles
 import "swiper/css";
@@ -18,10 +18,14 @@ import "swiper/css/effect-fade"; // Import fade effect
 SwiperCore.use([Navigation, Pagination, Autoplay, EffectFade]);
 
 const HomeBanner = () => {
-      const DOMPurifyServer = DOMPurify(window);
+      // const DOMPurifyServer = DOMPurify(window);
   const [cats, setCats] = useState([]);
-
+  const DOMPurifyRef = useRef(null);
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      DOMPurifyRef.current = createDOMPurify(window);
+    }
+
     const fetchCategories = async () => {
       try {
         const wixClient = await wixClientServer();
@@ -61,7 +65,14 @@ const HomeBanner = () => {
               <img src={img.imgPath} alt={`Banner ${index + 1}`} />
             </div>
             <div className="banner_txt">
-              <h2 dangerouslySetInnerHTML={{ __html: DOMPurifyServer.sanitize(img.bannerText)}}></h2>
+            {DOMPurifyRef.current && (
+                <h2
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurifyRef.current.sanitize(img.bannerText),
+                  }}
+                />
+              )}
+
               {cats.length > 0 && (
               <Link className="banner_btn add_cart" href={`/list?cat=${img.categorySlug}`}>
                 Buy Now

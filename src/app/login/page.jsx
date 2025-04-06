@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import "./login.scss";
 import { LoginState } from "@wix/sdk";
 import { useWixClient } from "@/hooks/useWixClient";
@@ -168,6 +168,7 @@ const LoginPage = () => {
 
 
   return (
+   
     <section className="login_page">
       <div className="container">
         {/* <button onClick={login}>login</button> */}
@@ -255,6 +256,7 @@ const LoginPage = () => {
         </form>
       </div>
     </section>
+   
   );
 };
 

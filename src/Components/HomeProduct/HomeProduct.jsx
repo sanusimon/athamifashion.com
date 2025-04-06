@@ -7,7 +7,7 @@ import { Navigation, Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from "swiper";
 import { useEffect, useRef, useState } from "react";
-import DOMPurify from 'dompurify'; 
+import createDOMPurify from "dompurify";
 
 // Import Swiper styles
 import "swiper/css";
@@ -21,7 +21,12 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const swiperRef = useRef(null); // ✅ Swiper reference
-    const DOMPurifyServer = DOMPurify(window);
+   const DOMPurifyRef = useRef(null);
+     useEffect(() => {
+       if (typeof window !== "undefined") {
+         DOMPurifyRef.current = createDOMPurify(window);
+       }})
+   
 
     useEffect(() => {
         if (!categoryId) return;
@@ -105,7 +110,9 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
                                     <div className="btm_area">
                                     <div className="name__">
                                         <label className="cat_name">{product.name}</label>
-                                        <span dangerouslySetInnerHTML={{ __html: DOMPurifyServer.sanitize(product.description) }}></span>
+                                        {DOMPurifyRef.current && (
+                <span dangerouslySetInnerHTML={{ __html: DOMPurifyRef.current.sanitize(product.description) }}></span>
+              )}
                                     </div>
                                     <div className="var_price">
                                         <div className="variant">

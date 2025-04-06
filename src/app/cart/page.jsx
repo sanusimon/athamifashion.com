@@ -9,6 +9,8 @@ import {media as wixMedia} from '@wix/sdk'
 import Link from 'next/link';
 import { useWixClient } from '@/hooks/useWixClient';
 import { currentCart } from '@wix/ecom';
+
+
 // import Quantity from '../../Components/Quantity/Quantity';
 // import Link from 'next/link';
 
@@ -62,6 +64,7 @@ export const Cart = () => {
 
 
     return (
+       
         <section className="cart_page">
             <div className="container">
                     {
