@@ -1,13 +1,7 @@
-export const dynamic = "force-dynamic"; // Ensures this page is never statically generated
+import NotFoundWrapper from "./NotFoundWrapper";
 
-import dynamic from "next/dynamic";
-
-// ✅ Dynamically import the client component with SSR disabled
-const NotFoundClient = dynamic(() => import("./NotFoundClient"), {
-  ssr: false,
-  loading: () => <div>Loading 404...</div>,
-});
+export const dynamic = "force-dynamic";
 
 export default function NotFoundPage() {
-  return <NotFoundClient />;
+  return <NotFoundWrapper />;
 }
