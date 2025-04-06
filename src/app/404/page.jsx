@@ -1,13 +1,13 @@
-// app/404/page.jsx
-export const dynamic = "force-dynamic"; // 👈 important!
+export const dynamic = "force-dynamic";
+export const dynamicParams = true;
 
-import { Suspense } from "react";
-import NotFoundClient from "./NotFoundClient";
+import dynamic from "next/dynamic";
+
+const NotFoundClient = dynamic(() => import("./NotFoundClient"), {
+  ssr: false, // 🚨 This disables server-side rendering for this component
+  loading: () => <div>Loading 404...</div>,
+});
 
 export default function NotFoundPage() {
-  return (
-    <Suspense fallback={<div>Loading 404...</div>}>
-      <NotFoundClient />
-    </Suspense>
-  );
+  return <NotFoundClient />;
 }

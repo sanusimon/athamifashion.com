@@ -3,7 +3,7 @@ import { useSearchParams } from "next/navigation";
 
 export default function NotFoundClient() {
   const params = useSearchParams();
-  const from = params.get("from"); // or whatever you're checking
+  const from = params.get("from");
 
   return (
     <div className="not-found">
