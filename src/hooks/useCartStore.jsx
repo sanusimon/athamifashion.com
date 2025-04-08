@@ -11,8 +11,15 @@ export const useCartStore = create((set) => ({
 
     
     getCart: async (wixClient)=>{
-        const cart = await wixClient.currentCart.getCurrentCart();
-        set({cart:(cart || []),isLoading:false,counter:cart?.lineItems.length || 0})
+        try{
+            const cart = await wixClient.currentCart.getCurrentCart();
+            set({cart:(cart || []),isLoading:false,counter:cart?.lineItems.length || 0})
+        }
+        catch(err){
+            console.log(err)
+            set(prev=>({...prev,isLoading:false}))
+        }
+        
     },
     addItem: async (wixClient, productId,variantId,quantity)=>{
 

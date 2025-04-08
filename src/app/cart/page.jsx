@@ -18,7 +18,7 @@ export const Cart = () => {
 
     const wixClient = useWixClient()
     const {cart , isLoading , removeItem ,updateQuantity } = useCartStore();
-
+console.log(cart)
     const handleCheckout = async () =>{
         try{
             const checkout = await wixClient.currentCart.createCheckoutFromCurrentCart({
@@ -27,8 +27,8 @@ export const Cart = () => {
             const {redirectSession} = await wixClient.redirects.createRedirectSession({
                 ecomCheckout:{checkoutId:checkout.checkoutId},
                 callbacks:{
-                    postFlowUrl:window.location.origin,
-                    thankyouPage:`${window.location.origin}/success`
+                    postFlowUrl: window.location.origin,
+                    thankyouPage: `${window.location.origin}/success`
                 }
             });
             if(redirectSession?.fullUrl){
@@ -170,10 +170,10 @@ export const Cart = () => {
                                 <div className="cart_item_price sub_total">
                                     <label className='label'>Value of Products</label>
                                     <span>
-                                        {cart.subtotal
-                                        ? `₹${(parseFloat(cart.subtotal.formattedAmount.replace(/[^\d.-]/g, '')) + totalDiscount).toFixed(2)}`
-                                        : '₹0.00'}
-                                    </span>
+                                        ₹{(
+                                            parseFloat(cart.subtotal?.formattedAmount.replace(/[^\d.-]/g, '')) || 0
+                                        ).toFixed(2)}
+                                        </span>
                                 </div>
                                 <div className="cart_item_price sub_total">
                                         <label className='label'>
