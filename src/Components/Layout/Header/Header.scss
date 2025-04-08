@@ -95,12 +95,16 @@
                 display: flex;
                 gap: 30px;
                 align-items: center;
+                position: relative;
                 @media only screen and (max-width: 767px) {
                     position: absolute;
                     right: 20px;
                     top: 50%;
                     z-index: 3;
                     transform: translateY(-50%);
+                }
+                .absolute{
+                    position: absolute;
                 }
             }
             .cart{
