@@ -105,6 +105,16 @@
                 }
                 .absolute{
                     position: absolute;
+                    position: absolute;
+                    top: 105%;
+                    left: -8px;
+                    background: $color-white;
+                    z-index: 2;
+                    max-width: 200px;
+                    min-width: 100px;
+                    padding: 10px;
+                    border: 1px solid $border-color;
+                   
                 }
             }
             .cart{
