@@ -15,6 +15,7 @@
     "@wix/sdk": "^1.15.13",
     "@wix/stores": "^1.0.381",
     "axios": "^1.8.1",
+    "date-fns": "^4.1.0",
     "dompurify": "^3.2.4",
     "js-cookie": "^3.0.5",
     "jsdom": "^26.0.0",
