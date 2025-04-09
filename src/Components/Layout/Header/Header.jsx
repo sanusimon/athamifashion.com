@@ -180,7 +180,8 @@ const handleLogout = async () => {
                       {isProfileOpen ? "Login" : "Login"} <img src="./user.png" /> 
                         {isProfileOpen && (
                             <div className="absolute p-4 rounded-md top-12 left-0 bg-white text-sm shadow-[0_3px_10px_rgb(0,0,0,0.2)] z-20">
-                            <Link href="/profile">Profile</Link>
+                            <Link className="mt-2 cursor-pointer" href="/profile">Profile</Link>
+                            <Link className="mt-2 cursor-pointer" href="/orders">Your Order</Link>
                             <div className="mt-2 cursor-pointer" onClick={handleLogout}>
                                 {isLoading ? "Logging out" : "Logout"}
                             </div>

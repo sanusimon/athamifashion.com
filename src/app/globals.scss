@@ -396,3 +396,55 @@ input{
 .text-center{
     text-align: center;
 }
+.common_page{
+    .container{
+        width: 1100px;
+        margin: 0 auto;
+        @media (max-width: 1099px) {
+            width: 90%;
+        }
+    }
+    .link_{
+        margin-bottom: 20px;
+        border: 1px solid $border-color;
+       
+        
+    }
+    .item{
+        .head_{
+            display: flex;
+            justify-content: space-between;
+            background-color: $light-grey;
+            padding: 20px;
+            .box_{
+                span{
+                    display: block;
+                    &:first-child{
+                        font-weight: 700;
+                    }
+                }
+            }
+        }
+        .body_{
+            padding: 20px;
+            display: flex;
+            .left_{
+                display: flex;
+                gap: 20px;
+                align-items: center;
+                
+            }
+        }
+    }
+    &.profile_{
+        .container{
+            width: 700px;
+            margin:  0 auto;
+            form{
+                input{
+                    max-width: 100%;
+                }
+            }
+        }
+    }
+}
