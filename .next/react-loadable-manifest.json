@@ -1,1 +1,24 @@
-{}
+{
+  "..\\node_modules\\@wix\\sdk\\build\\auth\\AppStrategy.js -> jose": {
+    "id": null,
+    "files": []
+  },
+  "..\\node_modules\\next\\dist\\client\\index.js -> ../pages/_app": {
+    "id": 5203,
+    "files": [
+      "static/chunks/203.2b4c1ee4fbe3a7cf.js"
+    ]
+  },
+  "..\\node_modules\\next\\dist\\client\\index.js -> ../pages/_error": {
+    "id": 6218,
+    "files": [
+      "static/chunks/218.57a830a2c55ba802.js"
+    ]
+  },
+  "app\\404\\NotFoundWrapper.jsx -> ./NotFoundClient": {
+    "id": 8681,
+    "files": [
+      "static/chunks/681.a12d84ff13e592a8.js"
+    ]
+  }
+}
