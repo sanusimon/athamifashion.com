@@ -64,6 +64,7 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
     if (!products.length) {
         return <div className="container">No products found for this category.</div>;
     }
+    console.log(products);
 
     return (
         <div className="product_page">
@@ -91,7 +92,7 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
                         breakpoints={{
                             320: { slidesPerView: 2 }, // 1 slide on small screens
                             767: { slidesPerView: 3 }, // 2 slides on medium screens
-                            1024: { slidesPerView: 3 }, // 3 slides on large screens
+                            1024: { slidesPerView: 4 }, // 3 slides on large screens
                             1280: { slidesPerView: 4 }, // 4 slides on extra-large screens
                             1600: { slidesPerView: 5 }, // 5 slides on ultra-wide screens
                         }}

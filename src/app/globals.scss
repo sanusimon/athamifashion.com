@@ -404,7 +404,7 @@ input{
             width: 90%;
         }
     }
-    .link_{
+    .item{
         margin-bottom: 20px;
         border: 1px solid $border-color;
        
@@ -428,6 +428,12 @@ input{
         .body_{
             padding: 20px;
             display: flex;
+            .inner_{
+                display: flex;
+                justify-content: space-between;
+                
+                flex: 1;
+            }
             .left_{
                 display: flex;
                 gap: 20px;

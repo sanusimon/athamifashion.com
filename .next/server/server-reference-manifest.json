@@ -1,1 +1,17 @@
-{"node":{},"edge":{},"encryptionKey":"XF3wHcwbKVYuigxzjv073Ml2sdIFLy3aP87ODNW8D90="}
+{
+  "node": {
+    "7f405f388f9d26710e3db91ccdd919363da9fef929": {
+      "workers": {
+        "app/orders/page": {
+          "moduleId": "[project]/.next-internal/server/app/orders/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/lib/action.js [app-rsc] (ecmascript)\" } [app-rsc] (ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/orders/page": "rsc"
+      }
+    }
+  },
+  "edge": {},
+  "encryptionKey": "XF3wHcwbKVYuigxzjv073Ml2sdIFLy3aP87ODNW8D90="
+}

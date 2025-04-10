@@ -35,13 +35,8 @@ const Order = async () => {
         <h1 className="text-2xl">Orders</h1>
         <div className="mt-12 flex flex-col">
           {orderRes.orders.map((order) => (
-            <Link
-              href={`/orders/${order._id}`} 
-              key={order._id}
-              className="link_"
-            >
-                {console.log(order)}
-                <div className="item">
+                <div className="item" key={order._id}>
+                  
                     <div className="head_">
                         <div className="box_">
                             <span>Date</span>
@@ -67,7 +62,7 @@ const Order = async () => {
                     <div className="body_">
                         {order.lineItems.map((lineItem,index)=>(
                             
-                            <div  key={index}>
+                            <div className="inner_" key={index}>
                             <div className="left_">
                                 <div className="prod_img">
                                     <img src={wixMedia.getScaledToFillImageUrl(lineItem.image,72,96,{})} />
@@ -76,19 +71,28 @@ const Order = async () => {
                                 {lineItem?.productName?.original}
                                 </div>
                             </div>
-                            <div className="right_">
-
+                            <div className="right_ flex gap-4" >
+                              <div className="shipping_address">
+                                <p>{order.recipientInfo?.address?.addressLine1}</p>
+                                <p>{order.recipientInfo?.address?.city}</p>
+                                <p>{order.recipientInfo?.address?.postalCode}</p>
+                                <p>{order.recipientInfo?.address?.subdivisionFullname}</p>
+                                <p>{order.recipientInfo?.address?.countryFullname}</p>
+                                
+                              </div>
+                            <Link
+                                href={`/orders/${order._id}`} 
+                                className="underline block"
+                              ><span>View order detail</span>
+                            </Link>
                             </div>
                             </div>
                         ))}
                         
                     </div>
-                </div>
-              {/* <span className="w-1/4">{order.number?.substring(0, 10)}</span>
-              <span className="w-1/4">${order.priceSummary?.subtotal?.amount}</span>
-              <span className="w-1/4">{format(order._createdDate)}</span>
-              <span className="w-1/4">{order.status}</span> */}
-            </Link>
+               
+             
+             </div>
           ))}
         </div>
       </div>
