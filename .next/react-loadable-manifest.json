@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "..\\node_modules\\@wix\\sdk\\build\\auth\\AppStrategy.js -> jose": {
     "id": null,
@@ -22,3 +23,6 @@
     ]
   }
 }
+=======
+{}
+>>>>>>> 8bb901ac (.nxt)
