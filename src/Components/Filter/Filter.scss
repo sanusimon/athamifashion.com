@@ -8,7 +8,16 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            &.size_{
+                flex-wrap: wrap;
+                >div{
+                    display: flex;
+                    gap: 20px;
+                    margin-bottom: 30px;
+                    flex-wrap: wrap;
+                }
+            }
             h4{
                 font-weight: 700;
                 font-size: 1.3rem;

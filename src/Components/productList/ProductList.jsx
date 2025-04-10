@@ -85,6 +85,16 @@ export default function ProductList({ limit }) {
           return sortDir === "asc" ? dateA - dateB : dateB - dateA;
         });
       }
+      const selectedSizes = searchParams.getAll("size");
+
+        if (selectedSizes.length > 0) {
+        filteredProducts = filteredProducts.filter((product) =>
+            product.variants.some((variant) =>
+            selectedSizes.includes(variant.choices?.Size)
+            )
+        );
+        }
+
 
       setTotalProducts(filteredProducts.length);
       setProducts(filteredProducts);

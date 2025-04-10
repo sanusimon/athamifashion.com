@@ -12,6 +12,7 @@ const Filter = () => {
   const { replace } = useRouter();
 
   const [categories, setCategories] = useState([]);
+  const selectedSize = searchParams.getAll("size");
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -84,6 +85,24 @@ const Filter = () => {
           </label>
         ))}
       </div>
+      <div className="filter_group size_">
+      <h4 className="">Size</h4>
+      <div className="flex">
+        {["S", "M", "L", "XL", "XXL"].map((size) => (
+            <label key={size}>
+            <input
+                type="checkbox"
+                name="size"
+                value={size}
+                checked={selectedSize.includes(size)}
+                onChange={(e) => handleCheckboxChange(e, "size")}
+            />
+            {size}
+            </label>
+            
+        ))}
+        </div>
+        </div>
 
       <div className="filter_group">
         <h4>Price</h4>
