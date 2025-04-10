@@ -1,100 +1,126 @@
-"use client"
+"use client";
 
-import React, { useEffect, useState } from 'react'; // Add this import
-
-import { usePathname, useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import "./Filter.scss"  
-import { wixClientServer } from '@/lib/wixClientServer';
+import { wixClientServer } from "@/lib/wixClientServer";
+import "./Filter.scss";
 
- const Filter = ({}) => {
-    const pathname = usePathname();
-    const searchParams = useSearchParams();
-    const{ replace } = useRouter();
+const Filter = () => {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const { replace } = useRouter();
 
- 
-    // Get the selected size from URL
- const selectedSize = searchParams.get("size") || "";
- // Local state to store categories and selected category
- const [categories, setCategories] = useState([]);
- const [selectedCategory, setSelectedCategory] = useState(searchParams.get('cat') || '');
+  const [categories, setCategories] = useState([]);
 
-    // ✅ Sync `selectedCategory` when URL changes
-    useEffect(() => {
-      setSelectedCategory(searchParams.get("cat") || "");
-  }, [searchParams]);
-
-
-   // Fetch categories from the server
-    useEffect(() => {
-        const fetchCategories = async () => {
-            const wixClient = await wixClientServer();
-            const cats = await wixClient.collections.queryCollections().find();
-            setCategories(cats.items);
-        };
-        fetchCategories();
-    }, []);
-
-
-       // Handle filter change
-       const selectFilterChange = (e) => {
-        const { name, value } = e.target;
-        const params = new URLSearchParams(searchParams);
-
-        params.set(name, value);
-        replace(`${pathname}?${params.toString()}`);
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const wixClient = await wixClientServer();
+      const cats = await wixClient.collections.queryCollections().find();
+      setCategories(cats.items);
     };
-    
+    fetchCategories();
+  }, []);
+
+  const handleCheckboxChange = (e, name) => {
+    const params = new URLSearchParams(searchParams);
+    const values = params.getAll(name);
+    const value = e.target.value;
+
+    if (e.target.checked) {
+      params.append(name, value);
+    } else {
+      const newValues = values.filter((v) => v !== value);
+      params.delete(name);
+      newValues.forEach((v) => params.append(name, v));
+    }
+
+    replace(`${pathname}?${params.toString()}`);
+  };
+
+  const handleInputChange = (e) => {
+    const params = new URLSearchParams(searchParams);
+    const { name, value } = e.target;
+
+    if (value) {
+      params.set(name, value);
+    } else {
+      params.delete(name);
+    }
+
+    replace(`${pathname}?${params.toString()}`);
+  };
+
+  const handleSortChange = (e) => {
+    const params = new URLSearchParams(searchParams);
+    const value = e.target.value;
+
+    if (value) {
+      params.set("sort", value);
+    } else {
+      params.delete("sort");
+    }
+
+    replace(`${pathname}?${params.toString()}`);
+  };
+
+  const selectedCategories = searchParams.getAll("cat");
 
   return (
-    <div className='filter_area'>
-        <div className="filter_item">
-            <select
-                className="drop_down"
-                name="cat"
-                onChange={selectFilterChange}
-                value={selectedCategory}
-                >
-                <option value="">All Categories</option>
-                {categories.map((cat) => (
-                    <option key={cat._id} value={cat.slug}>
-                    {cat.name}
-                    </option>
-                ))}
-            </select>
-        </div>
-        <div className="filter_item">
-          <select className="drop_down" name="size" value={selectedSize} onChange={selectFilterChange}>
-              <option value="">All Sizes</option>
-              <option value="0-3M">0-3 Months</option>
-              <option value="3-6M">3-6 Months</option>
-              <option value="6-9M">6-9 Months</option>
-              <option value="9-12M">9-12 Months</option>
-              <option value="1+">1+ Years</option> {/* ✅ New option for 1Y+ */}
-          </select>
+    <div className="filter_area">
+        <div className="sticky_">
+      <div className="filter_group">
+        <h4>Categories</h4>
+        {categories.map((cat) => (
+          <label key={cat._id}>
+            <input
+              type="checkbox"
+              name="cat"
+              value={cat.slug}
+              checked={selectedCategories.includes(cat.slug)}
+              onChange={(e) => handleCheckboxChange(e, "cat")}
+            />
+            {cat.name}
+          </label>
+        ))}
       </div>
 
-        <div className="filter_item">
-            <input type="text" name="min" placeholder="Min Price" onChange={selectFilterChange}></input>
-        </div>
-        <div className="filter_item">
-            <input type="text" name="max" placeholder="Max Price" onChange={selectFilterChange}></input>
-        </div>
-        <div className="filter_item">
-          <select className="drop_down" name="sort" onChange={selectFilterChange}>
-              <option value="">Sort By</option>
-              <option value="asc price">Price (low to high)</option>
-              <option value="desc price">Price (high to low)</option>
-              <option value="asc lastUpdated">Newest</option>
-              <option value="desc lastUpdated">Oldest</option>
-          </select>
-        </div>
+      <div className="filter_group">
+        <h4>Price</h4>
+        <input
+          type="text"
+          name="min"
+          placeholder="Min Price"
+          defaultValue={searchParams.get("min") || ""}
+          onChange={handleInputChange}
+        />
+        <input
+          type="text"
+          name="max"
+          placeholder="Max Price"
+          defaultValue={searchParams.get("max") || ""}
+          onChange={handleInputChange}
+        />
+      </div>
 
-
-
-
+      <div className="filter_group">
+        <h4>Sort By</h4>
+        <select
+          className="drop_down"
+          name="sort"
+          defaultValue={searchParams.get("sort") || ""}
+          onChange={handleSortChange}
+        >
+          <option value="">Default</option>
+          <option value="asc price">Price (Low to High)</option>
+          <option value="desc price">Price (High to Low)</option>
+          <option value="desc lastUpdated">Newest</option>
+          <option value="asc lastUpdated">Oldest</option>
+        </select>
+      </div>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Filter
+export default Filter;

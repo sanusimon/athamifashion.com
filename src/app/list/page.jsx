@@ -26,7 +26,7 @@ const List = () => {
   if (!cat) return <Skeleton />;  // Return a loading skeleton until category data is fetched
 
   return (
-    <section className="product_page">
+    <section className="product_page inner_product">
       <div className="container">
         <Breadcrumbs />
         <div className="inner_">

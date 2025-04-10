@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST='{"../node_modules/@wix/sdk/build/auth/AppStrategy.js -> jose":{"id":null,"files":[]},"app/404/NotFoundWrapper.jsx -> ./NotFoundClient":{"id":8681,"files":["static/chunks/681.a12d84ff13e592a8.js"]}}';
+self.__REACT_LOADABLE_MANIFEST="{}"
