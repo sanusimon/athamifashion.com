@@ -1,5 +1,22 @@
 {
-  "node": {},
+  "node": {
+    "7f405f388f9d26710e3db91ccdd919363da9fef929": {
+      "workers": {
+        "app/profile/page": {
+          "moduleId": "[project]/.next-internal/server/app/profile/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/lib/action.js [app-rsc] (ecmascript)\" } [app-rsc] (ecmascript)",
+          "async": false
+        },
+        "app/orders/page": {
+          "moduleId": "[project]/.next-internal/server/app/orders/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/lib/action.js [app-rsc] (ecmascript)\" } [app-rsc] (ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/profile/page": "rsc",
+        "app/orders/page": "rsc"
+      }
+    }
+  },
   "edge": {},
   "encryptionKey": "CFfXZBXAbgJorB8zCcf+mLX6P0p7xTEFGDoU0/wSVXc="
 }

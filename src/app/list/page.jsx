@@ -28,7 +28,7 @@ const List = () => {
   return (
     <section className="product_page inner_product">
       <div className="container">
-        <Breadcrumbs />
+        {/* <Breadcrumbs /> */}
         <div className="inner_">
           <Filter />
           <Suspense fallback={<Skeleton />}>

@@ -31,7 +31,7 @@ const DetailPage = async ({params}) =>{
     return( 
         <section className="product_detail">
             <div className="container">
-            <Breadcrumbs product={product} />
+            {/* <Breadcrumbs product={product} /> */}
                 <div className="inner_">
                     <div className="image_sec">
                         <ProductImage items={product.media?.items} />

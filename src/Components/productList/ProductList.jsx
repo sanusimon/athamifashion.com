@@ -103,6 +103,13 @@ export default function ProductList({ limit }) {
   
     fetchProducts();
   }, [searchParams, isDiscountChecked]);
+  useEffect(() => {
+    document.body.classList.add("product-list-page");
+    return () => {
+      document.body.classList.remove("product-list-page");
+    };
+  }, []);
+  
 
   const currentPage = parseInt(searchParams.get("page") || 0);
   const totalPages = Math.ceil(totalProducts / (limit || PRODUCT_PER_PAGE));

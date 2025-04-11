@@ -13,40 +13,73 @@ import { useCartStore } from "@/hooks/useCartStore";
 import SearchBar from "@/Components/SearchBar/SearchBar";
 import Breadcrumbs from "@/Components/Breadcrumbs/Breadcrumbs";
 import { wixClientServer } from "@/lib/wixClientServer";
+import Filter from "@/Components/Filter/Filter";
+import Image from "next/image";
 
 const Header = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
+  const [openFilter, setOpenFilter] = useState(false);
+  const [openSearch, setOpenSearch] = useState(false);
   const menuRef = useRef(null);
-  const buttonRef = useRef(null);
+  const menuBtnRef = useRef(null);
+  const filterRef = useRef(null);
+  const filterBtnRef = useRef(null);
+  const searchRef = useRef(null);
+  const searchBtnRef = useRef(null);
+  
+  
+  
 
-    // Toggle menu
-  const hamburger = () => {
-    setOpenMenu((prev) => !prev);
-  };
+
 
   // Close menu when clicking outside (excluding button)
   useEffect(() => {
     const handleClickOutside = (event) => {
+      // Close nav menu if clicked outside
       if (
+        openMenu &&
         menuRef.current &&
         !menuRef.current.contains(event.target) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(event.target)
+        menuBtnRef.current &&
+        !menuBtnRef.current.contains(event.target)
       ) {
         setOpenMenu(false);
       }
+  
+      // Close filter if clicked outside
+      if (
+        openFilter &&
+        filterRef.current &&
+        !filterRef.current.contains(event.target) &&
+        filterBtnRef.current &&
+        !filterBtnRef.current.contains(event.target)
+      ) {
+        setOpenFilter(false);
+      }
+      // Close search if clicked outside
+      if (
+        openSearch &&
+        searchRef.current &&
+        !searchRef.current.contains(event.target) &&
+        searchBtnRef.current &&
+        !searchBtnRef.current.contains(event.target)
+      ) {
+        setOpenSearch(false);
+      }      
     };
-
-    if (openMenu) {
+  
+    if (openMenu || openFilter) {
       document.addEventListener("mousedown", handleClickOutside);
     }
-
+  
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [openMenu]);
+  }, [openMenu, openFilter , openSearch]);
+  
+  
 
   const router = useRouter();
 
@@ -144,9 +177,14 @@ const handleLogout = async () => {
                     </Link>
                 </div>
                 <div className='navigation'>
-                <button onClick={hamburger} className={`menu_btn ${openMenu ? "close_menu" : ""}`}>
+                <button
+                  ref={menuBtnRef}
+                  onClick={() => setOpenMenu((prev) => !prev)}
+                  className={`menu_btn ${openMenu ? "close_menu" : ""}`}
+                >
                   {openMenu ? "Close" : "Menu"}
                 </button>
+
                 <ul ref={menuRef} className={`menu-dropdown ${openMenu ? "open" : ""}`}>
                     {cats.map((category) => (
                       <li key={category.slug}
@@ -161,23 +199,32 @@ const handleLogout = async () => {
                     
                     ))}
                   </ul>
-                    {/* <ul>
-                    {cats.length > 0 && (
-                      <Link className="banner_btn add_cart" href={`/list?cat=${img.categorySlug}`}>
-                        Buy Now
-                      </Link>
-                    )}
-                    </ul> */}
+                    
                 </div>
                 </div>
                 <div className="right_sec">
+                <button
+                  ref={searchBtnRef}
+                  onClick={() => setOpenSearch((prev) => !prev)}
+                  className={`search_btn ${openSearch ? "active" : ""}`}
+                >
+                   <Image src="/search.png" alt="Search" width={16} height={16} />
+                   {!openSearch ? "Search" : "Close"}
+                </button>
+                <div
+                ref={searchRef}
+                className={`search-dropdown ${openSearch ? "open" : ""}`}
+              >
                 <SearchBar />
+              </div>
+
                 <div className='pro_cart'>
                     <div href={"/profile"} className='profile'
                      onClick={handleProfile}
                     // onClick={login}
                      >
-                      {isProfileOpen ? "Login" : "Login"} <img src="./user.png" /> 
+                      {isProfileOpen ? "Login" : "Login"} 
+                      <Image src="/user.png" alt="user" width={16} height={16} />
                         {isProfileOpen && (
                             <div className="absolute p-4 rounded-md top-12 left-0 bg-white text-sm shadow-[0_3px_10px_rgb(0,0,0,0.2)] z-20">
                             <Link className="mt-2 cursor-pointer" href="/profile">Profile</Link>
@@ -189,11 +236,26 @@ const handleLogout = async () => {
                         )}
                     
                     </div>
-                    <Link href={"/cart"} className='cart'> <img src="./shopping-cart.png" /> <span className='count'>{counter}</span></Link>
+                    <Link href={"/cart"} className='cart'> 
+                    <Image src="/shopping-cart.png" alt="shopping-cart" width={16} height={16} />
+                    <span className='count'>{counter}</span></Link>
+                    <button
+                      ref={filterBtnRef}
+                      onClick={() => setOpenFilter((prev) => !prev)}
+                      className={`filter_btn ${openFilter ? "close_filter" : ""}`}
+                    >
+                      <Image src="/filter.png" alt="filter" width={16} height={16} />
+                      
+                    </button>
                 </div>
                 </div>
             </div>
-           
+            <Breadcrumbs />
+            
+
+            <div ref={filterRef} className={`filter-dropdown ${openFilter ? "open" : ""}`}>
+            <Filter />
+          </div>
         </div>
     </header> 
   )
