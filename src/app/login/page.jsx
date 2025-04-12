@@ -62,8 +62,16 @@ const LoginPage = () => {
 
       switch (mode) {
         case MODE.LOGIN:
+          case MODE.LOGIN:
+          if (!email || !password) {
+            setError("Email and password are required.");
+            setIsLoading(false);
+            return;
+          }
+
           response = await wixClient.auth.login({ email, password });
           break;
+        
 
         case MODE.REGISTER:
           response = await wixClient.auth.register({
