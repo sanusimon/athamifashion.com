@@ -126,6 +126,10 @@ const Header = () => {
         window.location.reload(); // Reload once
       }
     }, [isLoggedIn]);
+
+    const closeFilter = () =>{
+      setOpenFilter(false);
+    }
     
 
 //   const { cart, counter, getCart } = useCartStore();
@@ -251,9 +255,8 @@ const handleLogout = async () => {
                 </div>
             </div>
             <Breadcrumbs />
-            
-
             <div ref={filterRef} className={`filter-dropdown ${openFilter ? "open" : ""}`}>
+              <span className="apply_filter" onClick={closeFilter}>Apply</span>
             <Filter />
           </div>
         </div>

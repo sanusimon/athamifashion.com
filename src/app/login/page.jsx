@@ -1,5 +1,5 @@
 "use client";
-import React, {  useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./login.scss";
 import { LoginState } from "@wix/sdk";
 import { useWixClient } from "@/hooks/useWixClient";
@@ -14,64 +14,55 @@ const MODE = {
 };
 
 const LoginPage = () => {
-
   const wixClient = useWixClient();
   const router = useRouter();
-  
 
-  const isLoggedIn = wixClient.auth.loggedIn();
- 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   useEffect(() => {
-    if (isLoggedIn) {
-      router.push("/");
-    }
-  }, [isLoggedIn, router]); // Add router and isLoggedIn to dependencies
-  // if(isLoggedIn){
-  //   router.push("/")
-  // }
+    const checkLoggedIn = async () => {
+      const logged = await wixClient.auth.loggedIn();
+      setIsLoggedIn(logged);
+      if (logged) router.push("/");
+    };
+    checkLoggedIn();
+  }, [wixClient, router]);
 
   const [username, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [emailcode, setEmailCode] = useState("");
+  const [emailCode, setEmailCode] = useState("");
   const [mode, setMode] = useState(MODE.LOGIN);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
- 
+  const formTitle = {
+    [MODE.LOGIN]: "Log in",
+    [MODE.REGISTER]: "Register",
+    [MODE.RESET_PASSWORD]: "Reset your password",
+    [MODE.EMAIL_VERIFICATION]: "Verify your Email",
+  }[mode];
 
-  const formTitle =
-    mode === MODE.LOGIN
-      ? "Log in"
-      : mode === MODE.REGISTER
-      ? "Register"
-      : mode === MODE.RESET_PASSWORD
-      ? "Reset your password"
-      : "Verify your Email";
-
-  const buttonTitle =
-    mode === MODE.LOGIN
-      ? "Login"
-      : mode === MODE.REGISTER
-      ? "Register"
-      : mode === MODE.RESET_PASSWORD
-      ? "Reset"
-      : "Verify";
-
-  
+  const buttonTitle = {
+    [MODE.LOGIN]: "Login",
+    [MODE.REGISTER]: "Register",
+    [MODE.RESET_PASSWORD]: "Reset",
+    [MODE.EMAIL_VERIFICATION]: "Verify",
+  }[mode];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
     setMessage("");
+
     try {
       let response;
+
       switch (mode) {
         case MODE.LOGIN:
           response = await wixClient.auth.login({ email, password });
-          setMessage("Login successful!");
           break;
 
         case MODE.REGISTER:
@@ -80,98 +71,98 @@ const LoginPage = () => {
             password,
             profile: { nickname: username },
           });
-          setMessage("Registration successful! Please verify your email.");
-          break;
+
+          // Handle the loginState response from register
+          switch (response?.loginState) {
+            case LoginState.EMAIL_VERIFICATION_REQUIRED:
+              setMode(MODE.EMAIL_VERIFICATION);
+              setMessage(`Registration successful! A verification code was sent to ${email}.`);
+              break;
+
+            case LoginState.SUCCESS:
+              setMessage("Registration successful! Redirecting...");
+              const tokens = await wixClient.auth.getMemberTokensForDirectLogin(response.data.sessionToken);
+              Cookies.set("refreshToken", JSON.stringify(tokens.refreshToken), { expires: 2 });
+              wixClient.auth.setTokens(tokens);
+              router.push("/");
+              break;
+
+            case LoginState.OWNER_APPROVAL_REQUIRED:
+              setMessage("Your account is pending approval.");
+              break;
+
+            default:
+              setError("Unexpected response from registration.");
+              break;
+          }
+          return; // No need to check loginState again
 
         case MODE.RESET_PASSWORD:
-          response = await wixClient.auth.sendPasswordResetEmail(email, window.location.href);
-          setMessage("Password reset email sent. Please check your e-mail");
-          break;
+          await wixClient.auth.sendPasswordResetEmail(email, window.location.href);
+          setMessage("Password reset email sent. Please check your inbox.");
+          return;
 
         case MODE.EMAIL_VERIFICATION:
-          response = await wixClient.auth.processVerification({
-            verificationCode: emailcode,
-          });
-          setMessage("Email verified successfully!");
-          break;
+          await wixClient.auth.processVerification({ verificationCode: emailCode });
+          setMessage("Email verified successfully! You can now log in.");
+          setMode(MODE.LOGIN);
+          return;
 
         default:
           throw new Error("Invalid mode");
       }
 
-
-      switch(response?.loginState){
-        case LoginState.SUCCESS:
-            setMessage("Successfull! You are being redirected");
-           
-            const tokens = await wixClient.auth.getMemberTokensForDirectLogin(response.data.sessionToken)
-      
-        
-      
-            
-            Cookies.set("refreshToken",JSON.stringify(tokens.refreshToken),{
-              expires:2
-            })
-            
+      // Only handle loginState for login requests
+      if (mode === MODE.LOGIN && response) {
+        switch (response?.loginState) {
+          case LoginState.SUCCESS:
+            setMessage("Login successful! Redirecting...");
+            const tokens = await wixClient.auth.getMemberTokensForDirectLogin(response.data.sessionToken);
+            Cookies.set("refreshToken", JSON.stringify(tokens.refreshToken), { expires: 2 });
             wixClient.auth.setTokens(tokens);
-      
             router.push("/");
-
-            
             break;
 
-            case LoginState.FAILURE:
-              if(response.errorCode === "invalidEmail" || response.errorCode === "invalidPassword"){
-                setError("Invalid email or password")
-              }
-              else if(response.errorCode === "emailAlreadyExist"){
-                setError("Email already exist")
-              }
-              else if(response.errorCode === "resetPassword"){
-                setError("You need to reset your password!")
-              }{
-                setError("Something went wrong")
-              }
-              case LoginState.EMAIL_VERIFICATION_REQUIRED:
-                setMode(MODE.EMAIL_VERIFICATION);
-              case LoginState.OWNER_APPROVAL_REQUIRED:
-              setMessage("Your account is pending approval")
+          case LoginState.FAILURE:
+            // Custom error for when no account is found for the email
+            if (response.errorCode === "invalidEmail") {
+              setError("No account found for this email. Please check or register.");
+            } else if (response.errorCode === "invalidPassword") {
+              setError("Invalid password. Please try again.");
+            } else if (response.errorCode === "emailAlreadyExist") {
+              setError("Email already exists.");
+            } else if (response.errorCode === "resetPassword") {
+              setError("You need to reset your password!");
+            } else {
+              setError("Something went wrong during login.");
+            }
+            break;
 
-            default:
-                break
+          case LoginState.EMAIL_VERIFICATION_REQUIRED:
+            setMode(MODE.EMAIL_VERIFICATION);
+            setMessage(`Please verify your email to continue. A code was sent to ${email}.`);
+            break;
+
+          case LoginState.OWNER_APPROVAL_REQUIRED:
+            setMessage("Your account is pending admin approval.");
+            break;
+
+          default:
+            setError("Unexpected login response.");
+            break;
+        }
       }
-
-
-
     } catch (err) {
+      console.error(err);
       setError("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
-   // AUTH WITH WIX-MANAGED AUTH
-
-  // const wixClient = useWixClient();
-
-  // const login = async () => {
-  //   const loginRequestData = wixClient.auth.generateOAuthData(
-  //     "http://localhost:3000"
-  //   );
-
-  //   console.log(loginRequestData);
-
-  //   localStorage.setItem("oAuthRedirectData", JSON.stringify(loginRequestData));
-  //   const { authUrl } = await wixClient.auth.getAuthUrl(loginRequestData);
-  //   window.location.href = authUrl;
-  // };
-
-
   return (
-   
     <section className="login_page">
       <div className="container">
-        {/* <button onClick={login}>login</button> */}
         <form className="login_box" onSubmit={handleSubmit}>
           <h2 className="title">{formTitle}</h2>
           <div className="form_">
@@ -182,6 +173,7 @@ const LoginPage = () => {
                   type="text"
                   placeholder="John"
                   name="username"
+                  value={username}
                   onChange={(e) => setUserName(e.target.value)}
                 />
               </div>
@@ -194,19 +186,27 @@ const LoginPage = () => {
                   type="email"
                   placeholder="john@gmail.com"
                   name="email"
+                  value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
             ) : (
-              <div className="form_control">
-                <label>Verification Code</label>
-                <input
-                  type="text"
-                  placeholder="Code"
-                  name="emailcode"
-                  onChange={(e) => setEmailCode(e.target.value)}
-                />
-              </div>
+              <>
+                <div className="form_control">
+                  <label>We sent a code to:</label>
+                  <div className="verified-email">{email}</div>
+                </div>
+                <div className="form_control">
+                  <label>Verification Code</label>
+                  <input
+                    type="text"
+                    placeholder="Enter the code"
+                    name="emailcode"
+                    value={emailCode}
+                    onChange={(e) => setEmailCode(e.target.value)}
+                  />
+                </div>
+              </>
             )}
 
             {(mode === MODE.LOGIN || mode === MODE.REGISTER) && (
@@ -216,6 +216,8 @@ const LoginPage = () => {
                   type="password"
                   placeholder="Enter password"
                   name="password"
+                  autoComplete="current-password"
+                  value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
@@ -232,6 +234,7 @@ const LoginPage = () => {
             </button>
 
             {error && <div className="error">{error}</div>}
+            {message && <div className="text-green-600 text-sm">{message}</div>}
 
             {mode === MODE.LOGIN && (
               <span className="frgt_txt" onClick={() => setMode(MODE.REGISTER)}>
@@ -250,13 +253,10 @@ const LoginPage = () => {
                 Go back to Login
               </div>
             )}
-
-            {message && <div className="text-green-600 text-sm">{message}</div>}
           </div>
         </form>
       </div>
     </section>
-   
   );
 };
 
