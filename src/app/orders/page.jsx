@@ -34,7 +34,10 @@ const Order = async () => {
       <div className="container">
         <h1 className="text-2xl">Orders</h1>
         <div className="mt-12 flex flex-col">
-          {orderRes.orders.map((order) => (
+        {orderRes.orders.length === 0 ? (
+            <div className="text-center text-gray-500 mt-8">You have no orders yet.</div>
+        ) : (
+            orderRes.orders.map((order) => (
                 <div className="item" key={order._id}>
                   
                     <div className="head_">
@@ -93,7 +96,7 @@ const Order = async () => {
                
              
              </div>
-          ))}
+          )))}
         </div>
       </div>
     </div>

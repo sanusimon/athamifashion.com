@@ -47,6 +47,8 @@ const Breadcrumbs = ({ product, categoryName }) => {
     breadcrumbItems.push({ name: `Order #${orderId}`, path: pathname });
   } else if (pathname === "/cart") {
     breadcrumbItems.push({ name: "Cart", path: "/cart" });
+  } else if (pathname === "/login") {
+    breadcrumbItems.push({ name: "Login", path: "/login" });
   }
   
 

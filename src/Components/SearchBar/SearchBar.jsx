@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 
-const SearchBar = () => {
+const SearchBar = ({onSearchComplete}) => {
   const [isClient, setIsClient] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -20,9 +20,7 @@ const SearchBar = () => {
     const formData = new FormData(e.currentTarget);
     const name = formData.get("name");
   
-    console.log("Search triggered with name:", name);
-  
-    const params = new URLSearchParams(window.location.search); // Read existing filters
+    const params = new URLSearchParams(window.location.search);
   
     if (name.trim()) {
       params.set("name", name);
@@ -31,9 +29,13 @@ const SearchBar = () => {
     }
   
     const newUrl = `/list?${params.toString()}`;
-    console.log("Navigating to:", newUrl); // Debugging
     router.push(newUrl);
+  
+    if (onSearchComplete) {
+      onSearchComplete(); // 🔒 Close the search dropdown in parent
+    }
   };
+  
   
 
 

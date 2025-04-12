@@ -10,6 +10,7 @@ const MODE = {
   LOGIN: "LOGIN",
   REGISTER: "REGISTER",
   RESET_PASSWORD: "RESET_PASSWORD",
+  RESET_PASSWORD_TOKEN: "RESET_PASSWORD_TOKEN",
   EMAIL_VERIFICATION: "EMAIL_VERIFICATION",
 };
 
@@ -18,6 +19,8 @@ const LoginPage = () => {
   const router = useRouter();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [lastResetRequest, setLastResetRequest] = useState(null);
+
 
   useEffect(() => {
     const checkLoggedIn = async () => {
@@ -32,22 +35,37 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailCode, setEmailCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [resetToken, setResetToken] = useState("");
   const [mode, setMode] = useState(MODE.LOGIN);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
+  // Detect reset password token from URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get("forgotPasswordToken");
+    if (token) {
+      setResetToken(token);
+      setMode(MODE.RESET_PASSWORD_TOKEN);
+    }
+  }, []);
+
   const formTitle = {
     [MODE.LOGIN]: "Log in",
     [MODE.REGISTER]: "Register",
     [MODE.RESET_PASSWORD]: "Reset your password",
+    [MODE.RESET_PASSWORD_TOKEN]: "Set New Password",
     [MODE.EMAIL_VERIFICATION]: "Verify your Email",
   }[mode];
 
   const buttonTitle = {
     [MODE.LOGIN]: "Login",
     [MODE.REGISTER]: "Register",
-    [MODE.RESET_PASSWORD]: "Reset",
+    [MODE.RESET_PASSWORD]: "Send Reset Email",
+    [MODE.RESET_PASSWORD_TOKEN]: "Reset Password",
     [MODE.EMAIL_VERIFICATION]: "Verify",
   }[mode];
 
@@ -56,37 +74,34 @@ const LoginPage = () => {
     setIsLoading(true);
     setError("");
     setMessage("");
-
+  
     try {
       let response;
-
+  
       switch (mode) {
         case MODE.LOGIN:
-          case MODE.LOGIN:
           if (!email || !password) {
             setError("Email and password are required.");
             setIsLoading(false);
             return;
           }
-
+  
           response = await wixClient.auth.login({ email, password });
           break;
-        
-
+  
         case MODE.REGISTER:
           response = await wixClient.auth.register({
             email,
             password,
             profile: { nickname: username },
           });
-
-          // Handle the loginState response from register
+  
           switch (response?.loginState) {
             case LoginState.EMAIL_VERIFICATION_REQUIRED:
               setMode(MODE.EMAIL_VERIFICATION);
               setMessage(`Registration successful! A verification code was sent to ${email}.`);
               break;
-
+  
             case LoginState.SUCCESS:
               setMessage("Registration successful! Redirecting...");
               const tokens = await wixClient.auth.getMemberTokensForDirectLogin(response.data.sessionToken);
@@ -94,33 +109,45 @@ const LoginPage = () => {
               wixClient.auth.setTokens(tokens);
               router.push("/");
               break;
-
+  
             case LoginState.OWNER_APPROVAL_REQUIRED:
               setMessage("Your account is pending approval.");
               break;
-
+  
             default:
               setError("Unexpected response from registration.");
               break;
           }
-          return; // No need to check loginState again
-
-        case MODE.RESET_PASSWORD:
-          await wixClient.auth.sendPasswordResetEmail(email, window.location.href);
-          setMessage("Password reset email sent. Please check your inbox.");
           return;
-
+  
+          case MODE.RESET_PASSWORD:
+            if (lastResetRequest && Date.now() - lastResetRequest < 60000) {
+              setError("Please wait at least 1 minute before requesting again.");
+              return;
+            }
+        
+            const redirectUrl =
+              process.env.NODE_ENV === "development"
+                ? "http://localhost:3000/login"
+                : "https://aureliahfashion.com/login";
+        
+            await wixClient.auth.sendPasswordResetEmail(email, redirectUrl);
+            setLastResetRequest(Date.now());
+            setMessage("Password reset email sent. Please check your inbox.");
+            return;
+        
+  
         case MODE.EMAIL_VERIFICATION:
           await wixClient.auth.processVerification({ verificationCode: emailCode });
           setMessage("Email verified successfully! You can now log in.");
           setMode(MODE.LOGIN);
           return;
-
+  
         default:
           throw new Error("Invalid mode");
       }
-
-      // Only handle loginState for login requests
+  
+      // Handle loginState for LOGIN
       if (mode === MODE.LOGIN && response) {
         switch (response?.loginState) {
           case LoginState.SUCCESS:
@@ -130,9 +157,8 @@ const LoginPage = () => {
             wixClient.auth.setTokens(tokens);
             router.push("/");
             break;
-
+  
           case LoginState.FAILURE:
-            // Custom error for when no account is found for the email
             if (response.errorCode === "invalidEmail") {
               setError("No account found for this email. Please check or register.");
             } else if (response.errorCode === "invalidPassword") {
@@ -145,16 +171,16 @@ const LoginPage = () => {
               setError("Something went wrong during login.");
             }
             break;
-
+  
           case LoginState.EMAIL_VERIFICATION_REQUIRED:
             setMode(MODE.EMAIL_VERIFICATION);
             setMessage(`Please verify your email to continue. A code was sent to ${email}.`);
             break;
-
+  
           case LoginState.OWNER_APPROVAL_REQUIRED:
             setMessage("Your account is pending admin approval.");
             break;
-
+  
           default:
             setError("Unexpected login response.");
             break;
@@ -167,6 +193,7 @@ const LoginPage = () => {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <section className="login_page">
@@ -187,7 +214,7 @@ const LoginPage = () => {
               </div>
             )}
 
-            {mode !== MODE.EMAIL_VERIFICATION ? (
+            {mode !== MODE.EMAIL_VERIFICATION && mode !== MODE.RESET_PASSWORD_TOKEN && (
               <div className="form_control">
                 <label>Email</label>
                 <input
@@ -198,7 +225,9 @@ const LoginPage = () => {
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
-            ) : (
+            )}
+
+            {mode === MODE.EMAIL_VERIFICATION && (
               <>
                 <div className="form_control">
                   <label>We sent a code to:</label>
@@ -229,6 +258,29 @@ const LoginPage = () => {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
+            )}
+
+            {mode === MODE.RESET_PASSWORD_TOKEN && (
+              <>
+                <div className="form_control">
+                  <label>New Password</label>
+                  <input
+                    type="password"
+                    placeholder="Enter new password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
+                </div>
+                <div className="form_control">
+                  <label>Confirm Password</label>
+                  <input
+                    type="password"
+                    placeholder="Confirm new password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                </div>
+              </>
             )}
 
             {mode === MODE.LOGIN && (

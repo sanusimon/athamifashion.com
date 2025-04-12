@@ -70,7 +70,7 @@ console.log(cart)
                     {
                     // isLoading ? ("Loading..." ): 
                     !cart.lineItems || cart.lineItems.length === 0 ? (
-                        <div>Cart is Empty</div>
+                        <div className="text-center text-gray-500 mt-8">Cart is Empty</div>
                         ) : (
                         <div className='inner_'>
                             <div>

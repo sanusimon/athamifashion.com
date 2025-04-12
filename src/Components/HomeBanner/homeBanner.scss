@@ -19,11 +19,16 @@
         z-index: 3;
         height: auto;
         text-align: center;
+        width: 100%;
         h2{
             color: $color-white;
             font-size: 3.8em;
             margin-bottom: 20px;
             font-weight: 700;
+            line-height: 1.5;
+            @media only screen and (max-width: 767px) {
+                font-size: 2em;
+            }
             span{
                 color: transparent;
                 -webkit-text-stroke: 1px #ffffff;
@@ -31,7 +36,6 @@
         }
     }
     .banner_btn{
-       
         background: $bg-pink;
         border: $bg-pink;
         color: $color-white;
