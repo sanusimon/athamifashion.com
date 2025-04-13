@@ -85,10 +85,16 @@ console.log(cart)
                                         <div className="cart_item">
                                             {item.image && (
                                                 <div className="cart_item_img">
-                                                
-                                                    <img src={wixMedia.getScaledToFillImageUrl(item.image,72,96,{})} />
-                                                
-                                            </div>
+                                                    <div className='img_wrp'>
+                                                        <img src={wixMedia.getScaledToFillImageUrl(item.image,72,96,{})} />
+                                                    </div>
+                                                    <div className='for_mob'>
+                                                        <Link href={`/${productSlug}`}>
+                                                            <h2 className='cat_name'>{item.productName.original}</h2>
+                                                            <span className='status_'>{item.availability.status}</span>
+                                                        </Link>
+                                                    </div>
+                                                </div>
                                             )}
                                             <div className='cart_rgt_'>
                                                 <div className="cart_item_name">

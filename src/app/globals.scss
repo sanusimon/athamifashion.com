@@ -466,9 +466,16 @@ input{
         }
     }
     &.profile_{
+        @media only screen and (max-width: 767px) {
+            margin-bottom: 50px;
+        }
         .container{
             width: 700px;
             margin:  0 auto;
+            @media only screen and (max-width: 767px) {
+                width: 100%;
+                
+            }
             form{
                 input{
                     max-width: 100%;
@@ -478,3 +485,8 @@ input{
     }
 }
 
+.footer{
+    @media only screen and (max-width: 767px) {
+        margin-bottom: 100px;
+    }
+}

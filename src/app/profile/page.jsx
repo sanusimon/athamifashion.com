@@ -23,11 +23,7 @@ const ProfilePage = async () => {
   if (!user.member?.contactId) {
     return <div>Not logged in!</div>;
   }
-  useEffect(() => {
-    if (user?.member?.profile?.nickname) {
-      sessionStorage.setItem("nickname", user.member.profile.nickname);
-    }
-  }, [user]);
+
   const orderRes = await wixClient.orders.searchOrders({
     search: {
       filter: { "buyerInfo.contactId": { $eq: user.member.contactId } },

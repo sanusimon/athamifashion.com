@@ -5,8 +5,15 @@
         grid-template-columns: 70% 28%;
         gap: 2%;
         border-top: 1px solid $border-color;
+        @media only screen and (max-width: 767px) {
+            margin-bottom: 80px;
+            grid-template-columns: 100%;
+        }
         >div{
             padding-right: 20px;
+            @media only screen and (max-width: 767px) {
+                padding-right: 0;
+            }
             &:first-child{
                 border-right: 1px solid $border-color;
             }
@@ -17,12 +24,42 @@
         align-items: center;
         margin-bottom: 20px;
         border: 1px solid #ccc;
+        @media only screen and (max-width: 767px) {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .cart_item_img{
+            @media only screen and (max-width: 767px) {
+                display: flex;
+                gap: 20px;
+                width: 100%;
+                .img_wrp{
+                    width: 40%;
+                }
+            }
+            .for_mob{
+                flex: 1;
+            }
+            @media only screen and (min-width: 768px) {
+                .for_mob{
+                    display: none;
+                }
+            }
+        }
         
       
        .cart_rgt_{
         flex: 1;
         position: relative;
         padding: 10px 20px;
+        @media only screen and (max-width: 767px) {
+            width: 100%;
+            border: 1px solid $border-color;
+            padding-top: 10px;
+            .cart_item_name{
+                display: none;
+            }
+        }
         .cart_item_price{
             font-weight: 700;
             margin: 15px 0 ;
@@ -50,6 +87,9 @@
             right: 20px;
             top: 0;
             width: 15px;
+            @media only screen and (max-width: 767px) {
+                top: 20px;
+            }
             img{
                 width: 100%;
                 display: block;
