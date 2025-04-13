@@ -8,7 +8,7 @@ import AddQuantity from '@/Components/AddQuantity/AddQuantity';
 import Breadcrumbs from '@/Components/Breadcrumbs/Breadcrumbs';
 import { JSDOM } from "jsdom";
 import DOMPurify from 'dompurify'; 
-
+import { notFound } from 'next/navigation';
 
 
 
@@ -22,8 +22,8 @@ const DetailPage = async ({params}) =>{
     const products = await wixClient.products.queryProducts().eq("slug", params.slug).find();
    
 
-    if(!products.items[0]){
-        return notFound
+    if (!products.items[0]) {
+        notFound(); // 👈 This *calls* the function to trigger the 404
     }
 
     const product = products.items[0];

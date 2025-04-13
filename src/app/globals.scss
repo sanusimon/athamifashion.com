@@ -490,3 +490,24 @@ input{
         margin-bottom: 100px;
     }
 }
+.not-found {
+    text-align: center;
+    padding: 100px 20px;
+    h1 {
+      font-size: 3rem;
+      color: #ff4d4f;
+    }
+    p {
+      margin: 20px 0;
+    }
+    .back-home {
+      color: #0070f3;
+      text-decoration: underline;
+    }
+  }
+  .not-found-body{
+    .breadcrumbs{
+        display: none;
+    }
+  }
+  

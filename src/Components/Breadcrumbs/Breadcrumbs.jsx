@@ -51,6 +51,7 @@ const Breadcrumbs = ({ product, categoryName }) => {
     breadcrumbItems.push({ name: "Login", path: "/login" });
   }
   
+  
 
 
 

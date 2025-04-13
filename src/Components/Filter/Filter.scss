@@ -84,14 +84,16 @@
 }
 .sort_{
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
+    gap: 5px;
 }
-
-.filter_btn{
-    display: none;
-}
-.product-list-page .filter_btn {
-    display: block;
+@media only screen and (max-width: 767px) {
+    .filter_btn{
+        display: none;
+    }
+    .product-list-page .filter_btn {
+        display: block;
+    }
 }
 
 

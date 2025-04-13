@@ -21,7 +21,7 @@ const { replace } = useRouter();
 
   return (
     <div className="filter_group sort_">
-        <h4>Sort By</h4>
+        <h4>Sort By</h4>:
         <select
           className="drop_down"
           name="sort"

@@ -40,7 +40,7 @@ function CustomizeProducts({ productId, variants, productOptions }) {
         <div className='custome_options'>
             {productOptions.map((options) => (
                 <div className={options.name === "Color" ? "color_wrap custm_wrap" : "size_wrap custm_wrap"} key={options.name}>
-                    <h3>Choose a {options.name}</h3>
+                    <span className='cart_label_'>Choose a {options.name}</span>
                     <div className='options_'>
                         {options.choices.map((choice) => {
                             const isDisabled = !isVariantStock({ ...selectOptions, [options.name]: choice.description });
