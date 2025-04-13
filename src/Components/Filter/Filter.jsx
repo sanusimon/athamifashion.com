@@ -52,18 +52,7 @@ const Filter = () => {
     replace(`${pathname}?${params.toString()}`);
   };
 
-  const handleSortChange = (e) => {
-    const params = new URLSearchParams(searchParams);
-    const value = e.target.value;
-
-    if (value) {
-      params.set("sort", value);
-    } else {
-      params.delete("sort");
-    }
-
-    replace(`${pathname}?${params.toString()}`);
-  };
+  
 
   const selectedCategories = searchParams.getAll("cat");
 
@@ -122,21 +111,7 @@ const Filter = () => {
         />
       </div>
 
-      <div className="filter_group">
-        <h4>Sort By</h4>
-        <select
-          className="drop_down"
-          name="sort"
-          defaultValue={searchParams.get("sort") || ""}
-          onChange={handleSortChange}
-        >
-          <option value="">Default</option>
-          <option value="asc price">Price (Low to High)</option>
-          <option value="desc price">Price (High to Low)</option>
-          <option value="desc lastUpdated">Newest</option>
-          <option value="asc lastUpdated">Oldest</option>
-        </select>
-      </div>
+      
       </div>
     </div>
   );

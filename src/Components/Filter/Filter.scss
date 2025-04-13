@@ -15,6 +15,7 @@
             flex-direction: column;
             gap: 10px;
             margin-bottom: 20px;
+            
             &.size_{
                 flex-wrap: wrap;
                 >div{
@@ -81,7 +82,10 @@
         }
     }
 }
-
+.sort_{
+    display: flex;
+    justify-content: space-between;
+}
 
 .filter_btn{
     display: none;

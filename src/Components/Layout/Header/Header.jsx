@@ -181,8 +181,8 @@ const Header = () => {
 
             <div className="pro_cart">
               <div className="profile" onClick={handleProfile} ref={profileBtnRef}>
+                <span className="ml-2">Hi, {nickname || "Login"}</span>
                 <Image src="/user.png" alt="user" width={16} height={16} />
-                <span className="ml-2">{nickname || "Login"}</span>
                 {isProfileOpen && (
                   <div
                     ref={profileRef}

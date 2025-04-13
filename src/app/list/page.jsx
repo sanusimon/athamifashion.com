@@ -7,6 +7,7 @@ import Breadcrumbs from "@/Components/Breadcrumbs/Breadcrumbs";
 import Skeleton from "@/Components/Skeleton";
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import Sort from "@/Components/Filter/Sort";
 
 const List = () => {
   const searchParams = useSearchParams();
@@ -28,6 +29,7 @@ const List = () => {
   return (
     <section className="product_page inner_product">
       <div className="container">
+        <Sort />
         {/* <Breadcrumbs /> */}
         <div className="inner_">
           <Filter />

@@ -127,6 +127,9 @@
                 transform: translateY(-100%);
                 opacity: 0;
                 transition: all .5s ease;
+                @media only screen and (max-width: 767px) {
+                    transform: translateY(100%);
+                }
                 .srch_bar{
                     width: 450px;
                     position: relative;
@@ -134,7 +137,7 @@
                     opacity: 0;
                     transition: all .5s ease;
                     @media only screen and (max-width: 767px) {
-                        width: 100%;
+                        width: 95%;
                     }
                     input{
                         width: 100%;
@@ -175,7 +178,9 @@
                     min-width: 100px;
                     padding: 10px;
                     border: 1px solid $border-color;
-                   
+                    @media only screen and (max-width: 767px) {
+                        top: -120px;
+                    }
                 }
             }
             .cart{
