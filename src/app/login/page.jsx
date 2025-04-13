@@ -102,13 +102,22 @@ const LoginPage = () => {
               setMessage(`Registration successful! A verification code was sent to ${email}.`);
               break;
   
-            case LoginState.SUCCESS:
-              setMessage("Registration successful! Redirecting...");
-              const tokens = await wixClient.auth.getMemberTokensForDirectLogin(response.data.sessionToken);
-              Cookies.set("refreshToken", JSON.stringify(tokens.refreshToken), { expires: 2 });
-              wixClient.auth.setTokens(tokens);
-              router.push("/");
-              break;
+              case LoginState.SUCCESS:
+                setMessage("Registration successful! Redirecting...");
+                const tokens = await wixClient.auth.getMemberTokensForDirectLogin(response.data.sessionToken);
+                Cookies.set("refreshToken", JSON.stringify(tokens.refreshToken), { expires: 2 });
+                wixClient.auth.setTokens(tokens);
+              
+                // ✅ Fetch user and store nickname
+                const user = await wixClient.members.getCurrentMember();
+                const nickname = user?.member?.profile?.nickname;
+                if (nickname) {
+                  sessionStorage.setItem("nickname", nickname);
+                }
+              
+                router.push("/");
+                break;
+              
   
             case LoginState.OWNER_APPROVAL_REQUIRED:
               setMessage("Your account is pending approval.");
@@ -155,8 +164,17 @@ const LoginPage = () => {
             const tokens = await wixClient.auth.getMemberTokensForDirectLogin(response.data.sessionToken);
             Cookies.set("refreshToken", JSON.stringify(tokens.refreshToken), { expires: 2 });
             wixClient.auth.setTokens(tokens);
+          
+            // ✅ Fetch user and store nickname
+            const user = await wixClient.members.getCurrentMember();
+            const nickname = user?.member?.profile?.nickname;
+            if (nickname) {
+              sessionStorage.setItem("nickname", nickname);
+            }
+          
             router.push("/");
             break;
+          
   
           case LoginState.FAILURE:
             if (response.errorCode === "invalidEmail") {

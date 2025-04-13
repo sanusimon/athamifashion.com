@@ -5,6 +5,7 @@ import { members } from "@wix/members";
 import Link from "next/link";
 import { format } from "timeago.js";
 
+
 const ProfilePage = async () => {
   // ✅ Get refreshToken here — it's allowed in server components
   const cookieStore = cookies();
@@ -16,11 +17,17 @@ const ProfilePage = async () => {
   const user = await wixClient.members.getCurrentMember({
     fieldsets: [members.Set.FULL],
   });
+  console.log(user)
+
 
   if (!user.member?.contactId) {
     return <div>Not logged in!</div>;
   }
-
+  useEffect(() => {
+    if (user?.member?.profile?.nickname) {
+      sessionStorage.setItem("nickname", user.member.profile.nickname);
+    }
+  }, [user]);
   const orderRes = await wixClient.orders.searchOrders({
     search: {
       filter: { "buyerInfo.contactId": { $eq: user.member.contactId } },
