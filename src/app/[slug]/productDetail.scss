@@ -4,8 +4,14 @@
     .inner_{
         display: flex;
         gap: 30px;
+        @media only screen and (max-width: 767px) {
+            flex-direction: column;
+        }
         .image_sec{
             width: 50%;
+            @media only screen and (max-width: 767px) {
+                width: 100%;
+            }
             .img_wrap{
                 position: sticky;
                 top: 0;
@@ -24,6 +30,9 @@
         }
         .content_sec{
             width: 50%;
+            @media only screen and (max-width: 767px) {
+                width: 100%;
+            }
             h3{
                 font-weight: 700;
                 font-size: 1.2rem;
