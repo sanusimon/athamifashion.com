@@ -161,17 +161,17 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
 
                     <div className="view-all-btn">
 
-                    {categoryId === "0e6feb7e-642f-de0e-a58e-807032d990b6"? (
+                    {categoryId === "aaa0c353-9221-99a5-d14a-94adb5b393f8"? (
                         <Link className="add_cart" href={`/list?cat=featured-products`}>
                             View All
                         </Link>
-                    ) :  categoryId === "e3bcecfa-aa13-a77a-3368-3fde8607d360" ? 
+                    ) :  categoryId === "69ad417a-f44a-93ed-14fc-af86a86cacdc" ? 
                     (
                     <Link className="add_cart" href={`/list?cat=girls`}>
                         View All
-                    </Link>) : categoryId === "576b21a3-e21a-c6a7-29e4-397dfba5cd7b" ? 
+                    </Link>) : categoryId === "cf4036aa-90de-3889-8248-e0ef3787c8a4" ? 
                     (
-                    <Link className="add_cart" href={`/list?cat=boys`}>
+                    <Link className="add_cart" href={`/list?cat=kurtis`}>
                         View All
                     </Link>) : ""}
                         
