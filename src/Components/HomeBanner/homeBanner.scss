@@ -2,6 +2,9 @@
 .banner_{
     height: calc(100vh - 100px);
     position: relative;
+    @media only screen and (max-width: 767px) {
+        height: calc(50vh - 100px);
+    }
     *{
         height: 100%;
     }
