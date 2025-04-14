@@ -59,7 +59,13 @@ console.log(cart)
           await updateQuantity(wixClient, itemId, newQuantity); // Update the quantity in the cart
         }
       };
-
+      if (isLoading) {
+        return <div className='container text-center'><p>Loading your cart...</p></div>;
+      }
+    
+      if (!cart || cart.length === 0) {
+        return <div className='container text-center'><p>Your cart is empty..</p></div>;
+      }
       
 
 
@@ -128,16 +134,18 @@ console.log(cart)
 
                                                     <div className='btm_'>
                                                         <div className="cart_item_quantity">
-                                                            <span>Qty : {item.quantity} </span>
+                                                            <label className='btm_hd'>Qty :</label>
+                                                            
 
                                                             <button
+                                                                className='minus_'
                                                                 onClick={() => handleQuantityChange(item._id, item.quantity, 'decrease')}
                                                                 disabled={item.quantity <= 1}
                                                                 >
                                                                 -
-                                                                </button>
-                                                                <span>Qty: {item.quantity}</span>
-                                                                <button
+                                                            </button>
+                                                            <span>{item.quantity}</span>
+                                                            <button
                                                                 onClick={() => handleQuantityChange(item._id, item.quantity, 'increase')}
                                                                 disabled={item.quantity >= 10} // Assuming 10 is the max quantity you can have in the cart
                                                                 >
@@ -146,10 +154,10 @@ console.log(cart)
                                                             
                                                         </div>
                                                         <div className="cart_item_quantity">
-                                                            <span>Size : {size} </span>
+                                                            <span  className='btm_hd'>Size : {size} </span>
                                                         </div>
                                                         <div className="cart_item_quantity">
-                                                            <span>Color: {color}</span>
+                                                            <span  className='btm_hd'>Color : {color}</span>
                                                         </div>
                                                     </div>
                                                     
