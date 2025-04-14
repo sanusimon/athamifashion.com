@@ -162,16 +162,16 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
                     <div className="view-all-btn">
 
                     {categoryId === "aaa0c353-9221-99a5-d14a-94adb5b393f8"? (
-                        <Link className="add_cart" href={`/list?cat=featured-products`}>
+                        <Link className="add_cart" href={`/list?cat=featured-product`}>
                             View All
                         </Link>
                     ) :  categoryId === "69ad417a-f44a-93ed-14fc-af86a86cacdc" ? 
                     (
-                    <Link className="add_cart" href={`/list?cat=girls`}>
+                    <Link className="add_cart" href={`/list?cat=kurtis`}>
                         View All
                     </Link>) : categoryId === "cf4036aa-90de-3889-8248-e0ef3787c8a4" ? 
                     (
-                    <Link className="add_cart" href={`/list?cat=kurtis`}>
+                    <Link className="add_cart" href={`/list?cat=feeding-kurti`}>
                         View All
                     </Link>) : ""}
                         

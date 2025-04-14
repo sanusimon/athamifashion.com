@@ -16,8 +16,11 @@ const List = () => {
   useEffect(() => {
     const fetchCategory = async () => {
       const wixClient = await wixClientServer();
-      const catSlug = searchParams.get("cat") || "all-products";  // Default to 'all-products' if no cat is present
-      const category = await wixClient.collections.getCollectionBySlug(catSlug);
+      const catSlug = searchParams.get("cat") || "all-products";
+  
+      const allCategories = await wixClient.collections.queryCollections().find();
+      const category = allCategories.items.find((cat) => cat.slug === catSlug);
+  
       setCat(category);
       document.body.classList.add("product_list_page");
   
@@ -25,13 +28,10 @@ const List = () => {
         document.body.classList.remove("product_list_page");
       };
     };
-    // useEffect(() => {
-      
-    // }, []);
-
-
+  
     fetchCategory();
   }, [searchParams]);
+  
 
   if (!cat) return <Skeleton />;  // Return a loading skeleton until category data is fetched
 
