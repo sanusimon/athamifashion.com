@@ -10,6 +10,7 @@ import { members } from "@wix/members";
 
 const refreshToken = JSON.parse(Cookies.get("refreshToken") || "{}")
 
+
 const wixClient = createClient({
     modules: {
       products,

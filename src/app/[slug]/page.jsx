@@ -8,7 +8,7 @@ import AddQuantity from '@/Components/AddQuantity/AddQuantity';
 import Breadcrumbs from '@/Components/Breadcrumbs/Breadcrumbs';
 import { JSDOM } from "jsdom";
 import DOMPurify from 'dompurify'; 
-import { notFound } from 'next/navigation';
+
 
 
 
@@ -27,7 +27,6 @@ const DetailPage = async ({params}) =>{
     }
 
     const product = products.items[0];
-    
 
     return( 
         <section className="product_detail">

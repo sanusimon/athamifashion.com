@@ -79,6 +79,11 @@ const Header = () => {
       getCart(wixClient);
     }
   }, [isLoggedIn, wixClient, getCart]);
+  useEffect(() => {
+    if (wixClient) {
+      getCart(wixClient);
+    }
+  }, [wixClient, getCart]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
