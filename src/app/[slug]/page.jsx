@@ -27,6 +27,7 @@ const DetailPage = async ({params}) =>{
     }
 
     const product = products.items[0];
+    
 
     return( 
         <section className="product_detail">

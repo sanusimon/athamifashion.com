@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { wixClientServer } from "@/lib/wixClientServer";
 import "./Filter.scss";
 
@@ -12,15 +11,42 @@ const Filter = () => {
   const { replace } = useRouter();
 
   const [categories, setCategories] = useState([]);
+  const [availableDiscounts, setAvailableDiscounts] = useState([]);
   const selectedSize = searchParams.getAll("size");
+  const selectedCategories = searchParams.getAll("cat");
+  const selectedDiscounts = searchParams.getAll("discount");
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchData = async () => {
       const wixClient = await wixClientServer();
+
+      // Fetch categories
       const cats = await wixClient.collections.queryCollections().find();
       setCategories(cats.items);
+
+      // Fetch products to determine discount tiers
+      const products = await wixClient.products.queryProducts().find();
+
+      const discountSet = new Set();
+
+      products.items.forEach((product) => {
+        const price = product.price?.price;
+        const discounted = product.price?.discountedPrice;
+
+        if (price && discounted && discounted < price) {
+          const percent = Math.floor(((price - discounted) / price) * 100);
+          if (percent >= 10) {
+            const rounded = Math.floor(percent / 10) * 10; // Round down to nearest 10
+            discountSet.add(rounded);
+          }
+        }
+      });
+
+      const sortedDiscounts = Array.from(discountSet).sort((a, b) => a - b);
+      setAvailableDiscounts(sortedDiscounts);
     };
-    fetchCategories();
+
+    fetchData();
   }, []);
 
   const handleCheckboxChange = (e, name) => {
@@ -52,66 +78,93 @@ const Filter = () => {
     replace(`${pathname}?${params.toString()}`);
   };
 
-  
-
-  const selectedCategories = searchParams.getAll("cat");
-
   return (
     <div className="filter_area">
-        <div className="sticky_">
-      <div className="filter_group">
-        <h4>Categories</h4>
-        {categories.map((cat) => (
-          <label key={cat._id}>
-            <input
-              type="checkbox"
-              name="cat"
-              value={cat.slug}
-              checked={selectedCategories.includes(cat.slug)}
-              onChange={(e) => handleCheckboxChange(e, "cat")}
-            />
-            {cat.name}
-          </label>
-        ))}
-      </div>
-      <div className="filter_group size_">
-      <h4 className="">Size</h4>
-      <div className="flex">
-        {["S", "M", "L", "XL", "XXL"].map((size) => (
-            <label key={size}>
-            <input
+      <div className="sticky_">
+        {/* Categories Filter */}
+        <div className="filter_group">
+          <h4>Categories</h4>
+          {categories.map((cat) => (
+            <label key={cat._id}>
+              <input
                 type="checkbox"
-                name="size"
-                value={size}
-                checked={selectedSize.includes(size)}
-                onChange={(e) => handleCheckboxChange(e, "size")}
-            />
-            {size}
+                name="cat"
+                value={cat.slug}
+                checked={selectedCategories.includes(cat.slug)}
+                onChange={(e) => handleCheckboxChange(e, "cat")}
+              />
+              {cat.name}
             </label>
-            
-        ))}
-        </div>
+          ))}
         </div>
 
-      <div className="filter_group">
-        <h4>Price</h4>
-        <input
-          type="text"
-          name="min"
-          placeholder="Min Price"
-          defaultValue={searchParams.get("min") || ""}
-          onChange={handleInputChange}
-        />
-        <input
-          type="text"
-          name="max"
-          placeholder="Max Price"
-          defaultValue={searchParams.get("max") || ""}
-          onChange={handleInputChange}
-        />
-      </div>
+        {/* Size Filter */}
+        <div className="filter_group size_">
+          <h4>Size</h4>
+          <div className="flex">
+            {["S", "M", "L", "XL", "XXL"].map((size) => (
+              <label key={size}>
+                <input
+                  type="checkbox"
+                  name="size"
+                  value={size}
+                  checked={selectedSize.includes(size)}
+                  onChange={(e) => handleCheckboxChange(e, "size")}
+                />
+                {size}
+              </label>
+            ))}
+          </div>
+        </div>
 
-      
+        {/* Price Filter */}
+        <div className="filter_group">
+          <h4>Price</h4>
+          <input
+            type="text"
+            name="min"
+            placeholder="Min Price"
+            defaultValue={searchParams.get("min") || ""}
+            onChange={handleInputChange}
+          />
+          <input
+            type="text"
+            name="max"
+            placeholder="Max Price"
+            defaultValue={searchParams.get("max") || ""}
+            onChange={handleInputChange}
+          />
+        </div>
+
+        {/* Dynamic Discount Filter */}
+        {availableDiscounts.length > 0 && (
+          <div className="filter_group">
+            <h4>Discount</h4>
+            {availableDiscounts.map((percent) => (
+              <label key={percent}>
+                <input
+                  type="checkbox"
+                  name="discount"
+                  value={percent}
+                  checked={selectedDiscounts.includes(percent.toString())}
+                  onChange={(e) => handleCheckboxChange(e, "discount")}
+                />
+                {percent}% or more
+              </label>
+            ))}
+          </div>
+        )}
+
+        {/* Clear All Filters */}
+        <button
+          className="clear_all_btn"
+          onClick={() => {
+            const params = new URLSearchParams();
+            replace(`${pathname}?${params.toString()}`);
+          }}
+        >
+          Clear All Filters <span><img src="/close.png" alt="Clear" /></span>
+        </button>
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import HomeProductList from '@/Components/HomeProduct/HomeProduct'
 import AgeFilterHome from '@/Components/AgeFilterHome/AgeFilterHome'
 import Skeleton from '@/Components/Skeleton'
 import { Suspense } from 'react'
+import DiscountSection from '@/Components/DiscountSection/DiscountSection'
 
 
 const HomePage = async() =>  {
@@ -33,6 +34,8 @@ const HomePage = async() =>  {
           <HomeProductList categoryId={process.env.KURTIES_PRODUCTS_CATEGORY_ID} limit={8}/>
         </Suspense>
         </section>
+        
+        <DiscountSection />
 
         <section className="product_page home_product">
         <div className="container">

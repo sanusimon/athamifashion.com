@@ -1,4 +1,5 @@
 "use client";
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSearchParams, usePathname } from "next/navigation";
@@ -8,67 +9,71 @@ const Breadcrumbs = ({ product, categoryName }) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const [isClient, setIsClient] = useState(false);
-  const [resolvedCategoryName, setResolvedCategoryName] = useState(null);
+  const [allCategories, setAllCategories] = useState([]);
 
-  const catSlug = searchParams.get("cat");
+  const catSlugs = searchParams.getAll("cat");
+  const discountParams = searchParams.getAll("discount");
+  const sizeParams = searchParams.getAll("size");
 
   useEffect(() => {
     setIsClient(true);
 
-    const fetchCategoryName = async () => {
-      if (!categoryName && catSlug) {
+    const fetchCategoryNames = async () => {
+      if (pathname.startsWith("/list") && catSlugs.length > 0) {
         const wixClient = await wixClientServer();
         const result = await wixClient.collections.queryCollections().find();
-        const match = result.items.find((cat) => cat.slug === catSlug);
-        if (match) {
-          setResolvedCategoryName(match.name);
-        }
+        setAllCategories(result.items);
       }
     };
 
-    fetchCategoryName();
-  }, [catSlug, categoryName]);
+    fetchCategoryNames();
+  }, [pathname, catSlugs]);
 
-  if (!isClient || pathname === "/") return null; // ⛔ Don't render on home
+  if (!isClient || pathname === "/") return null;
 
   const breadcrumbItems = [
-    { name: "Home", path: "/" }, // ✅ Add back Home
+    { name: "Home", path: "/" },
+    { name: "All Products", path: "/list" },
   ];
 
+  // Add all selected categories as a single breadcrumb item
+  if (pathname.startsWith("/list") && catSlugs.length > 0 && allCategories.length > 0) {
+    const selectedCatNames = catSlugs
+      .map((slug) => {
+        const match = allCategories.find((cat) => cat.slug === slug);
+        return match?.name;
+      })
+      .filter(Boolean);
 
-  // Pages like /profile, /orders, /settings
-  if (pathname === "/profile") {
-    breadcrumbItems.push({ name: "Profile", path: "/profile" });
-  } else if (pathname === "/orders") {
-    breadcrumbItems.push({ name: "Orders", path: "/orders" });
-  } else if (pathname.startsWith("/orders/")) {
-    const orderId = pathname.split("/")[2]; // /orders/[id]
-    breadcrumbItems.push({ name: "Orders", path: "/orders" });
-    breadcrumbItems.push({ name: `Order #${orderId}`, path: pathname });
-  } else if (pathname === "/cart") {
-    breadcrumbItems.push({ name: "Cart", path: "/cart" });
-  } else if (pathname === "/login") {
-    breadcrumbItems.push({ name: "Login", path: "/login" });
+    if (selectedCatNames.length > 0) {
+      breadcrumbItems.push({
+        name: `Categories: ${selectedCatNames.join(", ")}`,
+        path: "#",
+      });
+    }
   }
-  
-  
 
-
-
-
-  const finalCategoryName = categoryName || resolvedCategoryName;
-
-  if (pathname.startsWith("/list") && finalCategoryName) {
+  // Add size filters
+  if (sizeParams.length > 0) {
     breadcrumbItems.push({
-      name: finalCategoryName,
-      path: `/list?cat=${catSlug}`,
+      name: `Sizes: ${sizeParams.join(", ")}`,
+      path: "#",
     });
   }
 
+  // Add discount filters
+  if (discountParams.length > 0) {
+    breadcrumbItems.push({
+      name: `Discounts: ${discountParams.join("%, ")}%`,
+      path: "#",
+    });
+  }
+
+  // Add product name if on product page
   if (pathname.startsWith("/product") && product) {
     breadcrumbItems.push({
       name: product.name,
-      path: `/product/${product.slug}?cat=${catSlug}`,
+      path: `/product/${product.slug}`,
     });
   }
 
@@ -77,7 +82,11 @@ const Breadcrumbs = ({ product, categoryName }) => {
       <ul>
         {breadcrumbItems.map((item, index) => (
           <li key={index}>
-            <Link href={item.path}>{item.name}</Link>
+            {item.path !== "#" ? (
+              <Link href={item.path}>{item.name}</Link>
+            ) : (
+              <span>{item.name}</span>
+            )}
             {index < breadcrumbItems.length - 1 && " / "}
           </li>
         ))}

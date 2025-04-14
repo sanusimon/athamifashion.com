@@ -152,3 +152,8 @@ table{
     margin-bottom: 10px;
     display: block;
 }
+body:has(section.product_detail) {
+    .breadcrumbs{
+        display:none
+    }
+}

@@ -70,16 +70,16 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
         <div className="product_page">
             <div className="container">
                 <div className="inner_">
-                {products.length >= 4 && (
-                        <div className="swiper-navigation">
-                            <button className="swiper-button-prev" onClick={() => swiperRef.current?.slidePrev()}>
-                                
-                            </button>
-                            <button className="swiper-button-next" onClick={() => swiperRef.current?.slideNext()}>
-                                
-                            </button>
-                        </div>
-                    )}
+                    {products.length >= 4 && (
+                            <div className="swiper-navigation">
+                                <button className="swiper-button-prev" onClick={() => swiperRef.current?.slidePrev()}>
+                                    
+                                </button>
+                                <button className="swiper-button-next" onClick={() => swiperRef.current?.slideNext()}>
+                                    
+                                </button>
+                            </div>
+                        )}
 
                     <Swiper
                         className="Home_product_list"
@@ -105,6 +105,16 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
                                         <div className="img_wrap">
                                             <img src={product.media?.items[0]?.image?.url} alt={product.name} />
                                             {product.ribbon && <div className="ribbon_">{product.ribbon}</div>}
+                                            {product.price?.price > product.price?.discountedPrice && (
+                                            <div className="discount_percent">
+                                                {Math.floor(
+                                                ((product.price.price - product.price.discountedPrice) /
+                                                    product.price.price) *
+                                                    100
+                                                )}
+                                                % OFF
+                                            </div>
+                                            )}
                                         </div>
                                         <button className="add_cart">Add to Cart</button>
                                     </div>

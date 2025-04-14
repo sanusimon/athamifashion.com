@@ -6,7 +6,7 @@ import { wixClientServer } from "@/lib/wixClientServer";
 import Pagination from "@/Components/Pagination/Pagination";
 import Link from "next/link";
 import DOMPurify from "dompurify";
-import "./productList.scss"
+import "./productList.scss";
 
 const PRODUCT_PER_PAGE = 8;
 
@@ -16,59 +16,69 @@ export default function ProductList({ limit }) {
   const [totalProducts, setTotalProducts] = useState(0);
   const [loading, setLoading] = useState(true);
   const [slugToIdMap, setSlugToIdMap] = useState({});
-  const [isDiscountChecked, setIsDiscountChecked] = useState(searchParams.get("discount") === "true");
 
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
       const wixClient = await wixClientServer();
-  
-      // Slug-to-ID mapping
+
       const categoryData = await wixClient.collections.queryCollections().find();
       const map = {};
       categoryData.items.forEach((cat) => {
         map[cat.slug] = cat._id;
       });
       setSlugToIdMap(map);
-  
+
       const selectedCategorySlugs = searchParams.getAll("cat");
       const selectedCategoryIds = selectedCategorySlugs
         .map((slug) => map[slug])
         .filter(Boolean);
-  
+
       const minPrice = parseFloat(searchParams.get("min")) || 0;
       const maxPrice = parseFloat(searchParams.get("max")) || 99999;
-  
+
       const sort = searchParams.get("sort") || "";
       const [sortDir, sortField] = sort.split(" ");
-  
+
       const page = parseInt(searchParams.get("page") || "0");
       const perPage = limit || PRODUCT_PER_PAGE;
-  
+
       let productQuery = wixClient.products
         .queryProducts()
         .contains("name", searchParams.get("name") || "")
         .limit(perPage)
         .skip(page * perPage);
-  
+
       if (selectedCategoryIds.length > 0) {
         productQuery = productQuery.hasSome("collectionIds", selectedCategoryIds);
       }
 
-      // Filter products by discount if the checkbox is checked
-      if (isDiscountChecked) {
-        productQuery = productQuery.contains("discountedPrice", "");
-      }
-
       const res = await productQuery.find();
-  
-      // Filter products by price range first
+
+      const selectedSizes = searchParams.getAll("size");
+      const selectedDiscountLevels = searchParams.getAll("discount").map(Number);
+
       let filteredProducts = res.items.filter((product) => {
         const price = product.priceData?.price || 0;
-        return price >= minPrice && price <= maxPrice;
+        const discountedPrice = product.priceData?.discountedPrice || price;
+        const discountPercent = ((price - discountedPrice) / price) * 100;
+
+        const meetsDiscount =
+          selectedDiscountLevels.length === 0 ||
+          selectedDiscountLevels.some((level) => discountPercent >= level);
+
+        const matchesPrice = price >= minPrice && price <= maxPrice;
+
+        const matchesSize =
+          selectedSizes.length === 0 ||
+          product.variants.some((variant) =>
+            selectedSizes.includes(variant.choices?.Size)
+          );
+
+        return matchesPrice && meetsDiscount && matchesSize;
       });
 
-      // Sorting by price (client-side)
+      // Sorting by price
       if (sortField === "price") {
         filteredProducts.sort((a, b) => {
           const priceA = a.priceData?.price || 0;
@@ -77,7 +87,7 @@ export default function ProductList({ limit }) {
         });
       }
 
-      // Sorting by lastUpdated (client-side)
+      // Sorting by lastUpdated
       if (sortField === "lastUpdated") {
         filteredProducts.sort((a, b) => {
           const dateA = new Date(a.lastUpdated);
@@ -85,31 +95,21 @@ export default function ProductList({ limit }) {
           return sortDir === "asc" ? dateA - dateB : dateB - dateA;
         });
       }
-      const selectedSizes = searchParams.getAll("size");
-
-        if (selectedSizes.length > 0) {
-        filteredProducts = filteredProducts.filter((product) =>
-            product.variants.some((variant) =>
-            selectedSizes.includes(variant.choices?.Size)
-            )
-        );
-        }
-
 
       setTotalProducts(filteredProducts.length);
       setProducts(filteredProducts);
       setLoading(false);
     };
-  
+
     fetchProducts();
-  }, [searchParams, isDiscountChecked]);
+  }, [searchParams]);
+
   useEffect(() => {
     document.body.classList.add("product-list-page");
     return () => {
       document.body.classList.remove("product-list-page");
     };
   }, []);
-  
 
   const currentPage = parseInt(searchParams.get("page") || 0);
   const totalPages = Math.ceil(totalProducts / (limit || PRODUCT_PER_PAGE));
@@ -124,13 +124,25 @@ export default function ProductList({ limit }) {
           <li key={index}>
             <Link href={`/${product.slug}?cat=${searchParams.get("cat")}`}>
               <div className="top_area">
-                <div className="img_wrap">
-                  <img
-                    src={product.media?.items[0]?.image?.url || "/placeholder.jpg"}
-                    alt={product.name}
-                  />
-                  {product.ribbon && <div className="ribbon_">{product.ribbon}</div>}
-                </div>
+                  <div className="img_wrap">
+                    <img
+                      src={product.media?.items[0]?.image?.url || "/placeholder.jpg"}
+                      alt={product.name}
+                    />
+                    {product.ribbon && <div className="ribbon_">{product.ribbon}</div>}
+                    
+                    {product.price?.price > product.price?.discountedPrice && (
+                      <div className="discount_percent">
+                        {Math.floor(
+                          ((product.price.price - product.price.discountedPrice) /
+                            product.price.price) *
+                            100
+                        )}
+                        % OFF
+                      </div>
+                    )}
+                  </div>
+
                 <button className="add_cart">Add to Cart</button>
               </div>
 

@@ -19,7 +19,16 @@ const List = () => {
       const catSlug = searchParams.get("cat") || "all-products";  // Default to 'all-products' if no cat is present
       const category = await wixClient.collections.getCollectionBySlug(catSlug);
       setCat(category);
+      document.body.classList.add("product_list_page");
+  
+      return () => {
+        document.body.classList.remove("product_list_page");
+      };
     };
+    // useEffect(() => {
+      
+    // }, []);
+
 
     fetchCategory();
   }, [searchParams]);
@@ -30,7 +39,7 @@ const List = () => {
     <section className="product_page inner_product">
       <div className="container">
         <Sort />
-        {/* <Breadcrumbs /> */}
+        <Breadcrumbs categoryName={cat?.collection?.name} />
         <div className="inner_">
           <Filter />
           <Suspense fallback={<Skeleton />}>
