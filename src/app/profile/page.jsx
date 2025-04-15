@@ -7,28 +7,35 @@ import { format } from "timeago.js";
 
 
 const ProfilePage = async () => {
-  // ✅ Get refreshToken here — it's allowed in server components
   const cookieStore = cookies();
-  const refreshToken = JSON.parse(cookieStore.get("refreshToken")?.value || "{}");
+  const tokenCookie = cookieStore.get("refreshToken")?.value;
 
-  // ✅ Pass it in
-  const wixClient = await wixClientServer(refreshToken);
-
-  const user = await wixClient.members.getCurrentMember({
-    fieldsets: [members.Set.FULL],
-  });
-  console.log(user)
-
-
-  if (!user.member?.contactId) {
-    return <div>Not logged in!</div>;
+  if (!tokenCookie) {
+    return <div className='container text-center'><p>Not logged in!</p></div>;
   }
 
-  const orderRes = await wixClient.orders.searchOrders({
-    search: {
-      filter: { "buyerInfo.contactId": { $eq: user.member.contactId } },
-    },
-  });
+  let refreshToken;
+  try {
+    refreshToken = JSON.parse(tokenCookie);
+  } catch (err) {
+    return <div className='container text-center'><p>Not logged in!</p></div>;
+  }
+
+  const wixClient = await wixClientServer(refreshToken);
+
+  let user;
+  try {
+    user = await wixClient.members.getCurrentMember({
+      fieldsets: [members.Set.FULL],
+    });
+  } catch (err) {
+    return  <div className='container text-center'><p>Not logged in!</p></div>;
+  }
+
+  if (!user.member?.contactId) {
+    return  <div className='container text-center'><p>Not logged in!</p></div>;
+  }
+
 
   return (
     <div className="common_page profile_">

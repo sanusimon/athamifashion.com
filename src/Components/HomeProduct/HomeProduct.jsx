@@ -64,7 +64,7 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
     if (!products.length) {
         return <div className="container">No products found for this category.</div>;
     }
-    console.log(products);
+    
 
     return (
         <div className="product_page">
@@ -130,7 +130,7 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
                                             {product.variants.map((variant, vIndex) => (
                                             
                                             <div key={vIndex} className={variant.stock.quantity === 0 ? "disabled" : ""}>
-                                                {console.log(variant.stock.quantity === 0 )}
+                                                
                                                 {Object.entries(variant.choices).map(([key, value]) => (
                                                     <span key={key}>{value}</span>
                                                 ))}

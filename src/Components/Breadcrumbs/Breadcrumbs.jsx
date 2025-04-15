@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams, usePathname } from "next/navigation";
 import { wixClientServer } from "@/lib/wixClientServer";
 
-const Breadcrumbs = ({ product, categoryName }) => {
+const Breadcrumbs = ({ product }) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const [isClient, setIsClient] = useState(false);
@@ -33,16 +33,32 @@ const Breadcrumbs = ({ product, categoryName }) => {
 
   const breadcrumbItems = [
     { name: "Home", path: "/" },
-    { name: "All Products", path: "/list" },
   ];
 
-  // Add all selected categories as a single breadcrumb item
+  // Add "All Products" only for /list and /product pages
+  if (pathname.startsWith("/list") || pathname.startsWith("/product")) {
+    breadcrumbItems.push({ name: "All Products", path: "/list" });
+  }
+
+  // Page-specific breadcrumbs
+  if (pathname === "/profile") {
+    breadcrumbItems.push({ name: "Profile", path: "/profile" });
+  } else if (pathname === "/orders") {
+    breadcrumbItems.push({ name: "Orders", path: "/orders" });
+  } else if (pathname.startsWith("/orders/")) {
+    const orderId = pathname.split("/")[2];
+    breadcrumbItems.push({ name: "Orders", path: "/orders" });
+    breadcrumbItems.push({ name: `Order #${orderId}`, path: pathname });
+  } else if (pathname === "/cart") {
+    breadcrumbItems.push({ name: "Cart", path: "/cart" });
+  } else if (pathname === "/login") {
+    breadcrumbItems.push({ name: "Login", path: "/login" });
+  }
+
+  // Categories for product list
   if (pathname.startsWith("/list") && catSlugs.length > 0 && allCategories.length > 0) {
     const selectedCatNames = catSlugs
-      .map((slug) => {
-        const match = allCategories.find((cat) => cat.slug === slug);
-        return match?.name;
-      })
+      .map((slug) => allCategories.find((cat) => cat.slug === slug)?.name)
       .filter(Boolean);
 
     if (selectedCatNames.length > 0) {
@@ -53,7 +69,6 @@ const Breadcrumbs = ({ product, categoryName }) => {
     }
   }
 
-  // Add size filters
   if (sizeParams.length > 0) {
     breadcrumbItems.push({
       name: `Sizes: ${sizeParams.join(", ")}`,
@@ -61,7 +76,6 @@ const Breadcrumbs = ({ product, categoryName }) => {
     });
   }
 
-  // Add discount filters
   if (discountParams.length > 0) {
     breadcrumbItems.push({
       name: `Discounts: ${discountParams.join("%, ")}%`,
@@ -69,7 +83,6 @@ const Breadcrumbs = ({ product, categoryName }) => {
     });
   }
 
-  // Add product name if on product page
   if (pathname.startsWith("/product") && product) {
     breadcrumbItems.push({
       name: product.name,

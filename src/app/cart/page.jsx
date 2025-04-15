@@ -18,7 +18,7 @@ export const Cart = () => {
 
     const wixClient = useWixClient()
     const {cart , isLoading , removeItem ,updateQuantity } = useCartStore();
-console.log(cart)
+
     const handleCheckout = async () =>{
         try{
             const checkout = await wixClient.currentCart.createCheckoutFromCurrentCart({
@@ -66,6 +66,8 @@ console.log(cart)
       if (!cart || cart.length === 0) {
         return <div className='container text-center'><p>Your cart is empty..</p></div>;
       }
+      console.log("lineitem" , cart.lineItems)
+      console.log("normal" , cart)
       
 
 
@@ -184,10 +186,10 @@ console.log(cart)
                                 <div className="cart_item_price sub_total">
                                     <label className='label'>Value of Products</label>
                                     <span>
-                                        ₹{(
-                                            parseFloat(cart.subtotal?.formattedAmount.replace(/[^\d.-]/g, '')) || 0
-                                        ).toFixed(2)}
-                                        </span>
+                                        ₹{cart.lineItems?.reduce((total, item) => {
+                                        return total + Number(item.fullPrice?.amount || 0);
+                                        }, 0).toFixed(2)}
+                                    </span>
                                 </div>
                                 <div className="cart_item_price sub_total">
                                         <label className='label'>
@@ -200,11 +202,20 @@ console.log(cart)
                                 </div>
                                 <div className="cart_item_price sub_total">
                                     <label className='label'> Order Total</label>
-                                    <span>{cart.subtotal?.formattedAmount}</span>
+                                    <span>
+                                        ₹{cart.lineItems?.reduce((total, item) => {
+                                        return total + Number(item.priceBeforeDiscounts?.amount || 0);
+                                        }, 0).toFixed(2)}
+                                    </span>
+
                                 </div>
                                 <div className="cart_item_price sub_total">
                                     <label className='label'> <b>Net Payment</b></label>
-                                    <span>{cart.subtotal?.formattedAmount}</span>
+                                    <span>
+                                        ₹{cart.lineItems?.reduce((total, item) => {
+                                        return total + Number(item.priceBeforeDiscounts?.amount || 0);
+                                        }, 0).toFixed(2)}
+                                    </span>
                                 </div>
                                 <button onClick={handleCheckout} className={isLoading ? "cmnBtn disabled" : "cmnBtn"} disabled={isLoading}>Checkout</button>
                                 </div>

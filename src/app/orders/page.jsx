@@ -7,19 +7,33 @@ import { format } from 'date-fns';
 
 
 const Order = async () => {
-  // ✅ Get refreshToken here — it's allowed in server components
   const cookieStore = cookies();
-  const refreshToken = JSON.parse(cookieStore.get("refreshToken")?.value || "{}");
+  const tokenCookie = cookieStore.get("refreshToken")?.value;
 
-  // ✅ Pass it in
+  if (!tokenCookie) {
+    return <div className='container text-center'><p>Not logged in!</p></div>;
+  }
+
+  let refreshToken;
+  try {
+    refreshToken = JSON.parse(tokenCookie);
+  } catch (err) {
+    return <div className='container text-center'><p>Not logged in!</p></div>;
+  }
+
   const wixClient = await wixClientServer(refreshToken);
 
-  const user = await wixClient.members.getCurrentMember({
-    fieldsets: [members.Set.FULL],
-  });
+  let user;
+  try {
+    user = await wixClient.members.getCurrentMember({
+      fieldsets: [members.Set.FULL],
+    });
+  } catch (err) {
+    return  <div className='container text-center'><p>Not logged in!</p></div>;
+  }
 
   if (!user.member?.contactId) {
-    return <div>Not logged in!</div>;
+    return  <div className='container text-center'><p>Not logged in!</p></div>;
   }
 
   const orderRes = await wixClient.orders.searchOrders({
