@@ -15,6 +15,15 @@ const Filter = () => {
   const selectedSize = searchParams.getAll("size");
   const selectedCategories = searchParams.getAll("cat");
   const selectedDiscounts = searchParams.getAll("discount");
+  const [accordionOpen, setAccordionOpen] = useState({
+  categories: true,
+  size: false,
+  price: false,
+  discount: false,
+});
+
+const [openAccordion, setOpenAccordion] = useState("categories"); // default open
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,6 +57,10 @@ const Filter = () => {
 
     fetchData();
   }, []);
+  const toggleAccordion = (key) => {
+    setOpenAccordion((prev) => (prev === key ? null : key));
+  };
+  
 
   const handleCheckboxChange = (e, name) => {
     const params = new URLSearchParams(searchParams);
@@ -83,7 +96,12 @@ const Filter = () => {
       <div className="sticky_">
         {/* Categories Filter */}
         <div className="filter_group">
-          <h4>Categories</h4>
+        <h4 onClick={() => toggleAccordion("categories")}
+          className={`filtr_hd ${openAccordion === "categories" ? "active" : ""}`}>
+            Categories {accordionOpen.categories ? "▾" : "▸"}
+          </h4>
+          
+          <div className={`filter_content ${openAccordion === "categories" ? "active" : ""}`}>
           {categories.map((cat) => (
             <label key={cat._id}>
               <input
@@ -96,12 +114,18 @@ const Filter = () => {
               {cat.name}
             </label>
           ))}
+          </div>
+          
         </div>
 
         {/* Size Filter */}
-        <div className="filter_group size_">
-          <h4>Size</h4>
-          <div className="flex">
+        <div className="filter_group ">
+        <h4 onClick={() => toggleAccordion("size")}
+          className={`filtr_hd ${openAccordion === "size" ? "active" : ""}`}>
+            Size {accordionOpen.size ? "▾" : "▸"}
+          </h4>
+          
+            <div className={`filter_content size_ ${openAccordion === "size" ? "active" : ""}`}>
             {["S", "M", "L", "XL", "XXL"].map((size) => (
               <label key={size}>
                 <input
@@ -114,12 +138,19 @@ const Filter = () => {
                 {size}
               </label>
             ))}
-          </div>
-        </div>
+            </div>
+          
+            </div>
+          
 
         {/* Price Filter */}
         <div className="filter_group">
-          <h4>Price</h4>
+        <h4 onClick={() => toggleAccordion("price")}
+        className={`filtr_hd ${openAccordion === "price" ? "active" : ""}`}>
+            Price {accordionOpen.price ? "▾" : "▸"}
+          </h4>
+          
+            <div className={`filter_content ${openAccordion === "price" ? "active" : ""}`}>
           <input
             type="text"
             name="min"
@@ -135,11 +166,18 @@ const Filter = () => {
             onChange={handleInputChange}
           />
         </div>
+          
+          </div>
 
         {/* Dynamic Discount Filter */}
         {availableDiscounts.length > 0 && (
           <div className="filter_group">
-            <h4>Discount</h4>
+            <h4 onClick={() => toggleAccordion("discount")}
+            className={`filtr_hd ${openAccordion === "discount" ? "active" : ""}`}>
+              Discount {accordionOpen.discount ? "▾" : "▸"}
+            </h4>
+            
+              <div className={`filter_content ${openAccordion === "discount" ? "active" : ""}`}>
             {availableDiscounts.map((percent) => (
               <label key={percent}>
                 <input
@@ -152,11 +190,15 @@ const Filter = () => {
                 {percent}% or more
               </label>
             ))}
+            </div>
+            
           </div>
         )}
 
         {/* Clear All Filters */}
-        <button
+       
+      </div>
+      <button
           className="clear_all_btn"
           onClick={() => {
             const params = new URLSearchParams();
@@ -165,7 +207,6 @@ const Filter = () => {
         >
           Clear All Filters <span><img src="/close.png" alt="Clear" /></span>
         </button>
-      </div>
     </div>
   );
 };

@@ -20,6 +20,8 @@ const Header = () => {
   const [openFilter, setOpenFilter] = useState(false);
   const [openSearch, setOpenSearch] = useState(false);
   const [nickname, setNickname] = useState("");
+  const pathname = usePathname();
+  const { replace } = useRouter();
 
   const menuRef = useRef(null);
   const menuBtnRef = useRef(null);
@@ -218,6 +220,15 @@ const Header = () => {
         <Breadcrumbs />
         <div ref={filterRef} className={`filter-dropdown ${openFilter ? "open" : ""}`}>
           <span className="apply_filter" onClick={closeFilter}>Apply</span>
+          <button
+          className="clear_all_btn"
+          onClick={() => {
+            const params = new URLSearchParams();
+            replace(`${pathname}?${params.toString()}`);
+          }}
+        >
+          Clear All Filters <span><img src="/close.png" alt="Clear" /></span>
+        </button>
           <Filter />
         </div>
       </div>

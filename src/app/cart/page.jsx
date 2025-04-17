@@ -196,10 +196,10 @@ export const Cart = () => {
                                         Discount(-)</label>
                                         <span>{totalDiscount ? `$${totalDiscount.toFixed(2)}` : '$0.00'}</span>
                                     </div>
-                                <div className="cart_item_price sub_total">
+                                {/* <div className="cart_item_price sub_total">
                                     <label className='label'>Shiping</label>
                                     <span>Shiping</span>
-                                </div>
+                                </div> */}
                                 <div className="cart_item_price sub_total">
                                     <label className='label'> Order Total</label>
                                     <span>

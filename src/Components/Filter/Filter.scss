@@ -6,17 +6,53 @@
     padding-right: 20px;
     @media only screen and (max-width: 767px) {
         display: none;
+        .clear_all_btn{
+            display: none;
+        }
     }
     .sticky_{
         position: sticky;
         top: 20px;
+        @media only screen and (max-width: 767px) {
+            position: static;
+        }
         .filter_group{
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 20px;
+            .filtr_hd{
+                margin-bottom: 10px;
+            }
+            @media only screen and (max-width: 767px) {
+                padding: 0 0 20px;
+                .filtr_hd{
+                    width: 50%;
+                    background-color: $light-grey;
+                    position: relative;
+                    z-index: 2;
+                    &.active{
+                        pointer-events: none;
+                        color: $bg-color;
+                    }
+                }
+            }
             
-            &.size_{
+            .filter_content{
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                margin-bottom: 20px;
+                @media only screen and (max-width: 767px) {
+                    opacity: 0;
+                    visibility: hidden;
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                    width: 50%;
+                    &.active{
+                        opacity: 1;
+                        visibility: visible;
+                    }
+                }
+                
+                &.size_{
                 flex-wrap: wrap;
                 >div{
                     display: flex;
@@ -24,6 +60,8 @@
                     flex-wrap: wrap;
                 }
             }
+            }
+            
             h4{
                 font-weight: 700;
                 font-size: 1.3rem;
@@ -57,19 +95,32 @@
         position: fixed;
         left: 0;
         width: 100%;
-        bottom: 64px;
-        padding: 20px;
+        height: calc(100vh - 64px);
+        top: 0;
+        padding: 100px 20px 20px;
         background-color: $color-white;
-        z-index: 2;
+        z-index: 99;
         opacity: 0;
         transform: translateY(100%);
         transition: all .3s ease;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        opacity: 0;
+        visibility: hidden;
         &.open{
             transform: none;
             opacity: 1;
+            visibility: visible;
             .filter_area{
                 display: block;
+                position: relative;
+            }
+            &:after{
+                position: absolute;
+                content: "";
+                left: 0;
+                top: 0;
+                width: 48%;
+                height: 100%;
+                background-color: $light-grey;
             }
         }
         .apply_filter{
@@ -80,6 +131,7 @@
             top: 0;
             right: 0;
         }
+        
     }
 }
 .sort_{
@@ -105,26 +157,35 @@
 }
 .clear_all_btn{
     position: fixed;
-    top: 0;
-    right: 0;
     // background-color: $bg-color;
     color: $bg-color;
     position: absolute;
     top: -20px;
-    right: 0px;
     text-align: right;
     display: flex;
     align-items: center;
     gap: 10px;
-    @media only screen and (max-width: 767px) {
-        right: auto;
-        left: 0;
-        text-align: left;
-    }
     span{
         img{
             width: 10px;
             opacity: .2;
         }
     }
+    @media only screen and (max-width: 767px) {
+        right: auto;
+        left: 0;
+        text-align: left;
+        top: 0;
+        z-index: 9;
+        font-weight: 700;
+        padding: 20px;
+        color: $color-black;
+       
+        span{
+            img{
+                opacity: 1;
+            }
+        }
+    }
+   
 }
