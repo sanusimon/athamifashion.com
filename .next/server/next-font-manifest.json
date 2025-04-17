@@ -1,21 +1,15 @@
 {
   "app": {
-    "[project]/src/app/page": [
+    "[project]/src/app/[slug]/page": [
       "static/media/92zatBhPNqw73oTd4jQmfxI-s.p.ba172912.woff2"
     ],
-    "[project]/src/app/login/page": [
+    "[project]/src/app/page": [
       "static/media/92zatBhPNqw73oTd4jQmfxI-s.p.ba172912.woff2"
     ],
     "[project]/src/app/list/page": [
       "static/media/92zatBhPNqw73oTd4jQmfxI-s.p.ba172912.woff2"
     ],
-    "[project]/src/app/[slug]/page": [
-      "static/media/92zatBhPNqw73oTd4jQmfxI-s.p.ba172912.woff2"
-    ],
     "[project]/src/app/cart/page": [
-      "static/media/92zatBhPNqw73oTd4jQmfxI-s.p.ba172912.woff2"
-    ],
-    "[project]/src/app/_not-found/page": [
       "static/media/92zatBhPNqw73oTd4jQmfxI-s.p.ba172912.woff2"
     ]
   },

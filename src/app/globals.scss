@@ -196,6 +196,7 @@ ul.product_list{
 .variant {
     display: flex;
     gap: 5px;
+    flex-wrap: wrap;
     .disabled{
         opacity: .2;
     }
@@ -355,6 +356,14 @@ input{
     .var_price{
         display: flex;
         justify-content: space-between;
+        .pro_clr{
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin: 10px auto;
+            padding: 0;
+            display: block;
+        }
         @media only screen and (max-width: 767px) {
             flex-direction: column;
             gap: 10px;

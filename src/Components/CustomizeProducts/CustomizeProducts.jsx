@@ -1,28 +1,46 @@
-"use client"
-import React, { useEffect, useState } from 'react'
-import AddQuantity from '../AddQuantity/AddQuantity'
+'use client';
 
-function CustomizeProducts({ productId, variants, productOptions }) {
+import React, { useEffect, useState } from 'react';
+import AddQuantity from '../AddQuantity/AddQuantity';
+import DOMPurify from 'dompurify';
+
+function CustomizeProducts({
+    productId,
+    variants,
+    productOptions,
+    onColorSelect,
+    name,
+    price,
+    discount,
+    description
+}) {
     const [selectOptions, setSelectOptions] = useState({});
     const [selectVariant, setSelectVariant] = useState(null);
 
     useEffect(() => {
+        // 1. Match selected options to a variant
         const variant = variants.find((v) => {
             const variantChoices = v.choices;
             if (!variantChoices) return false;
-            
-            return Object.entries(selectOptions).every(([key, value]) => variantChoices[key] === value);
+            return Object.entries(selectOptions).every(
+                ([key, value]) => variantChoices[key] === value
+            );
         });
-        
+
         setSelectVariant(variant || null);
-    }, [selectOptions, variants]);
+
+        // 2. If color is selected, notify parent to change image
+        const selectedColor = selectOptions["Color"];
+        if (selectedColor && onColorSelect) {
+            onColorSelect(selectedColor);
+        }
+    }, [selectOptions, variants, onColorSelect]);
 
     const handleOptionSelect = (optionType, choice) => {
         setSelectOptions((prev) => ({ ...prev, [optionType]: choice }));
     };
 
     const isVariantStock = (choices) => {
-        if (!variants || variants.length === 0) return false;
         return variants.some((variant) => {
             const variantChoices = variant.choices;
             if (!variantChoices) return false;
@@ -30,41 +48,84 @@ function CustomizeProducts({ productId, variants, productOptions }) {
             return (
                 Object.entries(choices).every(([key, value]) => variantChoices[key] === value) &&
                 variant.stock?.inStock &&
-                variant.stock?.quantity &&
                 variant.stock.quantity > 0
             );
         });
     };
 
     return (
-        <div className='custome_options'>
-            {productOptions.map((options) => (
-                <div className={options.name === "Color" ? "color_wrap custm_wrap" : "size_wrap custm_wrap"} key={options.name}>
-                    <span className='cart_label_'>Choose a {options.name}</span>
-                    <div className='options_'>
-                        {options.choices.map((choice) => {
-                            const isDisabled = !isVariantStock({ ...selectOptions, [options.name]: choice.description });
-                            const isSelected = selectOptions[options.name] === choice.description;
+        <>
+            <div className="content_sec">
+                <label className="detail_title">{name}</label>
 
-                            return (
-                                <div className='options_' key={choice.description} onClick={() => handleOptionSelect(options.name, choice.description)}>
-                                    {options.name === "Color" ? (
-                                        <span className={`${isDisabled ? "disabled color_span" : "color_span"} ${isSelected ? "selected_" : ""}`} 
-                                            style={{ backgroundColor: choice.description }}>
-                                        </span>
-                                    ) : (
-                                        <span className={`${isDisabled ? "disabled size_span" : "size_span"} ${isSelected ? "selected_" : ""}`}>
-                                            {choice.description}
-                                        </span>
-                                    )}
-                                </div>
-                            );
-                        })}
-                    </div>
+                {/* <div
+                    className="detail_desc"
+                    dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(description),
+                    }}
+                /> */}
+
+                <div className="price_area">
+                    {price?.price === price?.discountedPrice ? (
+                        <label className="detail_price">₹{price?.price}</label>
+                    ) : (
+                        <div className="discount_sec">
+                            <label className="detail_price">₹{price?.discountedPrice}</label>
+                            <label className="detail_price line_throw">₹{price?.price}</label>
+                            <label className="persntge">{discount?.value}% OFF</label>
+                        </div>
+                    )}
                 </div>
-            ))}
-            <AddQuantity productId={productId} variantId={selectVariant?._id || "00000000-000000-000000-000000000000"} stockNumber={selectVariant?.stock?.quantity ?? 0} isSelected={Object.keys(selectOptions).length === productOptions.length} />
-        </div>
+            </div>
+
+            <div className='custome_options'>
+                {productOptions.map((option) => (
+                    <div
+                        key={option.name}
+                        className={option.name === "Color" ? "color_wrap custm_wrap" : "size_wrap custm_wrap"}
+                    >
+                        <span className='cart_label_'>Choose a {option.name}</span>
+                        <div className='options_'>
+                            {option.choices.map((choice) => {
+                                const isDisabled = !isVariantStock({
+                                    ...selectOptions,
+                                    [option.name]: choice.description
+                                });
+                                const isSelected = selectOptions[option.name] === choice.description;
+
+                                return (
+                                    <div
+                                        key={choice.description}
+                                        className='options_'
+                                        onClick={() => handleOptionSelect(option.name, choice.description)}
+                                    >
+                                        {option.name === "Color" ? (
+                                            <span
+                                                className={`color_span ${isDisabled ? "disabled" : ""} ${isSelected ? "selected_" : ""}`}
+                                                style={{ backgroundColor: choice.description }}
+                                            ></span>
+                                        ) : (
+                                            <span
+                                                className={`size_span ${isDisabled ? "disabled" : ""} ${isSelected ? "selected_" : ""}`}
+                                            >
+                                                {choice.description}
+                                            </span>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                ))}
+
+                <AddQuantity
+                    productId={productId}
+                    variantId={selectVariant?._id || "00000000-000000-000000-000000000000"}
+                    stockNumber={selectVariant?.stock?.quantity ?? 0}
+                    isSelected={Object.keys(selectOptions).length === productOptions.length}
+                />
+            </div>
+        </>
     );
 }
 
