@@ -45,7 +45,7 @@ export const Cart = () => {
     // Function to calculate total discount
     const calculateTotalDiscount = () => {
         return cart.lineItems?.reduce((total, item) => {
-          // Calculate the discount for each item (fullPrice - price)
+          // Calculate the discount for each item (lineItemPrice - price)
           const discount = item.fullPrice.amount - item.price.amount;
           return total + discount * item.quantity; // Multiply by quantity
         }, 0);
@@ -186,9 +186,10 @@ export const Cart = () => {
                                 <div className="cart_item_price sub_total">
                                     <label className='label'>Value of Products</label>
                                     <span>
-                                        ₹{cart.lineItems?.reduce((total, item) => {
-                                        return total + Number(item.fullPrice?.amount || 0);
-                                        }, 0).toFixed(2)}
+                                    ₹{cart.lineItems?.reduce((total, item) => {
+  return total + item.fullPrice.amount * item.quantity;
+}, 0).toFixed(2)}
+
                                     </span>
                                 </div>
                                 <div className="cart_item_price sub_total">
@@ -203,18 +204,19 @@ export const Cart = () => {
                                 <div className="cart_item_price sub_total">
                                     <label className='label'> Order Total</label>
                                     <span>
-                                        ₹{cart.lineItems?.reduce((total, item) => {
-                                        return total + Number(item.priceBeforeDiscounts?.amount || 0);
-                                        }, 0).toFixed(2)}
+                                    ₹{cart.lineItems?.reduce((total, item) => {
+  return total + item.price.amount * item.quantity;
+}, 0).toFixed(2)}
+
                                     </span>
 
                                 </div>
                                 <div className="cart_item_price sub_total">
                                     <label className='label'> <b>Net Payment</b></label>
                                     <span>
-                                        ₹{cart.lineItems?.reduce((total, item) => {
-                                        return total + Number(item.priceBeforeDiscounts?.amount || 0);
-                                        }, 0).toFixed(2)}
+                                    ₹{cart.lineItems?.reduce((total, item) => {
+  return total + item.price.amount * item.quantity;
+}, 0).toFixed(2)}
                                     </span>
                                 </div>
                                 <button onClick={handleCheckout} className={isLoading ? "cmnBtn disabled" : "cmnBtn"} disabled={isLoading}>Checkout</button>
