@@ -5,8 +5,17 @@ import React, { useState } from 'react';
 import CustomizeProducts from '../CustomizeProducts/CustomizeProducts';
 import ProductImage from '../ProductImage/ProductImage';
 
-function CustomizeProductsWrapper({ productId, variants, productOptions, defaultImages , name , description , price , discount}) {
-    const [selectedColor, setSelectedColor] = useState(null);
+function CustomizeProductsWrapper({
+    productId,
+    variants,
+    productOptions,
+    defaultImages,
+    name,
+    description,
+    price,
+    discount
+  }) {
+    const [selectedColor, setSelectedColor] = useState(null);    
 
     return (
         <>
@@ -16,6 +25,7 @@ function CustomizeProductsWrapper({ productId, variants, productOptions, default
                 mediaItems={defaultImages}
                 productOptions={getColorOptions(productOptions)}
                 selectedColor={selectedColor}
+                
             />
             </div>
 

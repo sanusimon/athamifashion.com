@@ -143,7 +143,7 @@ export default function ProductList({ limit }) {
 
   if (loading) return <div>Loading products...</div>;
   if (products.length === 0) return <div>No products found.</div>;
-
+  console.log(products)
   return (
     <>
       <ul className="product_list">

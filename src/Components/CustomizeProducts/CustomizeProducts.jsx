@@ -55,15 +55,15 @@ function CustomizeProducts({
 
     return (
         <>
-            <div className="content_sec">
+            
                 <label className="detail_title">{name}</label>
 
-                {/* <div
+                <div
                     className="detail_desc"
                     dangerouslySetInnerHTML={{
                         __html: DOMPurify.sanitize(description),
                     }}
-                /> */}
+                />
 
                 <div className="price_area">
                     {price?.price === price?.discountedPrice ? (
@@ -76,7 +76,7 @@ function CustomizeProducts({
                         </div>
                     )}
                 </div>
-            </div>
+            
 
             <div className='custome_options'>
                 {productOptions.map((option) => (
@@ -124,7 +124,15 @@ function CustomizeProducts({
                     stockNumber={selectVariant?.stock?.quantity ?? 0}
                     isSelected={Object.keys(selectOptions).length === productOptions.length}
                 />
-            </div>
+                {/* REVIEWS */}
+                 
+                    
+                    {/* <h1 className="text-2xl">User Reviews</h1>
+                    <Suspense fallback="Loading...">
+                        <Reviews productId={productId} />
+                    </Suspense> */}
+      
+                </div>
         </>
     );
 }

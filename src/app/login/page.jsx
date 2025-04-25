@@ -138,7 +138,7 @@ const LoginPage = () => {
             const redirectUrl =
               process.env.NODE_ENV === "development"
                 ? "http://localhost:3000/login"
-                : "https://aureliahfashion.com/login";
+                : "https://athamifashion.com/login";
         
             await wixClient.auth.sendPasswordResetEmail(email, redirectUrl);
             setLastResetRequest(Date.now());

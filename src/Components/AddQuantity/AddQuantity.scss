@@ -24,10 +24,7 @@
         .quantity_field{
             display: flex;
             gap: 20px;
-            @media only screen and (max-width: 767px) {
-                display: flex;
-                flex-direction: column;
-            }
+            flex-direction: column;
            >div{
             background-color: $light-grey;
             padding: 10px 20px;
