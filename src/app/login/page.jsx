@@ -20,17 +20,6 @@ const LoginPage = () => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [lastResetRequest, setLastResetRequest] = useState(null);
-
-
-  useEffect(() => {
-    const checkLoggedIn = async () => {
-      const logged = await wixClient.auth.loggedIn();
-      setIsLoggedIn(logged);
-      if (logged) router.push("/");
-    };
-    checkLoggedIn();
-  }, [wixClient, router]);
-
   const [username, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -43,7 +32,15 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
-  // Detect reset password token from URL
+  useEffect(() => {
+    const checkLoggedIn = async () => {
+      const logged = await wixClient.auth.loggedIn();
+      setIsLoggedIn(logged);
+      if (logged) router.push("/");
+    };
+    checkLoggedIn();
+  }, [wixClient, router]);
+
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("forgotPasswordToken");
@@ -74,10 +71,10 @@ const LoginPage = () => {
     setIsLoading(true);
     setError("");
     setMessage("");
-  
+
     try {
       let response;
-  
+
       switch (mode) {
         case MODE.LOGIN:
           if (!email || !password) {
@@ -85,133 +82,127 @@ const LoginPage = () => {
             setIsLoading(false);
             return;
           }
-  
+
           response = await wixClient.auth.login({ email, password });
           break;
-  
+
         case MODE.REGISTER:
           response = await wixClient.auth.register({
             email,
             password,
             profile: { nickname: username },
           });
-  
+
           switch (response?.loginState) {
             case LoginState.EMAIL_VERIFICATION_REQUIRED:
               setMode(MODE.EMAIL_VERIFICATION);
-              setMessage(`Registration successful! A verification code was sent to ${email}.`);
+              setMessage(`A verification code was sent to ${email}.`);
               break;
-  
-              case LoginState.SUCCESS:
-                setMessage("Registration successful! Redirecting...");
-                const tokens = await wixClient.auth.getMemberTokensForDirectLogin(response.data.sessionToken);
-                Cookies.set("refreshToken", JSON.stringify(tokens.refreshToken), { expires: 2 });
-                wixClient.auth.setTokens(tokens);
-              
-                // ✅ Fetch user and store nickname
-                const user = await wixClient.members.getCurrentMember();
-                const nickname = user?.member?.profile?.nickname;
-                if (nickname) {
-                  sessionStorage.setItem("nickname", nickname);
-                }
-              
-                router.push("/");
-                break;
-              
-  
+
+            case LoginState.SUCCESS:
+              const tokens = await wixClient.auth.getMemberTokensForDirectLogin(response.data.sessionToken);
+              Cookies.set("refreshToken", JSON.stringify(tokens.refreshToken), { expires: 2 });
+              wixClient.auth.setTokens(tokens);
+              const user = await wixClient.members.getCurrentMember();
+              const nickname = user?.member?.profile?.nickname;
+              if (nickname) sessionStorage.setItem("nickname", nickname);
+              router.push("/");
+              break;
+
             case LoginState.OWNER_APPROVAL_REQUIRED:
               setMessage("Your account is pending approval.");
               break;
-  
+
             default:
-              setError("Unexpected response from registration.");
+              setError("Unexpected registration response.");
               break;
           }
           return;
-  
-          case MODE.RESET_PASSWORD:
-            if (lastResetRequest && Date.now() - lastResetRequest < 60000) {
-              setError("Please wait at least 1 minute before requesting again.");
-              return;
-            }
-        
-            const redirectUrl =
-              process.env.NODE_ENV === "development"
-                ? "http://localhost:3000/login"
-                : "https://athamifashion.com/login";
-        
-            await wixClient.auth.sendPasswordResetEmail(email, redirectUrl);
-            setLastResetRequest(Date.now());
-            setMessage("Password reset email sent. Please check your inbox.");
+
+        case MODE.RESET_PASSWORD:
+          if (!email) {
+            setError("Email is required.");
             return;
-        
-  
-        case MODE.EMAIL_VERIFICATION:
-          await wixClient.auth.processVerification({ verificationCode: emailCode });
-          setMessage("Email verified successfully! You can now log in.");
+          }
+
+          if (lastResetRequest && Date.now() - lastResetRequest < 60000) {
+            setError("Please wait before requesting another email.");
+            return;
+          }
+
+          const redirectUrl =
+            process.env.NODE_ENV === "development"
+              ? "http://localhost:3000/login"
+              : "https://athamifashion.com/login";
+
+          await wixClient.auth.sendPasswordResetEmail(email, redirectUrl);
+          setLastResetRequest(Date.now());
+          setMessage("Reset email sent. Check your inbox.");
+          return;
+
+        case MODE.RESET_PASSWORD_TOKEN:
+          if (!resetToken) {
+            setError("Invalid or expired reset token.");
+            return;
+          }
+
+          if (newPassword !== confirmPassword) {
+            setError("Passwords do not match.");
+            return;
+          }
+
+          await wixClient.auth.resetPassword(resetToken, newPassword);
+          setMessage("Password updated. Please log in.");
           setMode(MODE.LOGIN);
           return;
-  
+
+        case MODE.EMAIL_VERIFICATION:
+          await wixClient.auth.processVerification({ verificationCode: emailCode });
+          setMessage("Email verified. Please log in.");
+          setMode(MODE.LOGIN);
+          return;
+
         default:
-          throw new Error("Invalid mode");
+          setError("Invalid form mode.");
+          return;
       }
-  
-      // Handle loginState for LOGIN
+
       if (mode === MODE.LOGIN && response) {
-        switch (response?.loginState) {
+        switch (response.loginState) {
           case LoginState.SUCCESS:
-            setMessage("Login successful! Redirecting...");
             const tokens = await wixClient.auth.getMemberTokensForDirectLogin(response.data.sessionToken);
             Cookies.set("refreshToken", JSON.stringify(tokens.refreshToken), { expires: 2 });
             wixClient.auth.setTokens(tokens);
-          
-            // ✅ Fetch user and store nickname
             const user = await wixClient.members.getCurrentMember();
             const nickname = user?.member?.profile?.nickname;
-            if (nickname) {
-              sessionStorage.setItem("nickname", nickname);
-            }
-          
+            if (nickname) sessionStorage.setItem("nickname", nickname);
             router.push("/");
             break;
-          
-  
+
           case LoginState.FAILURE:
-            if (response.errorCode === "invalidEmail") {
-              setError("No account found for this email. Please check or register.");
-            } else if (response.errorCode === "invalidPassword") {
-              setError("Invalid password. Please try again.");
-            } else if (response.errorCode === "emailAlreadyExist") {
-              setError("Email already exists.");
-            } else if (response.errorCode === "resetPassword") {
-              setError("You need to reset your password!");
-            } else {
-              setError("Something went wrong during login.");
-            }
+            setError("Invalid login credentials.");
             break;
-  
+
           case LoginState.EMAIL_VERIFICATION_REQUIRED:
             setMode(MODE.EMAIL_VERIFICATION);
-            setMessage(`Please verify your email to continue. A code was sent to ${email}.`);
+            setMessage(`Please verify your email. Code sent to ${email}.`);
             break;
-  
+
           case LoginState.OWNER_APPROVAL_REQUIRED:
-            setMessage("Your account is pending admin approval.");
+            setMessage("Your account is pending approval.");
             break;
-  
+
           default:
             setError("Unexpected login response.");
-            break;
         }
       }
     } catch (err) {
       console.error(err);
-      setError("Something went wrong. Please try again.");
+      setError("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
-  
 
   return (
     <section className="login_page">
@@ -225,7 +216,6 @@ const LoginPage = () => {
                 <input
                   type="text"
                   placeholder="John"
-                  name="username"
                   value={username}
                   onChange={(e) => setUserName(e.target.value)}
                 />
@@ -237,8 +227,7 @@ const LoginPage = () => {
                 <label>Email</label>
                 <input
                   type="email"
-                  placeholder="john@gmail.com"
-                  name="email"
+                  placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -248,15 +237,10 @@ const LoginPage = () => {
             {mode === MODE.EMAIL_VERIFICATION && (
               <>
                 <div className="form_control">
-                  <label>We sent a code to:</label>
-                  <div className="verified-email">{email}</div>
-                </div>
-                <div className="form_control">
                   <label>Verification Code</label>
                   <input
                     type="text"
-                    placeholder="Enter the code"
-                    name="emailcode"
+                    placeholder="Enter code"
                     value={emailCode}
                     onChange={(e) => setEmailCode(e.target.value)}
                   />
@@ -270,8 +254,6 @@ const LoginPage = () => {
                 <input
                   type="password"
                   placeholder="Enter password"
-                  name="password"
-                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -284,7 +266,7 @@ const LoginPage = () => {
                   <label>New Password</label>
                   <input
                     type="password"
-                    placeholder="Enter new password"
+                    placeholder="New password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                   />
@@ -293,7 +275,7 @@ const LoginPage = () => {
                   <label>Confirm Password</label>
                   <input
                     type="password"
-                    placeholder="Confirm new password"
+                    placeholder="Confirm password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                   />

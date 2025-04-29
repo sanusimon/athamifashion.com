@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import AddQuantity from '../AddQuantity/AddQuantity';
 import DOMPurify from 'dompurify';
 

@@ -8,6 +8,7 @@ import AgeFilterHome from '@/Components/AgeFilterHome/AgeFilterHome'
 import Skeleton from '@/Components/Skeleton'
 import { Suspense } from 'react'
 import DiscountSection from '@/Components/DiscountSection/DiscountSection'
+import Positives from '@/Components/Positives/Positives'
 
 
 const HomePage = async() =>  {
@@ -15,6 +16,7 @@ const HomePage = async() =>  {
     <>
       {/* <Header/> */}
       <HomeBanner />
+      <Positives />
       <Categories />
       {/* <AgeFilterHome /> */}
       <section className="product_page home_product">

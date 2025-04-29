@@ -34,6 +34,7 @@ export const Cart = () => {
             if(redirectSession?.fullUrl){
                 window.location.href = redirectSession.fullUrl
             }
+            
         }
         catch(err){
             console.log(err)
@@ -205,8 +206,8 @@ export const Cart = () => {
                                     <label className='label'> Order Total</label>
                                     <span>
                                     ₹{cart.lineItems?.reduce((total, item) => {
-  return total + item.price.amount * item.quantity;
-}, 0).toFixed(2)}
+                                    return total + item.price.amount * item.quantity;
+                                    }, 0).toFixed(2)}
 
                                     </span>
 
@@ -215,8 +216,8 @@ export const Cart = () => {
                                     <label className='label'> <b>Net Payment</b></label>
                                     <span>
                                     ₹{cart.lineItems?.reduce((total, item) => {
-  return total + item.price.amount * item.quantity;
-}, 0).toFixed(2)}
+                                    return total + item.price.amount * item.quantity;
+                                    }, 0).toFixed(2)}
                                     </span>
                                 </div>
                                 <button onClick={handleCheckout} className={isLoading ? "cmnBtn disabled" : "cmnBtn"} disabled={isLoading}>Checkout</button>

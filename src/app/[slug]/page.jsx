@@ -40,7 +40,7 @@ const DetailPage = async ({ params }) => {
                             defaultImages={product.media?.items || []}
                             name={product.name}
                             description={product.description}
-                            price={product.price}
+                            price={product.priceData}
                             discount={product.discount}
                           />
                           

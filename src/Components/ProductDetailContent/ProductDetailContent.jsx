@@ -47,12 +47,12 @@ function ProductClientWrapper({ product }) {
             <label className="detail_title">{product.name}</label>
 
             <div className="price_area">
-              {product.price?.price === product.price?.discountedPrice ? (
-                <label className="detail_price">₹{product.price?.price}</label>
+              {product.priceData?.price === product.priceData?.discountedPrice ? (
+                <label className="detail_price">₹{product.priceData?.price}</label>
               ) : (
                 <div className="discount_sec">
-                  <label className="detail_price">₹{product.price?.discountedPrice}</label>
-                  <label className="detail_price line_throw">₹{product.price?.price}</label>
+                  <label className="detail_price">₹{product.priceData?.discountedPrice}</label>
+                  <label className="detail_price line_throw">₹{product.priceData?.price}</label>
                   <label className="persntge">{product.discount?.value}% OFF</label>
                 </div>
               )}

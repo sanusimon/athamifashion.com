@@ -16,8 +16,8 @@ export default function DiscountSection() {
       const discountMap = new Map();
 
       res.items.forEach((product) => {
-        const price = product.price?.price;
-        const discounted = product.price?.discountedPrice;
+        const price = product.priceData?.price;
+        const discounted = product.priceData?.discountedPrice;
 
         if (price && discounted && discounted < price) {
           const percent = Math.floor(((price - discounted) / price) * 100);

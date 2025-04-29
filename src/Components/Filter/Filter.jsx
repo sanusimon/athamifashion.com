@@ -29,42 +29,43 @@ const Filter = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const wixClient = await wixClientServer();
-
-      // Fetch categories
-      const cats = await wixClient.collections.queryCollections().find();
-      setCategories(cats.items);
-
-      // Fetch products to determine discount tiers and colors
-      const products = await wixClient.products.queryProducts().find();
-
-      const discountSet = new Set();
-      const colorSet = new Set(); // Set for colors
-
-      products.items.forEach((product) => {
-        const price = product.price?.price;
-        const discounted = product.price?.discountedPrice;
-
-        if (price && discounted && discounted < price) {
-          const percent = Math.floor(((price - discounted) / price) * 100);
-          if (percent >= 10) {
-            const rounded = Math.floor(percent / 10) * 10; // Round down to nearest 10
-            discountSet.add(rounded);
+      try {
+        const wixClient = await wixClientServer();
+    
+        const cats = await wixClient.collections.queryCollections().find();
+        setCategories(cats.items);
+    
+        const products = await wixClient.products.queryProducts().find();
+        const discountSet = new Set();
+        const colorSet = new Set();
+    
+        products.items.forEach((product) => {
+          const price = product.priceData?.price;
+          const discounted = product.priceData?.discountedPrice;
+          if (price && discounted && discounted < price) {
+            const discountPercent = Math.floor(((price - discounted) / price) * 100);
+        
+            // Ensure 100% discounts are correctly added to the set
+            if (discountPercent === 100) {
+              discountSet.add(100);
+            } else if (discountPercent < 100) {
+              discountSet.add(discountPercent);
+            }
           }
-        }
-
-        // Collect unique colors from product variants
-        product.variants.forEach((variant) => {
-          const color = variant.choices?.Color;
-          if (color) colorSet.add(color);
         });
-      });
-
-      const sortedDiscounts = Array.from(discountSet).sort((a, b) => a - b);
-      setAvailableDiscounts(sortedDiscounts);
-      setAvailableColors(Array.from(colorSet)); // Set available colors
+        
+    
+        setAvailableDiscounts(Array.from(discountSet).sort((a, b) => a - b));
+        setAvailableColors(Array.from(colorSet));
+      } catch (err) {
+        console.error("Failed to load filters from Wix:", err);
+        setAvailableDiscounts([]); // Fallback: no filter shown
+        setAvailableColors([]);
+      }
     };
-
+    
+    
+  
     fetchData();
   }, []);
 
@@ -73,20 +74,24 @@ const Filter = () => {
   };
 
   const handleCheckboxChange = (e, name) => {
-    const params = new URLSearchParams(searchParams);
-    const values = params.getAll(name);
+    const params = new URLSearchParams(searchParams.toString());
     const value = e.target.value;
-
+    const existingValues = params.getAll(name);
+  
     if (e.target.checked) {
-      params.append(name, value);
+      if (!existingValues.includes(value)) {
+        params.append(name, value);
+      }
     } else {
-      const newValues = values.filter((v) => v !== value);
+      const updatedValues = existingValues.filter((v) => v !== value);
       params.delete(name);
-      newValues.forEach((v) => params.append(name, v));
+      updatedValues.forEach((v) => params.append(name, v));
     }
-
+  
     replace(`${pathname}?${params.toString()}`);
   };
+  
+  
 
   const handleInputChange = (e) => {
     const params = new URLSearchParams(searchParams);
@@ -183,30 +188,32 @@ const Filter = () => {
 
         {/* Discount Filter */}
         {availableDiscounts.length > 0 && (
-          <div className="filter_group">
-            <h4
-              onClick={() => toggleAccordion("discount")}
-              className={`filtr_hd ${openAccordion === "discount" ? "active" : ""}`}
-            >
-              Discount {accordionOpen.discount ? "▾" : "▸"}
-            </h4>
+  <div className="filter_group">
+    <h4
+      onClick={() => toggleAccordion("discount")}
+      className={`filtr_hd ${openAccordion === "discount" ? "active" : ""}`}
+    >
+      Discount {accordionOpen.discount ? "▾" : "▸"}
+    </h4>
 
-            <div className={`filter_content ${openAccordion === "discount" ? "active" : ""}`}>
-              {availableDiscounts.map((percent) => (
-                <label key={percent}>
-                  <input
-                    type="checkbox"
-                    name="discount"
-                    value={percent}
-                    checked={selectedDiscounts.includes(percent.toString())}
-                    onChange={(e) => handleCheckboxChange(e, "discount")}
-                  />
-                  {percent}% or more
-                </label>
-              ))}
-            </div>
-          </div>
-        )}
+    <div className={`filter_content ${openAccordion === "discount" ? "active" : ""}`}>
+      {availableDiscounts.map((percent) => (
+        <label key={percent}>
+          <input
+            type="checkbox"
+            name="discount"
+            value={percent}
+            checked={selectedDiscounts.includes(percent.toString())}
+            onChange={(e) => handleCheckboxChange(e, "discount")}
+          />
+          {percent === 100 ? "100% OFF" : `${percent}% or more`}
+        </label>
+      ))}
+    </div>
+  </div>
+)}
+
+
 
         {/* Color Filter */}
         {availableColors.length > 0 && (
