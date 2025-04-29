@@ -3,5 +3,6 @@
   "/login/page": "app/login/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/list/page": "app/list/page.js",
-  "/[slug]/page": "app/[slug]/page.js"
+  "/[slug]/page": "app/[slug]/page.js",
+  "/_not-found/page": "app/_not-found/page.js"
 }
