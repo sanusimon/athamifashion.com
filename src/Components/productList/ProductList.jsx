@@ -181,7 +181,15 @@ export default function ProductList({ limit }) {
               <div className="btm_area">
                 <div className="name__">
                   <label className="cat_name">{product.name} - {choice.description}</label>
-                  <span dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.description) }} />
+                  {product.description &&
+                    product.description.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, "").trim() && (
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: DOMPurify.sanitize(product.description),
+                        }}
+                      />
+                  )}
+
                 </div>
                 <div className="var_price">
                                     <div className="variant">
@@ -239,7 +247,15 @@ export default function ProductList({ limit }) {
             <div className="btm_area">
               <div className="name__">
                 <label className="cat_name">{product.name}</label>
-                <span dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.description) }} />
+                {product.description &&
+                  product.description.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, "").trim() && (
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(product.description),
+                      }}
+                    />
+                )}
+
               </div>
               <div className="var_price">
                                     <div className="variant">

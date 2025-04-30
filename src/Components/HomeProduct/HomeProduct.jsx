@@ -121,9 +121,17 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
                                     <div className="btm_area">
                                     <div className="name__">
                                         <label className="cat_name">{product.name}</label>
-                                        {DOMPurifyRef.current && (
-                <span dangerouslySetInnerHTML={{ __html: DOMPurifyRef.current.sanitize(product.description) }}></span>
-              )}
+                                        {DOMPurifyRef.current &&
+                                            product.description &&
+                                            product.description.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, "").trim() && (
+                                                <span
+                                                dangerouslySetInnerHTML={{
+                                                    __html: DOMPurifyRef.current.sanitize(product.description),
+                                                }}
+                                                ></span>
+                                            )}
+
+
                                     </div>
                                     <div className="var_price">
                                     <div className="variant">
