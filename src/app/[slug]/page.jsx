@@ -42,7 +42,11 @@ const DetailPage = async ({ params }) => {
                             description={product.description}
                             price={product.priceData}
                             discount={product.discount}
+                            additionalInfoSections={product.additionalInfoSections} // ✅ This is correct
                           />
+                          
+                          
+                          
                           
                         
                         ) : (
@@ -53,7 +57,9 @@ const DetailPage = async ({ params }) => {
                             />
                         )}
 
-                        <div className="additional_info">
+                        
+
+                        {/* <div className="additional_info">
                             {product.additionalInfoSections.map((section) => (
                                 <div className="info_sec" key={section.title}>
                                     <h3>{section.title}</h3>
@@ -64,7 +70,7 @@ const DetailPage = async ({ params }) => {
                                     />
                                 </div>
                             ))}
-                        </div>
+                        </div> */}
                    
                 </div>
             </div>

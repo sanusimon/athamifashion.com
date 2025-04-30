@@ -38,7 +38,7 @@ function AddQuantity({productId,variantId,stockNumber , isSelected}) {
   return (
     <div className='quant_cart'>
         <div className='quantity'>
-            <span className='cart_label_'>Choose Quantity</span>
+          <span className='cart_label_'>Choose Quantity</span>
             <span className='quantity_field'>
               <div>
                 <label className='qnty_btn minus' onClick={() => handleQuantity("d")} disabled={quantity === 1}>-</label>

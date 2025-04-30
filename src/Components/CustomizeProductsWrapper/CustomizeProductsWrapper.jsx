@@ -13,7 +13,8 @@ function CustomizeProductsWrapper({
     name,
     description,
     price,
-    discount
+    discount,
+    additionalInfoSections
   }) {
     const [selectedColor, setSelectedColor] = useState(null);    
 
@@ -41,6 +42,7 @@ function CustomizeProductsWrapper({
                 description={description}
                 price={price}
                 discount={discount}
+                additionalInfoSections={additionalInfoSections} 
                 />
             </div>
         </>

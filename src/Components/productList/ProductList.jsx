@@ -168,13 +168,12 @@ export default function ProductList({ limit }) {
                   {product.ribbon && <div className="ribbon_">{product.ribbon}</div>}
                                             {product.price?.price > product.price?.discountedPrice && (
                                             <div className="discount_percent">
-                                                {Math.floor(
-                                                ((product.price.price - product.price.discountedPrice) /
-                                                    product.price.price) *
-                                                    100
-                                                )}
-                                                % OFF
-                                            </div>
+                                            {Math.round(
+                                              ((product.price.price - product.price.discountedPrice) / product.price.price) * 100
+                                            )}
+                                            % OFF
+                                          </div>
+                                          
                                             )}
                 </div>
                 <button className="add_cart">Add to Cart</button>
@@ -227,13 +226,12 @@ export default function ProductList({ limit }) {
                 {product.ribbon && <div className="ribbon_">{product.ribbon}</div>}
                                             {product.price?.price > product.price?.discountedPrice && (
                                             <div className="discount_percent">
-                                                {Math.floor(
-                                                ((product.price.price - product.price.discountedPrice) /
-                                                    product.price.price) *
-                                                    100
-                                                )}
-                                                % OFF
-                                            </div>
+                                            {Math.round(
+                                              ((product.price.price - product.price.discountedPrice) / product.price.price) * 100
+                                            )}
+                                            % OFF
+                                          </div>
+                                          
                                             )}
               </div>
               <button className="add_cart">Add to Cart</button>

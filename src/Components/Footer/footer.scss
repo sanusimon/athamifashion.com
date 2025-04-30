@@ -1,0 +1,24 @@
+@use '../../app/variable' as *;
+.footer{
+    background-color: $light-grey;
+    margin-top: 50px;
+    .inner_{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        
+        .logo_{
+            width: 250px;
+        }
+        ul{
+            display: flex;
+            gap: 20px;
+            li{
+                font-weight: 500;
+                font-size: 12px;
+            }
+        }
+    }
+    
+}

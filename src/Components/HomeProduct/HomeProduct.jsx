@@ -107,7 +107,7 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
                                             {product.ribbon && <div className="ribbon_">{product.ribbon}</div>}
                                             {product.priceData?.price > product.priceData?.discountedPrice && (
                                             <div className="discount_percent">
-                                                {Math.floor(
+                                                {Math.round(
                                                 ((product.priceData.price - product.priceData.discountedPrice) /
                                                     product.priceData.price) *
                                                     100

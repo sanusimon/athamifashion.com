@@ -43,7 +43,7 @@ const Filter = () => {
           const price = product.priceData?.price;
           const discounted = product.priceData?.discountedPrice;
           if (price && discounted && discounted < price) {
-            const discountPercent = Math.floor(((price - discounted) / price) * 100);
+            const discountPercent = Math.round(((price - discounted) / price) * 100);
         
             // Ensure 100% discounts are correctly added to the set
             if (discountPercent === 100) {
@@ -52,6 +52,14 @@ const Filter = () => {
               discountSet.add(discountPercent);
             }
           }
+          // ✅ Add this block to populate colorSet
+          product.variants?.forEach((variant) => {
+            const color = variant.choices?.Color;
+            if (color) {
+              colorSet.add(color);
+            }
+          });
+
         });
         
     

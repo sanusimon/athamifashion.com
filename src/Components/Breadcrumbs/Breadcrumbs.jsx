@@ -53,6 +53,8 @@ const Breadcrumbs = ({ product }) => {
     breadcrumbItems.push({ name: "Cart", path: "/cart" });
   } else if (pathname === "/login") {
     breadcrumbItems.push({ name: "Login", path: "/login" });
+  } else if (pathname === "/refund-policy") {
+    breadcrumbItems.push({ name: "Refund-policy", path: "/refund-policy" });
   }
 
   // Categories for product list

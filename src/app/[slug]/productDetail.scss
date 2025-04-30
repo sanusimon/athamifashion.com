@@ -130,6 +130,7 @@
             
             
             .additional_info{
+                margin-top: 30px;
                 .info_sec{
                     margin-bottom: 30px;
                     line-height: 1.5;
@@ -140,6 +141,7 @@
     }
 }
 table{
+    width: 100%;
     td,th{
         border: 1px solid $border-color;
         padding: 5px 10px;
@@ -155,5 +157,31 @@ table{
 body:has(section.product_detail) {
     .breadcrumbs{
         display:none
+    }
+}
+.positive_sec{
+    a{
+        font-weight: 700;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: flex-end;
+    }
+    .our_positives {
+        padding: 20px 0;
+        background-color: $light-grey;
+        ul{
+            justify-content: space-between;
+            gap: 20px;
+            li {
+                width: 28%;
+                img{
+                    width: 50px;
+                }
+                span{
+                    font-size: 12px;
+                    width: auto;
+                }
+            }
+        }
     }
 }

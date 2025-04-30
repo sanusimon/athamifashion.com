@@ -3,6 +3,8 @@
 import React, { Suspense, useEffect, useState } from 'react';
 import AddQuantity from '../AddQuantity/AddQuantity';
 import DOMPurify from 'dompurify';
+import Positives from '../Positives/Positives';
+import Link from 'next/link';
 
 function CustomizeProducts({
     productId,
@@ -12,7 +14,8 @@ function CustomizeProducts({
     name,
     price,
     discount,
-    description
+    description,
+    additionalInfoSections
 }) {
     const [selectOptions, setSelectOptions] = useState({});
     const [selectVariant, setSelectVariant] = useState(null);
@@ -70,8 +73,8 @@ function CustomizeProducts({
                         <label className="detail_price">₹{price?.price}</label>
                     ) : (
                         <div className="discount_sec">
-                            <label className="detail_price">₹{price?.discountedPrice}</label>
-                            <label className="detail_price line_throw">₹{price?.price}</label>
+                            <label className="detail_price">₹{Math.floor(price?.discountedPrice)}</label>
+                            <label className="detail_price line_throw">₹{Math.floor(price?.price)}</label>
                             <label className="persntge">{discount?.value}% OFF</label>
                         </div>
                     )}
@@ -124,6 +127,26 @@ function CustomizeProducts({
                     stockNumber={selectVariant?.stock?.quantity ?? 0}
                     isSelected={Object.keys(selectOptions).length === productOptions.length}
                 />
+                <div className='positive_sec'>
+                    <Link href="refund-policy"> Refund Policy</Link>
+                    <Positives />
+                </div>
+
+                {additionalInfoSections && additionalInfoSections.length > 0 && (
+                    <div className="additional_info">
+                        {additionalInfoSections.map((section) => (
+                            <div className="info_sec" key={section.title}>
+                                <h3>{section.title}</h3>
+                                <div
+                                    dangerouslySetInnerHTML={{
+                                        __html: DOMPurify.sanitize(section.description),
+                                    }}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                )}
+                
                 {/* REVIEWS */}
                  
                     
