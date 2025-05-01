@@ -6,14 +6,16 @@ import { media as wixMedia } from "@wix/sdk";
 
 // Fetch the order details inside the component
 const OrderPage = async ({ params }) => {
-  const { id } = await params; // Wait for params to resolve before accessing `id`
+  const { id } = params; // Wait for params to resolve before accessing `id`
 
   // Fetch order details
   const wixClient = await wixClientServer();
   let order;
 
+
   try {
     order = await wixClient.orders.getOrder(id); // Fetch the order details
+    console.log(order)
   } catch (err) {
     return notFound(); // Return notFound if there is an error
   }

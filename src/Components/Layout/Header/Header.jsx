@@ -157,9 +157,9 @@ const Header = () => {
                 <div ref={menuBtnRef}
                 onClick={() => setOpenMenu((prev) => !prev)}
                 className={`hamburger is-lg ${openMenu ? "close_menu" : ""}`}>
-                  <span class="hamburger-line"></span>
-                  <span class="hamburger-line"></span>
-                  <span class="hamburger-line"></span>
+                  <span className="hamburger-line"></span>
+                  <span className="hamburger-line"></span>
+                  <span className="hamburger-line"></span>
                 </div>
               </button>
               <ul ref={menuRef} className={`menu-dropdown ${openMenu ? "open" : ""}`}>
@@ -181,7 +181,7 @@ const Header = () => {
           </div>
 
           <div className="right_sec">
-            <Link href="/"><img src="/home-icon.png" /></Link>
+            <Link className="mob_home" href="/"><img src="/home-icon.png" /></Link>
             <button
               ref={searchBtnRef}
               onClick={() => setOpenSearch((prev) => !prev)}

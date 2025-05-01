@@ -28,7 +28,7 @@ export const Cart = () => {
                 ecomCheckout:{checkoutId:checkout.checkoutId},
                 callbacks:{
                     postFlowUrl: window.location.origin,
-                    thankyouPage: `${window.location.origin}/success`
+                    thankyouPage: `${window.location.origin}/success?orderId=${checkout.orderId}`
                 }
             });
             if(redirectSession?.fullUrl){

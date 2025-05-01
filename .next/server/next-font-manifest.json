@@ -17,6 +17,18 @@
     ],
     "[project]/src/app/refund-policy/page": [
       "static/media/92zatBhPNqw73oTd4jQmfxI-s.p.ba172912.woff2"
+    ],
+    "[project]/src/app/cart/page": [
+      "static/media/92zatBhPNqw73oTd4jQmfxI-s.p.ba172912.woff2"
+    ],
+    "[project]/src/app/orders/page": [
+      "static/media/92zatBhPNqw73oTd4jQmfxI-s.p.ba172912.woff2"
+    ],
+    "[project]/src/app/success/page": [
+      "static/media/92zatBhPNqw73oTd4jQmfxI-s.p.ba172912.woff2"
+    ],
+    "[project]/src/app/orders/[id]/page": [
+      "static/media/92zatBhPNqw73oTd4jQmfxI-s.p.ba172912.woff2"
     ]
   },
   "appUsingSizeAdjust": true,
