@@ -2,7 +2,7 @@
 
 import React, { Suspense, useEffect, useState } from 'react';
 import AddQuantity from '../AddQuantity/AddQuantity';
-import DOMPurify from 'dompurify';
+import DOMPurify from "isomorphic-dompurify";
 import Positives from '../Positives/Positives';
 import Link from 'next/link';
 
@@ -136,7 +136,7 @@ function CustomizeProducts({
                     <div className="additional_info">
                         {additionalInfoSections.map((section) => (
                             <div className="info_sec" key={section.title}>
-                                <h3>{section.title}</h3>
+                                <span className='cart_label_'>Size Chart</span>
                                 <div
                                     dangerouslySetInnerHTML={{
                                         __html: DOMPurify.sanitize(section.description),

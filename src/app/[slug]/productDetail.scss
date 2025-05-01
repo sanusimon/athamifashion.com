@@ -172,8 +172,16 @@ body:has(section.product_detail) {
         ul{
             justify-content: space-between;
             gap: 20px;
+            @media only screen and (max-width: 767px) {
+                align-items: flex-start
+            }
             li {
                 width: 28%;
+                @media only screen and (max-width: 767px) {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+
                 img{
                     width: 50px;
                 }

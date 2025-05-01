@@ -152,13 +152,20 @@ const Header = () => {
             </div>
             <div className="navigation">
               <button
-                ref={menuBtnRef}
-                onClick={() => setOpenMenu((prev) => !prev)}
-                className={`menu_btn ${openMenu ? "close_menu" : ""}`}
+                
               >
-                {openMenu ? "Close" : "Menu"}
+                <div ref={menuBtnRef}
+                onClick={() => setOpenMenu((prev) => !prev)}
+                className={`hamburger is-lg ${openMenu ? "close_menu" : ""}`}>
+                  <span class="hamburger-line"></span>
+                  <span class="hamburger-line"></span>
+                  <span class="hamburger-line"></span>
+                </div>
               </button>
               <ul ref={menuRef} className={`menu-dropdown ${openMenu ? "open" : ""}`}>
+              <li className={`item ${!selectedCategory ? "active" : ""}`}>
+                <Link href="/" onClick={() => setOpenMenu(false)}>Home</Link>
+              </li>
                 {cats.map((category) => (
                   <li
                     key={category.slug}
@@ -174,6 +181,7 @@ const Header = () => {
           </div>
 
           <div className="right_sec">
+            <Link href="/"><img src="/home-icon.png" /></Link>
             <button
               ref={searchBtnRef}
               onClick={() => setOpenSearch((prev) => !prev)}
