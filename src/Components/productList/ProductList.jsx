@@ -166,15 +166,15 @@ export default function ProductList({ limit }) {
                 <div className="img_wrap">
                   <img src={colorImage} alt={`${product.name} - ${choice.description}`} />
                   {product.ribbon && <div className="ribbon_">{product.ribbon}</div>}
-                                            {product.price?.price > product.price?.discountedPrice && (
-                                            <div className="discount_percent">
-                                            {Math.round(
-                                              ((product.price.price - product.price.discountedPrice) / product.price.price) * 100
-                                            )}
-                                            % OFF
-                                          </div>
-                                          
-                                            )}
+                            {product.price?.price > product.price?.discountedPrice && (
+                            <div className="discount_percent">
+                            {Math.round(
+                              ((product.price.price - product.price.discountedPrice) / product.price.price) * 100
+                            )}
+                            % OFF
+                          </div>
+                          
+                            )}
                 </div>
                 <button className="add_cart">Add to Cart</button>
               </div>

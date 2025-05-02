@@ -19,28 +19,31 @@ export const Cart = () => {
     const wixClient = useWixClient()
     const {cart , isLoading , removeItem ,updateQuantity } = useCartStore();
 
-    const handleCheckout = async () =>{
-        try{
-            const checkout = await wixClient.currentCart.createCheckoutFromCurrentCart({
-                channelType:currentCart.ChannelType.WEB,
-            });
-            const {redirectSession} = await wixClient.redirects.createRedirectSession({
-                ecomCheckout:{checkoutId:checkout.checkoutId},
-                callbacks:{
-                    postFlowUrl: window.location.origin,
-                    thankyouPage: `${window.location.origin}/success?orderId=${checkout.orderId}`
-                }
-            });
-            if(redirectSession?.fullUrl){
-                window.location.href = redirectSession.fullUrl
-            }
-            
+    const handleCheckout = async () => {
+        try {
+          const checkout = await wixClient.currentCart.createCheckoutFromCurrentCart({
+            channelType: currentCart.ChannelType.WEB,
+          });
+      
+          const { redirectSession } = await wixClient.redirects.createRedirectSession({
+            ecomCheckout: { checkoutId: checkout.checkoutId },
+            headlessExternalUrls: {
+              home: `${window.location.origin}`,
+            },
+            callbacks: {
+              // ✅ Dynamically include orderId in thankyouPage URL
+              thankyouPage: `${window.location.origin}/success?orderId=${checkout.orderId}`,
+            },
+          });
+      
+          if (redirectSession?.fullUrl) {
+            window.location.href = redirectSession.fullUrl;
+          }
+        } catch (err) {
+          console.log("Checkout error:", err);
         }
-        catch(err){
-            console.log(err)
-        }
-        
-    }
+      };
+      
     
 
     // Function to calculate total discount
@@ -61,7 +64,7 @@ export const Cart = () => {
         }
       };
       if (isLoading) {
-        return <div className='container text-center'><p>Loading your cart...</p></div>;
+        return <div className='container text-center empty_page'><p>Loading your cart...</p></div>;
       }
     
       if (!cart || cart.length === 0) {
@@ -79,7 +82,7 @@ export const Cart = () => {
                     {
                     // isLoading ? ("Loading..." ): 
                     !cart.lineItems || cart.lineItems.length === 0 ? (
-                        <div className="text-center text-gray-500 mt-8">Cart is Empty</div>
+                        <div className="text-center text-gray-500 mt-8 empty_page">Cart is Empty</div>
                         ) : (
                         <div className='inner_'>
                             <div>
@@ -100,7 +103,12 @@ export const Cart = () => {
                                                     <div className='for_mob'>
                                                         <Link href={`/${productSlug}`}>
                                                             <h2 className='cat_name'>{item.productName.original}</h2>
-                                                            <span className='status_'>{item.availability.status}</span>
+                                                            <span className='status_'>
+                                                                {item.availability.status === "IN_STOCK" && "In Stock"}
+                                                                {item.availability.status === "OUT_OF_STOCK" && "Out of Stock"}
+                                                                {item.availability.status === "PARTIALLY_AVAILABLE" && "Only a few left!"}
+                                                            </span>
+
                                                         </Link>
                                                     </div>
                                                 </div>
@@ -110,7 +118,11 @@ export const Cart = () => {
                                                 
                                                     <Link href={`/${productSlug}`}>
                                                         <h2 className='cat_name'>{item.productName.original}</h2>
-                                                        <span className='status_'>{item.availability.status}</span>
+                                                        <span className='status_'>
+                                                            {item.availability.status === "IN_STOCK" && "In Stock"}
+                                                            {item.availability.status === "OUT_OF_STOCK" && "Out of Stock"}
+                                                            {item.availability.status === "PARTIALLY_AVAILABLE" && "Only a few left!"}
+                                                        </span>
                                                     </Link>
                                                         
                                                     </div>

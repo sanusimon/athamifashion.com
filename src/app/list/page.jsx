@@ -38,8 +38,10 @@ const List = () => {
   return (
     <section className="product_page inner_product">
       <div className="container">
-        <Sort />
-        <Breadcrumbs categoryName={cat?.collection?.name} />
+        <div className="top_bread">
+          <Breadcrumbs categoryName={cat?.collection?.name} />
+          <Sort />
+        </div>
         <div className="inner_">
           <Filter />
           <Suspense fallback={<Skeleton />}>

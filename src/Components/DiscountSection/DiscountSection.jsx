@@ -5,11 +5,11 @@ import Link from "next/link";
 import "./DiscountSection.scss";
 
 export default function DiscountSection() {
-  const discountValue = 10; // Set the static discount value
+  const discountValue = 5; // Set the static discount value
   const imgPath = `/discountimg.jpg`;
   // const imgPath2 = `/discountimg.jpg`;
 
-  const discountText = "Unveiling This Season's<br><span>Fashion Trends</span>";
+  const discountText = "Limited Time Offers – <br/>Fashion You Love, Prices You'll Adore</span>";
   // const discountText2 = "Now’s the Time<br><span>To Upgrade Your Wardrobe</span>";
 
   return (

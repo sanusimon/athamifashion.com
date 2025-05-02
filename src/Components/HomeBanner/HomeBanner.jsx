@@ -40,11 +40,11 @@ const HomeBanner = () => {
   }, []);
 
   const imgArray = [
-    { imgPath: "/banner1.jpg", bannerText:"	Unveiling This Season's<br> <span> Fashion</span>", id: "img1", categorySlug: cats[0]?.slug || "all-products" },
-    { imgPath: "/banner2.jpg",bannerText:"Epitome of the Big<br> <span>Sweater</span>", id: "img2", categorySlug: cats[1]?.slug || "all-products" },
-    { imgPath: "/banner3.jpg",bannerText:"Unveiling This Season's<br> <span> Fashion</span>", id: "This Is A<br> Long Open<br> <span>Robe</span>", categorySlug: cats[2]?.slug || "all-products" },
-    { imgPath: "/banner4.jpg",bannerText:"Epitome of the Big<br> <span>Sweater</span>", id: "img4", categorySlug: cats[3]?.slug || "all-products" },
-    { imgPath: "/banner5.jpg",bannerText:"This Is A Long Open<br> <span>Robe</span>", id: "img5", categorySlug: cats[4]?.slug || "all-products" },
+    { imgPath: "/banner1.jpg", bannerText:"	Coord Sets That Define Effortless <br> <span> Style</span>", id: "img1", categorySlug: cats[0]?.slug || "all-products" },
+    { imgPath: "/banner2.jpg",bannerText:"Kurtis for the Modern <br> <span>Muse</span>", id: "img2", categorySlug: cats[1]?.slug || "all-products" },
+    { imgPath: "/banner3.jpg",bannerText:"Dresses That Make Every Moment <br> <span> Stylish</span>", id: "This Is A<br> Long Open<br> <span>Robe</span>", categorySlug: cats[2]?.slug || "all-products" },
+    { imgPath: "/banner4.jpg",bannerText:"Short Tops, Big Style  <br> <span>Statements</span>", id: "img4", categorySlug: cats[3]?.slug || "all-products" },
+    { imgPath: "/banner5.jpg",bannerText:"Sarees That Speak Grace and  <br> <span>Glamour</span>", id: "img5", categorySlug: cats[4]?.slug || "all-products" },
   ];
 
   return (

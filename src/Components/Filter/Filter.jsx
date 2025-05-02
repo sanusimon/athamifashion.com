@@ -233,7 +233,7 @@ const Filter = () => {
               Color {accordionOpen.color ? "▾" : "▸"}
             </h4>
 
-            <div className={`filter_content ${openAccordion === "color" ? "active" : ""}`}>
+            <div className={`filter_content color_ ${openAccordion === "color" ? "active" : ""}`}>
               {availableColors.map((color, index) => (
                 <label key={index}>
                   <input
@@ -247,7 +247,7 @@ const Filter = () => {
                     className="color_box"
                     style={{ backgroundColor: color }}
                   ></span>
-                  {color}
+                  
                 </label>
               ))}
             </div>

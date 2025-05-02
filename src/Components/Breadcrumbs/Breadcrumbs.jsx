@@ -55,6 +55,8 @@ const Breadcrumbs = ({ product }) => {
     breadcrumbItems.push({ name: "Login", path: "/login" });
   } else if (pathname === "/refund-policy") {
     breadcrumbItems.push({ name: "Refund-policy", path: "/refund-policy" });
+  } else if (pathname === "/contact") {
+    breadcrumbItems.push({ name: "Contact", path: "/contact" });
   }
 
   // Categories for product list

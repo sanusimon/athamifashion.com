@@ -54,12 +54,21 @@
                 
                 &.size_{
                 flex-wrap: wrap;
+                flex-direction: row;
                 >div{
                     display: flex;
                     gap: 20px;
                     flex-wrap: wrap;
                 }
-            }
+                }
+                &.color_{
+                    .color_box{
+                        width: 12px;
+                        height: 12px;
+                        border-radius: 50%;
+                        display: inline-block;
+                    }
+                }
             }
             
             h4{
@@ -136,8 +145,8 @@
 }
 .sort_{
     display: flex;
-    justify-content: flex-end;
     gap: 5px;
+    align-items: center;
 }
 @media only screen and (max-width: 767px) {
     .filter_btn{
@@ -188,4 +197,10 @@
         }
     }
    
+}
+
+
+.top_bread{
+    display: flex;
+    justify-content: space-between;
 }

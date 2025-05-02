@@ -1,11 +1,14 @@
 import React from 'react'
 import "./refund.scss"
+import InnerBanner from '@/Components/InnerBanner/InnerBanner'
 
 function Refund() {
   return (
+    <>
+    <InnerBanner title="Return & Refund Policy" img="./refund.jpg" />
     <section className="policy-section">
         <div className="container">
-        <h1 className='title'>Return & Refund Policy</h1>
+        
     
         <p>
             At <strong>athamifashion</strong>, we are committed to delivering high-quality products and thoroughly quality-check each item before dispatch. However, we understand that issues may arise. Please review our return and refund policy below.
@@ -84,13 +87,13 @@ function Refund() {
         </p>
         <ul>
             <li>Email: <a href="mailto:athamifashion@gmail.com">athamifashion@gmail.com</a></li>
-            <li>Phone: +91-9946774852 (Mon – Sat, 10:00 AM – 6:00 PM)</li>
+            <li>Phone: <a href="tel:9946774852"> +91 9946774852 </a> (Mon – Sat, 10:00 AM – 6:00 PM)</li>
         </ul>
     
         <p>We appreciate your understanding and will do our best to assist you!</p>
         </div>
     </section>
-  
+    </>
   )
 }
 

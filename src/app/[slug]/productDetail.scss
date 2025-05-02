@@ -193,3 +193,13 @@ body:has(section.product_detail) {
         }
     }
 }
+.related_products{
+    margin-top: 100px;
+    padding-top: 50px;
+    border-top: 1px solid $border-color;
+    .product_list{
+        li{
+            width: 25%;
+        }
+    }
+}

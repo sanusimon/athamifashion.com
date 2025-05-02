@@ -45,6 +45,7 @@ const Footer = () => {
                 </li>
               ))}
               <li><Link href="refund-policy"> Refund Policy</Link></li>
+              <li><Link href="contact"> Contact us</Link></li>
             </ul>
           </div>
           <div className="footer_social">

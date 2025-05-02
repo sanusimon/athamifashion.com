@@ -1,0 +1,10 @@
+.contact_sec{
+    .inner_{
+        display: flex;
+        gap: 50px;
+        align-items: center;
+        >div{
+            flex: 1;
+        }
+    }
+}
