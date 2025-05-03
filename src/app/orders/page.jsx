@@ -41,7 +41,7 @@ const Order = async () => {
       filter: { "buyerInfo.contactId": { $eq: user.member.contactId } },
     },
   });
-// console.log(orderRes)
+
   return (
     <div className="common_page">
       <div className="container">

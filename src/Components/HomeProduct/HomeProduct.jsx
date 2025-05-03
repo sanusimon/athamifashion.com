@@ -64,6 +64,7 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
     if (!products.length) {
         return <div className="container">No products found for this category.</div>;
     }
+    console.log(products)
     
 
     return (
@@ -104,7 +105,12 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
                                     <div className="top_area">
                                         <div className="img_wrap">
                                             <img src={product.media?.items[0]?.image?.url} alt={product.name} />
-                                            {product.ribbon && <div className="ribbon_">{product.ribbon}</div>}
+                                            {product.stock?.inventoryStatus === "OUT_OF_STOCK" ? (
+                                                <div className="ribbon_ sold_out">Sold Out</div>
+                                                ) : (
+                                                product.ribbon && <div className="ribbon_">{product.ribbon}</div>
+                                                )}
+
                                             {product.priceData?.price > product.priceData?.discountedPrice && (
                                             <div className="discount_percent">
                                                 {Math.round(

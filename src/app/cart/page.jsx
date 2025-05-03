@@ -70,8 +70,7 @@ export const Cart = () => {
       if (!cart || cart.length === 0) {
         return <div className='container text-center'><p>Your cart is empty..</p></div>;
       }
-      console.log("lineitem" , cart.lineItems)
-      console.log("normal" , cart)
+      
       
 
 

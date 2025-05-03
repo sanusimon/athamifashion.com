@@ -143,7 +143,7 @@ export default function ProductList({ limit }) {
 
   if (loading) return <div>Loading products...</div>;
   if (products.length === 0) return <div>No products found.</div>;
-  console.log(products)
+  
   return (
     <>
       <ul className="product_list">
@@ -165,16 +165,20 @@ export default function ProductList({ limit }) {
               <div className="top_area">
                 <div className="img_wrap">
                   <img src={colorImage} alt={`${product.name} - ${choice.description}`} />
-                  {product.ribbon && <div className="ribbon_">{product.ribbon}</div>}
-                            {product.price?.price > product.price?.discountedPrice && (
-                            <div className="discount_percent">
-                            {Math.round(
-                              ((product.price.price - product.price.discountedPrice) / product.price.price) * 100
-                            )}
-                            % OFF
-                          </div>
-                          
-                            )}
+                  {product.stock?.inventoryStatus === "OUT_OF_STOCK" ? (
+                    <div className="ribbon_ sold_out">Sold Out</div>
+                    ) : (
+                    product.ribbon && <div className="ribbon_">{product.ribbon}</div>
+                    )}
+                    {product.price?.price > product.price?.discountedPrice && (
+                    <div className="discount_percent">
+                    {Math.round(
+                      ((product.price.price - product.price.discountedPrice) / product.price.price) * 100
+                    )}
+                    % OFF
+                  </div>
+                  
+                    )}
                 </div>
                 <button className="add_cart">Add to Cart</button>
               </div>
@@ -231,16 +235,20 @@ export default function ProductList({ limit }) {
             <div className="top_area">
               <div className="img_wrap">
                 <img src={defaultImage} alt={product.name} />
-                {product.ribbon && <div className="ribbon_">{product.ribbon}</div>}
-                                            {product.price?.price > product.price?.discountedPrice && (
-                                            <div className="discount_percent">
-                                            {Math.round(
-                                              ((product.price.price - product.price.discountedPrice) / product.price.price) * 100
-                                            )}
-                                            % OFF
-                                          </div>
-                                          
-                                            )}
+                {product.stock?.inventoryStatus === "OUT_OF_STOCK" ? (
+                    <div className="ribbon_ sold_out">Sold Out</div>
+                    ) : (
+                    product.ribbon && <div className="ribbon_">{product.ribbon}</div>
+                    )}
+                {product.price?.price > product.price?.discountedPrice && (
+                <div className="discount_percent">
+                {Math.round(
+                  ((product.price.price - product.price.discountedPrice) / product.price.price) * 100
+                )}
+                % OFF
+              </div>
+              
+                )}
               </div>
               <button className="add_cart">Add to Cart</button>
             </div>

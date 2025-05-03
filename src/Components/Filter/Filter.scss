@@ -1,8 +1,6 @@
 @use "../../app/variable" as *;
 
 .filter_area{
-    overflow: auto;
-    max-height: calc(100vh - 260px);
     padding-right: 20px;
     @media only screen and (max-width: 767px) {
         display: none;
@@ -15,6 +13,10 @@
         top: 20px;
         @media only screen and (max-width: 767px) {
             position: static;
+        }
+        .over_flow{
+            overflow: auto;
+            max-height: calc(100vh - 100px);
         }
         .filter_group{
             .filtr_hd{
@@ -153,7 +155,9 @@
         display: none;
     }
     .product-list-page .filter_btn {
-        display: block;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 }
 

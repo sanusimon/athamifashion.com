@@ -529,6 +529,10 @@ input{
     padding: 5px;
     color: $color-white;
     z-index: 1;
+    border-top-left-radius: 10px;
+    &.sold_out{
+        background-color: #B0B0B0;
+    }
 }
 .discount_percent{
     position: absolute;

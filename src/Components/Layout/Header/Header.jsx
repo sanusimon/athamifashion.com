@@ -181,7 +181,7 @@ const Header = () => {
           </div>
 
           <div className="right_sec">
-            <Link className="mob_home" href="/"><img src="/home-icon.png" /></Link>
+            <Link className="mob_home" href="/"><img src="/home-icon.png" /><span>Home</span></Link>
             <button
               ref={searchBtnRef}
               onClick={() => setOpenSearch((prev) => !prev)}
@@ -221,6 +221,7 @@ const Header = () => {
                 className={`filter_btn ${openFilter ? "close_filter" : ""}`}
               >
                 <Image src="/filter.png" alt="filter" width={16} height={16} />
+                <span>Filter</span>
               </button>
             </div>
           </div>

@@ -200,6 +200,9 @@ body:has(section.product_detail) {
     .product_list{
         li{
             width: 25%;
+            @media only screen and (max-width: 767px) {
+                width: 50%;
+            }
         }
     }
 }

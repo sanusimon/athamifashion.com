@@ -15,7 +15,7 @@ const OrderPage = async ({ params }) => {
 
   try {
     order = await wixClient.orders.getOrder(id); // Fetch the order details
-    console.log(order)
+    
   } catch (err) {
     return notFound(); // Return notFound if there is an error
   }

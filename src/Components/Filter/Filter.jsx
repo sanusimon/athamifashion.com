@@ -117,6 +117,7 @@ const Filter = () => {
   return (
     <div className="filter_area">
       <div className="sticky_">
+        <div className="over_flow">
         {/* Categories Filter */}
         <div className="filter_group">
           <h4
@@ -264,6 +265,7 @@ const Filter = () => {
         >
           Clear All Filters <span><img src="/close.png" alt="Clear" /></span>
         </button>
+        </div>
       </div>
     </div>
   );
