@@ -182,6 +182,8 @@ const Header = () => {
 
           <div className="right_sec">
             <Link className="mob_home" href="/"><img src="/home-icon.png" /><span>Home</span></Link>
+            <Link className="mob_home shop_" href="/list"><img src="/shopping-store.png" /><span>Shop</span></Link>
+
             <button
               ref={searchBtnRef}
               onClick={() => setOpenSearch((prev) => !prev)}
@@ -196,7 +198,7 @@ const Header = () => {
 
             <div className="pro_cart">
               <div className="profile" onClick={handleProfile} ref={profileBtnRef}>
-                <span className="ml-2"> {nickname || "Login"}</span>
+                <span className="ml-2 pro_txt"> {nickname || "Login"}</span>
                 <Image src="/user.png" alt="user" width={16} height={16} />
                 {isProfileOpen && (
                   <div
@@ -214,6 +216,7 @@ const Header = () => {
               <Link href="/cart" className="cart">
                 <Image src="/shopping-cart.png" alt="cart" width={16} height={16} />
                 <span className="count">{counter}</span>
+                <span className="cart_txt">Cart</span>
               </Link>
               <button
                 ref={filterBtnRef}

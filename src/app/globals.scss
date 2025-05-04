@@ -322,6 +322,12 @@ input{
             position: absolute;
             right: 120px;
             top: -40px;
+            @media only screen and (max-width: 767px) {
+                top: auto;
+                bottom: 10px;
+                right: 0;
+                left: auto;
+            }
             .swiper-button-next,.swiper-button-prev{
                 background-color: $bg-pink;
                 border-radius: 50%;
@@ -373,9 +379,9 @@ input{
             width: 15px;
             height: 15px;
             border-radius: 50%;
-            margin: 10px auto;
             padding: 0;
             display: block;
+            
         }
         @media only screen and (max-width: 767px) {
             flex-direction: column;

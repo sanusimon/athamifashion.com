@@ -206,6 +206,9 @@
                 display: flex;
                 position: relative;
                 cursor: pointer;
+                @media only screen and (max-width: 767px) {
+                    flex-direction: column;
+                }
                 .count{
                     position: absolute;
                     bottom: -5px;
@@ -219,6 +222,16 @@
                     align-items: center;
                     justify-content: center;
                     font-size: 12px;
+                    @media only screen and (max-width: 767px) {
+                        bottom: 20px;
+                        right: -5px;
+                    }
+                }
+                .cart_txt{
+                    display: none;
+                    @media only screen and (max-width: 767px) {
+                        display: block;
+                    }
                 }
             }
             .profile{
@@ -227,6 +240,12 @@
                 gap: 10px;
                 cursor: pointer;
                 position: relative;
+                .pro_txt{
+                    max-width: 80px;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                }
                 @media only screen and (max-width: 767px) {
                     display: flex;
                     flex-direction: column;
@@ -234,7 +253,7 @@
                     img{
                         order: 1;
                     }
-                    span{
+                    .pro_txt{
                         order: 2;
                     }
                 }
