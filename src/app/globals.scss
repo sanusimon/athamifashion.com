@@ -73,7 +73,7 @@ ul.product_list{
     flex-wrap: wrap;
     gap: 2%;
     li{
-        width: 32%;
+        width: 23%;
         margin-bottom: 20px;
         @media only screen and (max-width: 767px) {
             width: 49%;
@@ -245,7 +245,7 @@ input{
     border-radius: 5px;
 }
 .cat_name{
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     margin: 10px 0;
     display: block;
     font-weight: 600;
@@ -368,6 +368,7 @@ input{
     .var_price{
         display: flex;
         justify-content: space-between;
+        flex-wrap: wrap;
         .pro_clr{
             width: 15px;
             height: 15px;

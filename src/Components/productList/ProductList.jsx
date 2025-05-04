@@ -196,19 +196,20 @@ export default function ProductList({ limit }) {
 
                 </div>
                 <div className="var_price">
-                                    <div className="variant">
-                                    {product.variants?.map((variant, vIndex) => (
-                                    <div
-                                        key={vIndex}
-                                        className={variant.stock.quantity === 0 ? "disabled" : ""}
-                                    >
-                                        <span>{variant.choices.Size}</span>
-                                        {variant.choices.Color && 
-                                            <span className="pro_clr" style={{ backgroundColor: variant.choices.Color }}></span>
-                                        }
-                                    </div>
-                                    ))}
-                                </div>
+                <div className="variant">
+  {[...new Set(
+    product.variants
+      ?.filter(v => v.stock.quantity > 0 && v.choices.Color)
+      .map(v => v.choices.Color)
+  )].map((color, index) => (
+    <span
+      key={index}
+      className="pro_clr"
+      style={{ backgroundColor: color }}
+    ></span>
+  ))}
+</div>
+
                                         <div className="price_area">
                                             {product.price?.price === product.price?.discountedPrice ? (
                                                 <label className="cat_price">₹{Math.floor(product.price?.price)}</label>
@@ -266,25 +267,20 @@ export default function ProductList({ limit }) {
 
               </div>
               <div className="var_price">
-                                    <div className="variant">
-                                    {product.variants?.map((variant, vIndex) => (
-                                    <div
-                                        key={vIndex}
-                                        className={variant.stock.quantity === 0 ? "disabled" : ""}
-                                    >
-                                        <span>{variant.choices.Size}</span>
-                                        {variant.choices.Color && 
-                                            <span className="pro_clr" style={{ backgroundColor: variant.choices.Color }}></span>
-                                        }
-                                        {/* {Object.entries(variant.choices || {}).map(
-                                        
-                                        ([key, value]) => (
-                                            <span key={key}>{value}</span>
-                                        )
-                                        )} */}
-                                    </div>
-                                    ))}
-                                </div>
+              <div className="variant">
+                {[...new Set(
+                  product.variants
+                    ?.filter(v => v.stock.quantity > 0 && v.choices.Color)
+                    .map(v => v.choices.Color)
+                )].map((color, index) => (
+                  <span
+                    key={index}
+                    className="pro_clr"
+                    style={{ backgroundColor: color }}
+                  ></span>
+                ))}
+              </div>
+
                                         <div className="price_area">
                                             {product.price?.price === product.price?.discountedPrice ? (
                                                 <label className="cat_price">₹{Math.floor(product.price?.price)}</label>
