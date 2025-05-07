@@ -35,3 +35,27 @@
         }
     }
 }
+.password_input {
+    position: relative;
+  
+    input {
+      width: 100%;
+      padding-right: 60px;
+    }
+  
+    span {
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 0.875rem;
+      color: #555;
+      user-select: none;
+    }
+  }
+  
+.error{
+    color: red;
+    font-size: 14px;
+}

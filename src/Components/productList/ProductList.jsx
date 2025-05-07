@@ -7,6 +7,7 @@ import Pagination from "@/Components/Pagination/Pagination";
 import Link from "next/link";
 import DOMPurify from "dompurify";
 import "./productList.scss";
+import Head from "next/head";
 
 const PRODUCT_PER_PAGE = 8;
 
@@ -146,6 +147,19 @@ export default function ProductList({ limit }) {
   
   return (
     <>
+      {/* SEO content for Product List Page */}
+      <Head>
+        <title>Shop Stylish and Trendy Products | AthamiFashion</title>
+        <meta name="description" content="Browse through our collection of stylish products for every occasion. Find your favorite clothes and accessories at AthamiFashion." />
+        <meta name="robots" content="index, follow" />
+        <meta name="keywords" content="athamifashion, online shopping, trendy clothes, stylish accessories" />
+        
+        {/* Open Graph Tags */}
+        <meta property="og:title" content="Shop Stylish and Trendy Products | AthamiFashion" />
+        <meta property="og:description" content="Browse through our collection of stylish products for every occasion. Find your favorite clothes and accessories at AthamiFashion." />
+        <meta property="og:image" content="https://athamifashion.com/images/default-banner.jpg" />
+        <meta property="og:url" content="https://athamifashion.com/products" />
+      </Head>
       <ul className="product_list">
   {products.flatMap((product, index) => {
     const colorOption = product.productOptions?.find(opt => opt.name === "Color");

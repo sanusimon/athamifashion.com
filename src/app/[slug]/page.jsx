@@ -6,6 +6,7 @@ import DOMPurify from 'dompurify';
 import { notFound } from 'next/navigation';
 import CustomizeProductsWrapper from '@/Components/CustomizeProductsWrapper/CustomizeProductsWrapper';
 import Link from 'next/link';
+import Head from 'next/head';
 
 const DetailPage = async ({ params, searchParams }) => {
   const category = searchParams?.cat || "all-products";
@@ -37,6 +38,41 @@ const DetailPage = async ({ params, searchParams }) => {
 
   return (
     <section className="product_detail">
+        <Head>
+        <title>{product.name} | AthamiFashion</title>
+        <meta name="description" content={product.description || "Discover this amazing product at AthamiFashion."} />
+        <meta name="robots" content="index, follow" />
+        <meta name="keywords" content={`${product.name}, online shopping, AthamiFashion`} />
+
+        {/* Open Graph Tags */}
+        <meta property="og:title" content={`${product.name} | AthamiFashion`} />
+        <meta property="og:description" content={product.description || "Discover this amazing product at AthamiFashion."} />
+        <meta property="og:image" content={product.media?.items[0]?.image?.url || "/placeholder.jpg"} />
+        <meta property="og:url" content={`https://athamifashion.com/products/${product.slug}`} />
+        
+        {/* Structured Data (JSON-LD) */}
+        <script type="application/ld+json">
+          {`
+            {
+              "@context": "https://schema.org/",
+              "@type": "Product",
+              "name": "${product.name}",
+              "image": "${product.media?.items[0]?.image?.url || '/placeholder.jpg'}",
+              "description": "${product.description}",
+              "brand": {
+                "@type": "Brand",
+                "name": "AthamiFashion"
+              },
+              "offers": {
+                "@type": "Offer",
+                "priceCurrency": "INR",
+                "price": "${product.priceData?.price || 0}",
+                "availability": "https://schema.org/InStock"
+              }
+            }
+          `}
+        </script>
+      </Head>
       <div className="container">
         <div className="inner_">
           {product.variants && product.productOptions ? (

@@ -66,7 +66,7 @@ const HomeBanner = () => {
             </div>
             <div className="banner_txt">
             {DOMPurifyRef.current && (
-                <h2
+                <h1
                   dangerouslySetInnerHTML={{
                     __html: DOMPurifyRef.current.sanitize(img.bannerText),
                   }}

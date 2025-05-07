@@ -31,6 +31,10 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
 
   useEffect(() => {
     const checkLoggedIn = async () => {
@@ -66,6 +70,11 @@ const LoginPage = () => {
     [MODE.EMAIL_VERIFICATION]: "Verify",
   }[mode];
 
+  const isStrongPassword = (password) => {
+    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
+    return strongPasswordRegex.test(password);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -87,11 +96,28 @@ const LoginPage = () => {
           break;
 
         case MODE.REGISTER:
+          if (!email || !password || !username) {
+            setError("All fields are required.");
+            setIsLoading(false);
+            return;
+          }
+        
+          if (!isStrongPassword(password)) {
+            setError("Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.");
+            setIsLoading(false);
+            return;
+          }
+
           response = await wixClient.auth.register({
             email,
             password,
             profile: { nickname: username },
           });
+          if (response?.loginState === undefined) {
+            setError("This email may already be registered. Try logging in or resetting your password.");
+            setIsLoading(false);
+            return;
+          }
 
           switch (response?.loginState) {
             case LoginState.EMAIL_VERIFICATION_REQUIRED:
@@ -205,6 +231,12 @@ const LoginPage = () => {
   };
 
   return (
+    <>
+    <Head>
+        <title>Login - AthamiFashion</title>
+        <meta name="description" content="Securely login to your Athami Fashion account." />
+      </Head>
+      
     <section className="login_page">
       <div className="container">
         <form className="login_box" onSubmit={handleSubmit}>
@@ -251,12 +283,17 @@ const LoginPage = () => {
             {(mode === MODE.LOGIN || mode === MODE.REGISTER) && (
               <div className="form_control">
                 <label>Password</label>
+                <div className="password_input">
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="Enter password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
+                <span onClick={() => setShowPassword((prev) => !prev)}>
+                    {showPassword ? "Hide" : "Show"}
+                </span>
+                </div>
               </div>
             )}
 
@@ -317,6 +354,7 @@ const LoginPage = () => {
         </form>
       </div>
     </section>
+    </>
   );
 };
 
