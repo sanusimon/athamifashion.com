@@ -5,7 +5,7 @@ import { LoginState } from "@wix/sdk";
 import { useWixClient } from "@/hooks/useWixClient";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-
+import Head from 'next/head';
 const MODE = {
   LOGIN: "LOGIN",
   REGISTER: "REGISTER",
