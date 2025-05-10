@@ -30,7 +30,7 @@ const HomePage = async() =>  {
 
         <section className="product_page home_product">
         <div className="container">
-          <h2 className="title">Kurti</h2>
+          <h2 className="title">Co-ord set</h2>
         </div>
         <Suspense fallback={<Skeleton />}>
           <HomeProductList categoryId={process.env.KURTIES_PRODUCTS_CATEGORY_ID} limit={8}/>
@@ -41,10 +41,10 @@ const HomePage = async() =>  {
 
         <section className="product_page home_product">
         <div className="container">
-          <h2 className="title">Feeding Kurti</h2>
+          <h2 className="title">kurti 2 Pc Set</h2>
         </div>
         <Suspense fallback={<Skeleton />}>
-          <HomeProductList categoryId={process.env.FEEDING_KURTIES_PRODUCTS_CATEGORY_ID}  limit={8}/>
+          <HomeProductList categoryId={process.env.KURTIES_TWO_PIECE_PRODUCTS_CATEGORY_ID}  limit={8}/>
         </Suspense>
         </section>
 

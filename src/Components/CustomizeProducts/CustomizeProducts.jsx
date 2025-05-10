@@ -136,7 +136,7 @@ function CustomizeProducts({
                     <div className="additional_info">
                         {additionalInfoSections.map((section) => (
                             <div className="info_sec" key={section.title}>
-                                <span className='cart_label_'>Size Chart</span>
+                                <span className='cart_label_'>{section.title}</span>
                                 <div
                                     dangerouslySetInnerHTML={{
                                         __html: DOMPurify.sanitize(section.description),

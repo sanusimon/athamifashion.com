@@ -134,7 +134,9 @@
                 .info_sec{
                     margin-bottom: 30px;
                     line-height: 1.5;
-                   
+                    >div{
+                        line-height: 1.185rem;
+                    }
                 }
             }
         }
