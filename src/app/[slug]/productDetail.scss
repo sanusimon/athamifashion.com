@@ -15,11 +15,15 @@
             .img_wrap{
                 position: sticky;
                 top: 0;
+                display: flex;
+                gap: .625rem;
                 .large_{
                     margin-bottom: 10px;
+                    flex: 1;
                 }
                 .thumb_images{
                     display: flex;
+                    flex-direction: column;
                     gap: 10px;
                     >div{
                         width: 100px;
@@ -133,9 +137,8 @@
                 margin-top: 30px;
                 .info_sec{
                     margin-bottom: 30px;
-                    line-height: 1.5;
-                    >div{
-                        line-height: 1.185rem;
+                    li,p{
+                        line-height: 1.88rem;
                     }
                 }
             }
