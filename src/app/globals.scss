@@ -365,6 +365,7 @@ input{
     gap: 10px;
     align-items: center;
     padding-bottom: 20px;
+    text-align: center;
     @media only screen and (max-width: 767px) {
         flex-direction: column;
     }
