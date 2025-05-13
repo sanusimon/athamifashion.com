@@ -7,7 +7,7 @@ function Positives() {
         <ul>
             <li>
                 <img src='/delivery-truck.png'></img>
-                <span>Free shipping on orders above ₹1500</span>
+                <span>Free shipping on orders above Rs.1500</span>
             </li>
             <li>
                 <img src='/cash-on-delivery.png'></img>

@@ -72,7 +72,6 @@
                     transition: all .5s ease;
                 }
                 li{
-                    font-weight: 700;
                     transition: all .5s;
                     @media only screen and (max-width: 767px) {
                         font-size: 2rem;
@@ -80,6 +79,7 @@
                     }
                     &.active{
                         color: $bg-pink;
+                        font-weight: 600;
                     }
                     &:hover{
                         color: $bg-pink;

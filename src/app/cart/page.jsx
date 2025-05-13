@@ -198,7 +198,7 @@ export const Cart = () => {
                                 <div className="cart_item_price sub_total">
                                     <label className='label'>Value of Products</label>
                                     <span>
-                                    ₹{cart.lineItems?.reduce((total, item) => {
+                                    Rs.{cart.lineItems?.reduce((total, item) => {
   return total + item.fullPrice.amount * item.quantity;
 }, 0).toFixed(2)}
 
@@ -216,7 +216,7 @@ export const Cart = () => {
                                 <div className="cart_item_price sub_total">
                                     <label className='label'> Order Total</label>
                                     <span>
-                                    ₹{cart.lineItems?.reduce((total, item) => {
+                                    Rs.{cart.lineItems?.reduce((total, item) => {
                                     return total + item.price.amount * item.quantity;
                                     }, 0).toFixed(2)}
 
@@ -226,7 +226,7 @@ export const Cart = () => {
                                 <div className="cart_item_price sub_total">
                                     <label className='label'> <b>Net Payment</b></label>
                                     <span>
-                                    ₹{cart.lineItems?.reduce((total, item) => {
+                                    Rs.{cart.lineItems?.reduce((total, item) => {
                                     return total + item.price.amount * item.quantity;
                                     }, 0).toFixed(2)}
                                     </span>

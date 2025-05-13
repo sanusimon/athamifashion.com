@@ -13,6 +13,7 @@ section{
     font-size: 3rem;
     margin-bottom: 20px;
     text-align: center;
+    font-weight: 600;
 }
 .subhead{
     font-size: 2rem;
@@ -51,8 +52,6 @@ img{
         display: flex;
         flex-direction: column;
         height: 100%;
-        border: 1px solid $border-color;
-        padding: 10px;
     }
     .img_wrap{
         position: relative;
@@ -82,8 +81,8 @@ ul.product_list{
             display: flex;
             flex-direction: column;
             height: 100%;
+            // padding: 10px;
             border: 1px solid $border-color;
-            padding: 10px;
         }
         .top_area{
             overflow: hidden;
@@ -101,6 +100,7 @@ ul.product_list{
                     width: 100%;
                     height: 100%;
                     z-index: 1;
+                   
                 }
                 
 
@@ -133,6 +133,13 @@ ul.product_list{
                 // }
             }
         }
+        .btm_area{
+            padding: 10px;
+            .var_price{
+                align-items: center;
+                width: 100%;
+            }
+        } 
         
         // .btm_area{
         //     display: flex;
@@ -245,10 +252,9 @@ input{
     border-radius: 5px;
 }
 .cat_name{
-    font-size: 1.2rem;
-    margin: 10px 0;
+    font-size: 1.3rem;
+    margin: 10px 0 0;
     display: block;
-    font-weight: 600;
     @media only screen and (max-width: 767px) {
         font-size: 1.2rem;
     }
@@ -282,6 +288,7 @@ input{
                         width: 100%;
                         height: 100%;
                         z-index: 1;
+                        border: 10px;
                     }
                 }
                 .add_cart{
@@ -356,6 +363,8 @@ input{
     flex-direction: column;
     flex: 1;
     gap: 10px;
+    align-items: center;
+    padding-bottom: 20px;
     @media only screen and (max-width: 767px) {
         flex-direction: column;
     }

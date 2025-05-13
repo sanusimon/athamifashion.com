@@ -140,27 +140,14 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
 
                                     </div>
                                     <div className="var_price">
-                                    <div className="variant">
-  {[...new Set(
-    product.variants
-      ?.filter(v => v.stock.quantity > 0 && v.choices.Color)
-      .map(v => v.choices.Color)
-  )].map((color, index) => (
-    <span
-      key={index}
-      className="pro_clr"
-      style={{ backgroundColor: color }}
-    ></span>
-  ))}
-</div>
 
                                         <div className="price_area">
                                             {product.priceData?.price === product.priceData?.discountedPrice ? (
-                                                <label className="cat_price">₹{Math.floor(product.priceData?.price)}</label>
+                                                <label className="cat_price">Rs.{Math.floor(product.priceData?.price)}</label>
                                             ) : (
                                                 <div className="discount_sec">
-                                                    <label className="cat_price">₹{Math.floor(product.priceData?.discountedPrice)}</label>
-                                                    <label className="cat_price line_throw">₹{Math.floor(product.priceData?.price)}</label>
+                                                    <label className="cat_price">Rs.{Math.floor(product.priceData?.discountedPrice)}</label>
+                                                    <label className="cat_price line_throw">Rs.{Math.floor(product.priceData?.price)}</label>
                                                 </div>
                                             )}
                                         </div>

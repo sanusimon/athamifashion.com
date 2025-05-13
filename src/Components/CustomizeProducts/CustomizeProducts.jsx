@@ -70,11 +70,11 @@ function CustomizeProducts({
 
                 <div className="price_area">
                     {price?.price === price?.discountedPrice ? (
-                        <label className="detail_price">₹{price?.price}</label>
+                        <label className="detail_price">Rs.{price?.price}</label>
                     ) : (
                         <div className="discount_sec">
-                            <label className="detail_price">₹{Math.floor(price?.discountedPrice)}</label>
-                            <label className="detail_price line_throw">₹{Math.floor(price?.price)}</label>
+                            <label className="detail_price">Rs.{Math.floor(price?.discountedPrice)}</label>
+                            <label className="detail_price line_throw">Rs.{Math.floor(price?.price)}</label>
                             <label className="persntge">{discount?.value}% OFF</label>
                         </div>
                     )}

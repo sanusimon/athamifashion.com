@@ -126,11 +126,11 @@ const DetailPage = async ({ params, searchParams }) => {
                     <div className="var_price">
                     <div className="price_area">
                         {item.priceData?.price === item.priceData?.discountedPrice ? (
-                            <label className="cat_price">₹{Math.floor(item.priceData?.price)}</label>
+                            <label className="cat_price">Rs.{Math.floor(item.priceData?.price)}</label>
                         ) : (
                             <div className="discount_sec">
-                                <label className="cat_price">₹{Math.floor(item.priceData?.discountedPrice)}</label>
-                                <label className="cat_price line_throw">₹{Math.floor(item.priceData?.price)}</label>
+                                <label className="cat_price">Rs.{Math.floor(item.priceData?.discountedPrice)}</label>
+                                <label className="cat_price line_throw">Rs.{Math.floor(item.priceData?.price)}</label>
                             </div>
                         )}
                     </div>

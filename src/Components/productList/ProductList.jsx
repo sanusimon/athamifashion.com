@@ -226,11 +226,11 @@ export default function ProductList({ limit }) {
 
                                         <div className="price_area">
                                             {product.price?.price === product.price?.discountedPrice ? (
-                                                <label className="cat_price">₹{Math.floor(product.price?.price)}</label>
+                                                <label className="cat_price">Rs.{Math.floor(product.price?.price)}</label>
                                             ) : (
                                                 <div className="discount_sec">
-                                                    <label className="cat_price">₹{Math.floor(product.price?.discountedPrice)}</label>
-                                                    <label className="cat_price line_throw">₹{Math.floor(product.price?.price)}</label>
+                                                    <label className="cat_price">Rs.{Math.floor(product.price?.discountedPrice)}</label>
+                                                    <label className="cat_price line_throw">Rs.{Math.floor(product.price?.price)}</label>
                                                 </div>
                                             )}
                                         </div>
@@ -297,11 +297,11 @@ export default function ProductList({ limit }) {
 
                                         <div className="price_area">
                                             {product.price?.price === product.price?.discountedPrice ? (
-                                                <label className="cat_price">₹{Math.floor(product.price?.price)}</label>
+                                                <label className="cat_price">Rs.{Math.floor(product.price?.price)}</label>
                                             ) : (
                                                 <div className="discount_sec">
-                                                    <label className="cat_price">₹{Math.floor(product.price?.discountedPrice)}</label>
-                                                    <label className="cat_price line_throw">₹{Math.floor(product.price?.price)}</label>
+                                                    <label className="cat_price">Rs.{Math.floor(product.price?.discountedPrice)}</label>
+                                                    <label className="cat_price line_throw">Rs.{Math.floor(product.price?.price)}</label>
                                                 </div>
                                             )}
                                         </div>
