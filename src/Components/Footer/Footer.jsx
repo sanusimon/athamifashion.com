@@ -54,7 +54,7 @@ const Footer = () => {
                 <a href="https://www.instagram.com/athami_fashion/" target="_blank"><img src="/instagram.png" /></a>
               </li>
               <li>
-                <a href="#"><img src="/facebook.png" /></a>
+                <a href="https://www.facebook.com/profile.php?id=61576264670580" target="_blank"><img src="/facebook.png" /></a>
               </li>
             </ul>
           </div>

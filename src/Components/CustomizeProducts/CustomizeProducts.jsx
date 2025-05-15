@@ -60,13 +60,15 @@ function CustomizeProducts({
         <>
             
                 <label className="detail_title">{name}</label>
-
+                {
+                    description.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, "").trim() && (
                 <div
                     className="detail_desc"
                     dangerouslySetInnerHTML={{
                         __html: DOMPurify.sanitize(description),
                     }}
                 />
+                )}
 
                 <div className="price_area">
                     {price?.price === price?.discountedPrice ? (

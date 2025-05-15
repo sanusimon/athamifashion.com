@@ -36,6 +36,7 @@
             }
         }
         .navigation{
+            display: flex;
             .menu_btn{
                 font-size: 1.5rem;
                 margin-top: 10px;
@@ -277,7 +278,7 @@
         transition: all 0.3s ease;
         cursor: pointer;
         &.is-lg {
-            font-size: 2rem;
+            font-size: 1.5rem;
         }
         &-line {
             position: absolute;
