@@ -14,6 +14,7 @@ section{
     margin-bottom: 20px;
     text-align: center;
     font-weight: 600;
+    color: $bg-theme;;
 }
 .subhead{
     font-size: 2rem;
@@ -336,7 +337,7 @@ input{
                 left: auto;
             }
             .swiper-button-next,.swiper-button-prev{
-                background-color: $bg-pink;
+                background-color: $bg-theme;
                 border-radius: 50%;
                 width: 30px;
                 height: 30px;
@@ -542,7 +543,7 @@ input{
     position: absolute;
     bottom: 0;
     right: 0;
-    background-color: $bg-pink;
+    background-color: $bg-theme;
     padding: 5px;
     color: $color-white;
     z-index: 1;

@@ -4,8 +4,12 @@
     cursor: pointer;
 }
 .login_page{
-    height: calc(100vh - 98px);
     padding: 0;
+    height: calc(100vh - 362px);
+    @media only screen and (max-width: 767px) {
+        height: calc(100vh - 462px);
+    }
+    // height: calc(100vh - 300px);
     .container{
         height: 100%;
         display: flex;

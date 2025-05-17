@@ -1,6 +1,9 @@
 @use "../../app/variable" as *;
 .disc_sec{
     height: 100vh;
+    @media only screen and (max-width: 767px) {
+        height: 60vh;
+    }
     .inner_{
         display: flex;
         height: 100%;

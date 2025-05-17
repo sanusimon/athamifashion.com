@@ -33,6 +33,9 @@ const jost = Jost({
 export const metadata = {
   title: "AthamiFashion",
   description: "Shop elegant red dresses for girls, perfect for parties and occasions. Discover more at AthamiFashion.",
+  icons: {
+    icon: './favicon.jpeg', // Ensure the file is in the /public folder
+  },
 };
 
 export default function RootLayout({ children }) {

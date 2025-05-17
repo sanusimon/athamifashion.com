@@ -1,6 +1,7 @@
 @use "../../../app/variable" as *;
 .header{
     position: relative;
+    background-color: $bg-theme;
     @media only screen and (max-width: 767px) {
         padding: 20px 0 0;
     }
@@ -14,14 +15,14 @@
         >div{
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 40px;
             justify-content: space-between;
             @media only screen and (max-width: 767px) {
                 flex: 1;
             }
         }
         .logo{
-            width: 200px;
+            width: 230px;
             height: 100px;
             position: relative;
             z-index: 9;
@@ -74,16 +75,19 @@
                 }
                 li{
                     transition: all .5s;
+                    a{
+                        color: $color-white;
+                    }
                     @media only screen and (max-width: 767px) {
                         font-size: 2rem;
                         transition: all .5s;
                     }
                     &.active{
-                        color: $bg-pink;
+                        color: $bg-theme;
                         font-weight: 600;
                     }
                     &:hover{
-                        color: $bg-pink;
+                        color: $bg-theme;
                     }
                 }
                 &.open{
@@ -95,6 +99,7 @@
         .right_sec{
             flex: 1;
             justify-content: flex-end;
+            color: $color-white;
             .mob_home{
                 display: none;
             }
@@ -129,6 +134,9 @@
                 img{
                     width: 18px;
                     height: 18px;
+                    @media only screen and (min-width: 767px) {
+                        filter: grayscale(1) invert(1);
+                    }
                 }
             }
             .search-dropdown{
@@ -201,6 +209,9 @@
                     @media only screen and (max-width: 767px) {
                         top: -120px;
                     }
+                    .mt-2{
+                        padding: 5px 0;
+                    }
                 }
             }
             .cart{
@@ -216,7 +227,7 @@
                     right: -10px;
                     width: 18px;
                     height: 18px;
-                    background-color: $bg-pink;
+                    background-color: $bg-color;
                     color: $color-white;
                     border-radius: 50%;
                     display: flex;
@@ -265,6 +276,9 @@
             img{
                 width: 22px;
                 height: 22px;
+                @media only screen and (min-width: 767px) {
+                    filter: grayscale(1) invert(1);
+                }
             }
         }
     }
@@ -286,7 +300,7 @@
             width: 100%;
             height: 0.125em;
             border-radius: 0.125em;
-            background: currentColor;
+            background: $color-white;
             transition: inherit;
         
             &:nth-child(1) {

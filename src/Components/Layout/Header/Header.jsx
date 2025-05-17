@@ -10,7 +10,6 @@ import { useCartStore } from "@/hooks/useCartStore";
 import SearchBar from "@/Components/SearchBar/SearchBar";
 import Breadcrumbs from "@/Components/Breadcrumbs/Breadcrumbs";
 import Filter from "@/Components/Filter/Filter";
-
 import "./Header.scss";
 
 const Header = () => {
@@ -147,7 +146,7 @@ const Header = () => {
           <div>
             <div className="logo">
               <Link href="/">
-                <img src="./logo.png" alt="Logo" />
+                <img src="./Athamifashion-logo.svg" alt="Logo" />
               </Link>
             </div>
             <div className="navigation">
