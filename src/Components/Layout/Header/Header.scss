@@ -117,6 +117,7 @@
                     display: flex;
                     flex-direction: column;
                     align-items: center;
+                    color: $color-black;
                 }
             }
             .search_btn{
@@ -130,6 +131,7 @@
                     flex-direction: column;
                     align-items: center;
                     gap: 0;
+                    color: $color-black;
                 }
                 img{
                     width: 18px;
@@ -154,7 +156,8 @@
                 opacity: 0;
                 transition: all .5s ease;
                 @media only screen and (max-width: 767px) {
-                    transform: translateY(100%);
+                    transform: translateY(110%);
+                    height: calc(100% - 87px);
                 }
                 .srch_bar{
                     width: 450px;
@@ -181,6 +184,11 @@
                     .srch_bar{
                         opacity: 1;
                         transition-delay: .8s;
+                        img{
+                            @media only screen and (max-width: 767px) {
+                                filter: grayscale(1) invert(1);
+                            }
+                        }
                     }
                 }
                 
@@ -243,6 +251,7 @@
                     display: none;
                     @media only screen and (max-width: 767px) {
                         display: block;
+                        color: $color-black;
                     }
                 }
             }
@@ -257,6 +266,9 @@
                     overflow: hidden;
                     white-space: nowrap;
                     text-overflow: ellipsis;
+                    @media only screen and (max-width: 767px) {
+                        color: $color-black;
+                    }
                 }
                 @media only screen and (max-width: 767px) {
                     display: flex;
@@ -302,6 +314,7 @@
             border-radius: 0.125em;
             background: $color-white;
             transition: inherit;
+            z-index: 4;
         
             &:nth-child(1) {
             top: 0.125em;

@@ -28,7 +28,7 @@ const Footer = () => {
       <div className="container">
         <div className="inner_">
           <div className="logo_">
-            <img src="/logo.png" alt="Logo" />
+            <img src="/footer-logo.jpeg" alt="Logo" />
           </div>
           <div className="footer_menu">
           <ul className="">
