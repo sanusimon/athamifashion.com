@@ -208,7 +208,7 @@
                     position: absolute;
                     top: 105%;
                     left: -8px;
-                    background: $color-white;
+                    background: $bg-theme;
                     z-index: 2;
                     max-width: 200px;
                     min-width: 100px;
@@ -219,6 +219,7 @@
                     }
                     .mt-2{
                         padding: 5px 0;
+                        color: $color-white;
                     }
                 }
             }
@@ -293,6 +294,10 @@
                 }
             }
         }
+    }
+    .breadcrumbs{
+        position: relative;
+        top: 40px;
     }
 }
 @media only screen and (max-width: 767px) {

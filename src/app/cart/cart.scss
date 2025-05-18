@@ -1,5 +1,10 @@
 @use '../variable' as *;
 .cart_page{
+    padding-top: 80px;
+    .title{
+        text-align: left;
+        padding-top: 20px;
+    }
     .inner_{
         display: grid;
         grid-template-columns: 70% 28%;
@@ -127,6 +132,7 @@
             top: 20px;
         }
         .title{
+            text-align: left;
             font-size: 2rem;
             margin-top: 20px;
         }

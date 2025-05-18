@@ -5,7 +5,7 @@ import Link from "next/link";
 import "./DiscountSection.scss";
 
 export default function DiscountSection() {
-  const discountValue = 5; // Set the static discount value
+  const discountValue = 10; // Set the static discount value
   const imgPath = `/discountimg.jpg`;
   // const imgPath2 = `/discountimg.jpg`;
 

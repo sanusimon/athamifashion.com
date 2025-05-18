@@ -2,7 +2,6 @@ import { createClient, OAuthStrategy } from "@wix/sdk";
 import { products, collections } from "@wix/stores";
 import { orders } from "@wix/ecom";
 import { members } from "@wix/members";
-
 // ✅ We now pass in refreshToken from the caller
 export const wixClientServer = async (refreshToken) => {
   const wixClient = createClient({

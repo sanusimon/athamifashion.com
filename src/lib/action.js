@@ -1,9 +1,23 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { wixClientServer } from "./wixClientServer";
+// import { redirect } from "next/navigation";
 
 export const updateUser = async (formData) => {
-  const wixClient = await wixClientServer();
+  const cookieStore = await cookies(); // <-- await here
+  const tokenCookie = cookieStore.get("refreshToken")?.value;
+
+  if (!tokenCookie) return;
+
+  let refreshToken;
+  try {
+    refreshToken = JSON.parse(tokenCookie);
+  } catch (err) {
+    return;
+  }
+
+  const wixClient = await wixClientServer(refreshToken);
 
   const id = formData.get("id");
   const firstName = formData.get("firstName");
@@ -12,16 +26,24 @@ export const updateUser = async (formData) => {
   const email = formData.get("email");
   const username = formData.get("username");
 
-  await wixClient.contacts.updateContact(id, {
-    firstName,
-    lastName,
-    phones: [phone],
-    emails: [email],
-  });
+  try {
+    await wixClient.members.updateMember(id, {
+      contact: {
+        firstName: firstName || undefined,
+        lastName: lastName || undefined,
+        phones: phone ? [phone] : undefined,
+      },
+      loginEmail: email || undefined,
+      profile: { nickname: username || undefined },
+    });
 
-  await wixClient.members.updateMember(id, {
-    profile: {
-      nickname: username,
-    },
-  });
-};
+    // redirect("/profile");
+  } catch (err) {
+    if (err?.digest === "NEXT_REDIRECT") {
+      // ignore redirect error here
+      return;
+    }
+    console.error("Update failed in caller:", err);
+  }
+  
+}

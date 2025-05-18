@@ -43,9 +43,7 @@ function ProductImage({ mediaItems = [], productOptions = {}, selectedColor = nu
 
     return (
         <div className="img_wrap">
-            <div className="large_">
-                <img src={imagesToDisplay[index]?.image?.url} alt="Product Image" />
-            </div>
+            
 
             <div className="thumb_images">
                 {imagesToDisplay.map((item, i) => (
@@ -53,6 +51,9 @@ function ProductImage({ mediaItems = [], productOptions = {}, selectedColor = nu
                         <img src={item.image?.url} alt={`Thumbnail ${i}`} />
                     </div>
                 ))}
+            </div>
+            <div className="large_">
+                <img src={imagesToDisplay[index]?.image?.url} alt="Product Image" />
             </div>
         </div>
     );

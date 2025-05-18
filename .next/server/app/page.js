@@ -8,6 +8,7 @@ runtime.loadChunk("server/chunks/ssr/src_app_not-found_jsx_f4b9dc._.js");
 runtime.loadChunk("server/chunks/ssr/node_modules_490daf._.js");
 runtime.loadChunk("server/chunks/ssr/node_modules_next_dist_client_components_unauthorized-error_d758e6.js");
 runtime.loadChunk("server/chunks/ssr/src_3f143c._.css");
+runtime.loadChunk("server/chunks/ssr/node_modules_@wix_447988._.js");
 runtime.loadChunk("server/chunks/ssr/node_modules_@wix_auto_sdk_stores_products_build_es_c8213f._.js");
 runtime.loadChunk("server/chunks/ssr/node_modules_@wix_auto_sdk_stores_info-sections-v-3_build_es_3f678c._.js");
 runtime.loadChunk("server/chunks/ssr/node_modules_@wix_auto_sdk_stores_products-v-3_build_es_9fa8e1._.js");
@@ -16,7 +17,7 @@ runtime.loadChunk("server/chunks/ssr/node_modules_@wix_auto_sdk_ecom_checkout_bu
 runtime.loadChunk("server/chunks/ssr/node_modules_@wix_auto_sdk_ecom_draft-orders_build_es_136bd5._.js");
 runtime.loadChunk("server/chunks/ssr/node_modules_@wix_auto_sdk_ecom_orders_build_es_5a0b26._.js");
 runtime.loadChunk("server/chunks/ssr/node_modules_@wix_auto_sdk_members_members_build_es_ea6d45._.js");
-runtime.loadChunk("server/chunks/ssr/node_modules_@wix_37a537._.js");
+runtime.loadChunk("server/chunks/ssr/node_modules_@wix_35f948._.js");
 runtime.loadChunk("server/chunks/ssr/node_modules_next_dist_78f32c._.js");
 runtime.loadChunk("server/chunks/ssr/_3a0532._.js");
 runtime.getOrInstantiateRuntimeModule("[project]/.next-internal/server/app/page/actions.js [app-rsc] (ecmascript)", CHUNK_PUBLIC_PATH);
