@@ -1,22 +1,34 @@
-// /app/api/apply-coupon/route.ts
-
-import { wixClientServer } from "@/lib/wixClientServer";
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-export async function POST(req) {
-  const { couponCode } = await req.json();
-  const cookieStore = cookies();
-  const token = cookieStore.get("refreshToken")?.value;
-  if (!token) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+// GET: Return list of promotions
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const orderId = searchParams.get("order_id");
+  const customerId = searchParams.get("customer");
 
-  const refreshToken = JSON.parse(token);
-  const wixClient = await wixClientServer(refreshToken);
+  console.log("Fetching promotions for", { orderId, customerId });
 
-  try {
-    const cart = await wixClient.currentCart.applyCouponToCurrentCart({ couponCode });
-    return NextResponse.json({ success: true, cart });
-  } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 400 });
+  // Fetch from DB or static list
+  const promotions = [
+    { code: "WELCOME10", discount: 10 },
+    { code: "SUMMER20", discount: 20 },
+  ];
+
+  return NextResponse.json({ success: true, promotions });
+}
+
+// POST: Validate and apply coupon
+export async function POST(request) {
+  const body = await request.json();
+  const { couponCode, orderId, customerId } = body;
+
+  console.log("Applying coupon", couponCode, "for order", orderId);
+
+  if (couponCode === "WELCOME10") {
+    return NextResponse.json({ success: true, discountAmount: 10 });
+  } else if (couponCode === "SUMMER20") {
+    return NextResponse.json({ success: true, discountAmount: 20 });
   }
+
+  return NextResponse.json({ success: false, message: "Invalid coupon" });
 }
