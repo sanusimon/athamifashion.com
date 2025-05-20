@@ -27,9 +27,8 @@ export const Cart = () => {
       
           const { redirectSession } = await wixClient.redirects.createRedirectSession({
             ecomCheckout: { checkoutId: checkout.checkoutId },
-            headlessExternalUrls: {
-              home: `${window.location.origin}`,
-            },
+            headlessExternalUrls: `~(home~'https*3a*2f*2fathamifashion.com)`
+,
             callbacks: {
               // ✅ Dynamically include orderId in thankyouPage URL
               thankyouPage: `${window.location.origin}/success?orderId=${checkout.orderId}`,
@@ -64,11 +63,11 @@ export const Cart = () => {
         }
       };
       if (isLoading) {
-        return <div className='container text-center empty_page'><p>Loading your cart...</p></div>;
+        return <div className='min_height container text-center empty_page'><p>Loading your cart...</p></div>;
       }
     
       if (!cart || cart.length === 0) {
-        return <div className='container text-center'><p>Your cart is empty..</p></div>;
+        return <div className='min_height container text-center'><p>Your cart is empty..</p></div>;
       }
       
       
