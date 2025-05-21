@@ -8,7 +8,13 @@ import { createContext, useContext } from "react";
 import { redirects } from "@wix/redirects";
 import { members } from "@wix/members";
 
-const refreshToken = JSON.parse(Cookies.get("refreshToken") || "{}")
+let refreshToken = {};
+try {
+  refreshToken = JSON.parse(Cookies.get("refreshToken") || "{}");
+} catch (err) {
+  console.error("Invalid refresh token:", err);
+  refreshToken = {};
+}
 
 
 const wixClient = createClient({
