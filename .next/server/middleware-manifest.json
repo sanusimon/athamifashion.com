@@ -3,9 +3,9 @@
   "middleware": {
     "/": {
       "files": [
-        "server/edge/chunks/_af18db._.js",
+        "server/edge/chunks/_4a42b4._.js",
         "server/edge/chunks/[root of the server]__defe9d._.js",
-        "server/edge/chunks/edge-wrapper_45b05c.js"
+        "server/edge/chunks/edge-wrapper_dbd24e.js"
       ],
       "name": "middleware",
       "page": "/",

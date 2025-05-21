@@ -10,7 +10,7 @@ export const useCartStore = create((set) => ({
     counter:0,
 
     
-    getCart: async (wixClient)=>{
+    getCart: async (WixClient)=>{
         try{
             const cart = await wixClient.currentCart.getCurrentCart();
             set({cart:(cart || []),isLoading:false,counter:cart?.lineItems.length || 0})

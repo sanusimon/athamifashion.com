@@ -8,7 +8,7 @@ runtime.loadChunk("server/chunks/ssr/src_app_not-found_jsx_f4b9dc._.js");
 runtime.loadChunk("server/chunks/ssr/node_modules_490daf._.js");
 runtime.loadChunk("server/chunks/ssr/node_modules_next_dist_client_components_unauthorized-error_d758e6.js");
 runtime.loadChunk("server/chunks/ssr/src_3f143c._.css");
-runtime.loadChunk("server/chunks/ssr/node_modules_@wix_447988._.js");
+runtime.loadChunk("server/chunks/ssr/node_modules_@wix_e8de0a._.js");
 runtime.loadChunk("server/chunks/ssr/node_modules_@wix_auto_sdk_stores_products_build_es_c8213f._.js");
 runtime.loadChunk("server/chunks/ssr/node_modules_@wix_auto_sdk_stores_info-sections-v-3_build_es_3f678c._.js");
 runtime.loadChunk("server/chunks/ssr/node_modules_@wix_auto_sdk_stores_products-v-3_build_es_9fa8e1._.js");

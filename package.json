@@ -12,7 +12,7 @@
     "@wix/contacts": "^1.0.27",
     "@wix/ecom": "^1.0.1003",
     "@wix/members": "^1.0.292",
-    "@wix/redirects": "^1.0.76",
+    "@wix/redirects": "^1.0.78",
     "@wix/sdk": "^1.15.13",
     "@wix/stores": "^1.0.381",
     "axios": "^1.8.1",

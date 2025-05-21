@@ -5,7 +5,7 @@
 }
 .login_page{
     padding: 0;
-    height: calc(100vh - 354px);
+    min-height: calc(100vh - 354px);
     @media only screen and (max-width: 767px) {
         height: calc(100vh - 462px);
     }

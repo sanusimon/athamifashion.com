@@ -21,25 +21,25 @@ export const Cart = () => {
 
     const handleCheckout = async () => {
         try {
-          const checkout = await wixClient.currentCart.createCheckoutFromCurrentCart({
-            channelType: currentCart.ChannelType.WEB,
-          });
-      
-          const { redirectSession } = await wixClient.redirects.createRedirectSession({
-            ecomCheckout: { checkoutId: checkout.checkoutId },
-            headlessExternalUrls: `~(home~'https*3a*2f*2fathamifashion.com)`
-,
-            callbacks: {
-              // ✅ Dynamically include orderId in thankyouPage URL
-              thankyouPage: `${window.location.origin}/success?orderId=${checkout.orderId}`,
-            },
-          });
-      
+          const checkout =
+            await wixClient.currentCart.createCheckoutFromCurrentCart({
+              channelType: currentCart.ChannelType.WEB,
+            });
+    
+          const { redirectSession } =
+            await wixClient.redirects.createRedirectSession({
+              ecomCheckout: { checkoutId: checkout.checkoutId },
+              callbacks: {
+                postFlowUrl: window.location.origin,
+                thankYouPageUrl: `${window.location.origin}/success`,
+              },
+            });
+    
           if (redirectSession?.fullUrl) {
             window.location.href = redirectSession.fullUrl;
           }
         } catch (err) {
-          console.log("Checkout error:", err);
+          console.log(err);
         }
       };
       
