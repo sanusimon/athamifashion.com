@@ -15,8 +15,12 @@ export const middleware = async (request) =>{
     })
 
     const tokens = await wixClient.auth.generateVisitorTokens()
-    res.cookies.set("refreshToken", JSON.stringify(tokens.refreshToken),{
-        naxAge:60*60*24*30,
-    })
+    res.cookies.set("refreshToken", JSON.stringify(tokens.refreshToken), {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 60 * 60 * 24 * 30,
+      });
+      
     return res
 }

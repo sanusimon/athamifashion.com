@@ -5,22 +5,29 @@ import { WixClient } from "@/Context/WixContext/WixContext";
 
 
 export const useCartStore = create((set) => ({
+    
     cart:[],
     isLoading:true,
     counter:0,
+    
 
     
-    getCart: async (WixClient)=>{
-        try{
-            const cart = await wixClient.currentCart.getCurrentCart();
-            set({cart:(cart || []),isLoading:false,counter:cart?.lineItems.length || 0})
+    getCart: async (wixClient) => {
+        try {
+          let cart = await wixClient.currentCart.getCurrentCart();
+      
+          // Create cart if not found
+          if (!cart || !cart.lineItems) {
+            cart = await wixClient.currentCart.createCurrentCart();
+          }
+      
+          set({ cart, isLoading: false, counter: cart?.lineItems?.length || 0 });
+        } catch (err) {
+          console.error("Error getting cart:", err);
+          set((prev) => ({ ...prev, isLoading: false }));
         }
-        catch(err){
-            console.log(err)
-            set(prev=>({...prev,isLoading:false}))
-        }
-        
-    },
+      },
+            
     addItem: async (wixClient, productId,variantId,quantity)=>{
 
         set((state)=>({...state, isLoading:true}))

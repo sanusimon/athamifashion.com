@@ -1,7 +1,7 @@
 
 "use client";
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import './cart.scss'
 
 import { useCartStore } from '@/hooks/useCartStore';
@@ -17,7 +17,13 @@ import { currentCart } from '@wix/ecom';
 export const Cart = () => {
 
     const wixClient = useWixClient()
-    const {cart , isLoading , removeItem ,updateQuantity } = useCartStore();
+    const {cart , isLoading , removeItem ,updateQuantity, getCart } = useCartStore();
+
+    useEffect(() => {
+        if (wixClient) {
+          getCart(wixClient); // 🔁 Fetch the persisted cart on load
+        }
+      }, [wixClient]);
 
     const handleCheckout = async () => {
         try {
