@@ -7,14 +7,15 @@ import Cookies from "js-cookie";
 import { createContext } from "react";
 import { redirects } from "@wix/redirects";
 import { members } from "@wix/members";
-
 let refreshToken = {};
-try {
-  const storedToken = Cookies.get("refreshToken");
-  refreshToken = storedToken ? JSON.parse(storedToken) : {};
-} catch (err) {
-  console.error("Invalid refresh token:", err);
-  refreshToken = {};
+if (typeof window !== "undefined") {
+    try {
+        const storedToken = Cookies.get("refreshToken");
+        refreshToken = storedToken ? JSON.parse(storedToken) : {};
+    } catch (err) {
+        console.error("Invalid refresh token:", err);
+        refreshToken = {};
+    }
 }
 
 const wixClient = createClient({
@@ -37,9 +38,10 @@ const wixClient = createClient({
           expires: 30,
           secure: true,
           sameSite: "Lax",
+          path: "/", // ✅ ensure it's accessible everywhere
         });
       }
-    },
+    }
   }),
 });
 

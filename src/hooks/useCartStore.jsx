@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { WixClient } from "@/Context/WixContext/WixContext";
-
+import Cookies from "js-cookie";
 
 
 
@@ -12,21 +12,25 @@ export const useCartStore = create((set) => ({
     
 
     
-    getCart: async (wixClient) => {
-        try {
-          let cart = await wixClient.currentCart.getCurrentCart();
-      
-          // Create cart if not found
-          if (!cart || !cart.lineItems) {
-            cart = await wixClient.currentCart.createCurrentCart();
-          }
-      
-          set({ cart, isLoading: false, counter: cart?.lineItems?.length || 0 });
-        } catch (err) {
-          console.error("Error getting cart:", err);
-          set((prev) => ({ ...prev, isLoading: false }));
+     getCart: async (wixClient) => {
+        const refreshToken = Cookies.get('refreshToken'); // Ensure refreshToken exists in cookies
+        if (!refreshToken) {
+            console.warn("No refresh token found. Reinitializing session...");
+            set({ cart: [], isLoading: false, counter: 0 });  // If no refresh token, reset the cart
+            return;
         }
-      },
+
+        try {
+            // Fetch the current cart
+            const cart = await wixClient.currentCart.getCurrentCart();
+            set({ cart, isLoading: false, counter: cart?.lineItems?.length || 0 });
+        } catch (e) {
+            console.warn("Cart not found, creating new one implicitly...");
+            set({ cart: [], isLoading: false, counter: 0 });  // Handle failure to fetch cart
+        }
+    },
+
+
             
     addItem: async (wixClient, productId,variantId,quantity)=>{
 
