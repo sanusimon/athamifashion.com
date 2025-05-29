@@ -45,7 +45,7 @@ export const Cart = () => {
             window.location.href = redirectSession.fullUrl;
           }
         } catch (err) {
-          console.log(err);
+            console.error("❌ Checkout failed:", err?.message || err);
         }
       };
       

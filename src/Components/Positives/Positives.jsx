@@ -6,7 +6,7 @@ function Positives() {
         <div className='container'>
         <ul>
             <li>
-                <img src='/delivery-truck.png'></img>
+                <img src='/fast-delivery.png'></img>
                 <span>Free shipping on orders above Rs.1500</span>
             </li>
             <li>

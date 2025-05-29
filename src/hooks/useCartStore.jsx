@@ -1,95 +1,98 @@
 import { create } from 'zustand';
-import { WixClient } from "@/Context/WixContext/WixContext";
 import Cookies from "js-cookie";
 
 export const useCartStore = create((set) => ({
-    cart: [],
-    isLoading: true,
-    counter: 0,
+  cart: [],
+  isLoading: true,
+  counter: 0,
 
-    // Function to load cart from localStorage (if available)
-    loadCartFromStorage: () => {
-        const savedCart = JSON.parse(localStorage.getItem('cart')) || [];
-        const savedCounter = savedCart?.lineItems?.length || 0;
-        set({ cart: savedCart, counter: savedCounter });
-    },
+  loadCartFromStorage: () => {
+    const savedCart = JSON.parse(localStorage.getItem('cart')) || [];
+    const savedCounter = savedCart?.lineItems?.length || 0;
+    set({ cart: savedCart, counter: savedCounter });
+  },
 
-    // Fetch the current cart from Wix
-    getCart: async (wixClient) => {
-        const refreshToken = Cookies.get('refreshToken'); // Ensure refreshToken exists in cookies
-        if (!refreshToken) {
-            console.warn("No refresh token found. Reinitializing session...");
-            set({ cart: [], isLoading: false, counter: 0 });  // If no refresh token, reset the cart
-            return;
-        }
+  getCart: async (wixClient) => {
+    const refreshToken = Cookies.get('refreshToken');
+    if (!refreshToken) {
+      console.warn("No refresh token found. Resetting session...");
+      set({ cart: [], isLoading: false, counter: 0 });
+      return;
+    }
 
-        try {
-            // Fetch the current cart
-            const cart = await wixClient.currentCart.getCurrentCart();
-            set({ cart, isLoading: false, counter: cart?.lineItems?.length || 0 });
+    try {
+      const cart = await wixClient.currentCart.getCurrentCart();
+      set({ cart, isLoading: false, counter: cart?.lineItems?.length || 0 });
+      localStorage.setItem('cart', JSON.stringify(cart));
+    } catch (e) {
+      console.error("❌ Failed to fetch cart:", e);
 
-            // Persist cart in localStorage
-            localStorage.setItem('cart', JSON.stringify(cart));
+      // Optional: clear bad token if authentication failed
+      if (e?.status === 401 || e?.message?.includes("unauthorized")) {
+        Cookies.remove("refreshToken");
+        console.warn("Removed invalid refresh token.");
+      }
 
-        } catch (e) {
-            console.warn("Cart not found, creating new one implicitly...");
-            set({ cart: [], isLoading: false, counter: 0 });  // Handle failure to fetch cart
-        }
-    },
+      set({ cart: [], isLoading: false, counter: 0 });
+    }
+  },
 
-    // Add item to the cart
-    addItem: async (wixClient, productId, variantId, quantity) => {
-        set((state) => ({ ...state, isLoading: true }));
-        const response = await wixClient.currentCart.addToCurrentCart({
-            lineItems: [{
-                catalogReference: {
-                    appId: process.env.NEXT_PUBLIC_WIX_APP_ID,
-                    catalogItemId: productId,
-                    ...(variantId && { options: { variantId } })
-                },
-                quantity: quantity
-            }]
-        });
+  addItem: async (wixClient, productId, variantId, quantity) => {
+    set({ isLoading: true });
+    try {
+      const response = await wixClient.currentCart.addToCurrentCart({
+        lineItems: [{
+          catalogReference: {
+            appId: process.env.NEXT_PUBLIC_WIX_APP_ID,
+            catalogItemId: productId,
+            ...(variantId && { options: { variantId } })
+          },
+          quantity
+        }]
+      });
+      set({
+        cart: response.cart,
+        counter: response.cart?.lineItems.length,
+        isLoading: false
+      });
+      localStorage.setItem('cart', JSON.stringify(response.cart));
+    } catch (e) {
+      console.error("❌ Failed to add item to cart:", e);
+      set({ isLoading: false });
+    }
+  },
 
-        // Update state and persist to localStorage
-        set({
-            cart: response.cart,
-            counter: response.cart?.lineItems.length,
-            isLoading: false
-        });
+  removeItem: async (wixClient, itemId) => {
+    set({ isLoading: true });
+    try {
+      const response = await wixClient.currentCart.removeLineItemsFromCurrentCart([itemId]);
+      set({
+        cart: response.cart,
+        counter: response.cart?.lineItems.length,
+        isLoading: false
+      });
+      localStorage.setItem('cart', JSON.stringify(response.cart));
+    } catch (e) {
+      console.error("❌ Failed to remove item from cart:", e);
+      set({ isLoading: false });
+    }
+  },
 
-        localStorage.setItem('cart', JSON.stringify(response.cart));
-    },
-
-    // Remove item from the cart
-    removeItem: async (wixClient, itemId) => {
-        set((state) => ({ ...state, isLoading: true }));
-        const response = await wixClient.currentCart.removeLineItemsFromCurrentCart([itemId]);
-
-        // Update state and persist to localStorage
-        set({
-            cart: response.cart,
-            counter: response.cart?.lineItems.length,
-            isLoading: false
-        });
-
-        localStorage.setItem('cart', JSON.stringify(response.cart));
-    },
-
-    // Update item quantity in the cart
-    updateQuantity: async (wixClient, itemId, newQuantity) => {
-        set((state) => ({ ...state, isLoading: true }));
-        const response = await wixClient.currentCart.updateCurrentCartLineItemQuantity([
-            { id: itemId, quantity: newQuantity }
-        ]);
-
-        // Update state and persist to localStorage
-        set({
-            cart: response.cart,
-            counter: response.cart?.lineItems.length,
-            isLoading: false
-        });
-
-        localStorage.setItem('cart', JSON.stringify(response.cart));
-    },
+  updateQuantity: async (wixClient, itemId, newQuantity) => {
+    set({ isLoading: true });
+    try {
+      const response = await wixClient.currentCart.updateCurrentCartLineItemQuantity([
+        { id: itemId, quantity: newQuantity }
+      ]);
+      set({
+        cart: response.cart,
+        counter: response.cart?.lineItems.length,
+        isLoading: false
+      });
+      localStorage.setItem('cart', JSON.stringify(response.cart));
+    } catch (e) {
+      console.error("❌ Failed to update cart quantity:", e);
+      set({ isLoading: false });
+    }
+  },
 }));
