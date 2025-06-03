@@ -14,12 +14,16 @@ import { ProfileForm } from "./ProfileForm";
 const ProfilePage = async () => {
   const cookieStore = cookies();
   const tokenCookie = cookieStore.get("refreshToken")?.value;
-
+  
   if (!tokenCookie) {
     return <div className='container text-center'><p>Not logged in!</p></div>;
   }
 
   let refreshToken;
+
+  console.log("Refresh Token:", refreshToken);
+
+  
   try {
     refreshToken = JSON.parse(tokenCookie);
   } catch (err) {

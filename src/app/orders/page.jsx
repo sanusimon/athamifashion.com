@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 
 
 const Order = async () => {
-  const cookieStore = cookies();
+  const cookieStore = await cookies()
   const tokenCookie = cookieStore.get("refreshToken")?.value;
 
   if (!tokenCookie) {
