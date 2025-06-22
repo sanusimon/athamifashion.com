@@ -28,7 +28,7 @@ const Footer = () => {
       <div className="container">
         <div className="inner_">
           <div className="logo_">
-            <img src="/footer-logo.jpeg" alt="Logo" />
+            <img src="/footer-logo.svg" alt="Logo" />
           </div>
           <div className="footer_menu">
           <ul className="">
@@ -51,7 +51,7 @@ const Footer = () => {
           <div className="footer_social">
             <ul>
               <li>
-                <a href="https://www.instagram.com/athami_fashion/" target="_blank"><img src="/instagram.png" /></a>
+                <a href="https://www.instagram.com/athamifashions/" target="_blank"><img src="/instagram.png" /></a>
               </li>
               <li>
                 <a href="https://www.facebook.com/profile.php?id=61576264670580" target="_blank"><img src="/facebook.png" /></a>

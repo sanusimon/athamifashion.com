@@ -8,7 +8,7 @@
         }
       },
       "layer": {
-        "app/profile/page": "action-browser"
+        "app/profile/page": "rsc"
       }
     }
   },
