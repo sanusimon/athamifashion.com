@@ -82,6 +82,7 @@ export const Cart = () => {
     return (
        
         <section className="cart_page">
+            {console.log("in")}
             <div className="container">
                     {
                     // isLoading ? ("Loading..." ): 
