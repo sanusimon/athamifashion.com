@@ -41,7 +41,7 @@ const HomePage = async() =>  {
 
         <section className="product_page home_product">
         <div className="container">
-          <h2 className="title">kurti 2 Pc Set</h2>
+          <h2 className="title">Top & Pant</h2>
         </div>
         <Suspense fallback={<Skeleton />}>
           <HomeProductList categoryId={process.env.KURTIES_TWO_PIECE_PRODUCTS_CATEGORY_ID}  limit={8}/>
