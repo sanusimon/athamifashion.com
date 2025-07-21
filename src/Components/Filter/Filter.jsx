@@ -152,7 +152,7 @@ const Filter = () => {
           </h4>
 
           <div className={`filter_content size_ ${openAccordion === "size" ? "active" : ""}`}>
-            {["S", "M", "L", "XL", "XXL"].map((size) => (
+            {["XS", "S", "M", "L", "XL", "XXL"].map((size) => (
               <label key={size}>
                 <input
                   type="checkbox"
