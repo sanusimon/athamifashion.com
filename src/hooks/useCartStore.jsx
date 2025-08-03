@@ -2,13 +2,6 @@ import { create } from 'zustand'
 import { WixClient } from "@/Context/WixContext/WixContext";
 import Cookies from "js-cookie";
 
-
-
-export const useCartStore = create((set) => ({
-    
-    cart:[],
-    isLoading:true,
-    counter:0,
     
 type CartState = {
   cart: currentCart.Cart;
@@ -24,9 +17,16 @@ type CartState = {
   removeItem: (wixClient: WixClient, itemId: string) => void;
 };
     
+
+export const useCartStore = create((set) => ({
+    
+    cart:[],
+    isLoading:true,
+    counter:0,
+
      getCart: async (wixClient) => {
         const refreshToken = Cookies.get('refreshToken'); // Ensure refreshToken exists in cookies
-         console.log(refreshToken);
+         
         if (!refreshToken) {
             console.warn("No refresh token found. Reinitializing session...");
             set({ cart: [], isLoading: false, counter: 0 });  // If no refresh token, reset the cart
