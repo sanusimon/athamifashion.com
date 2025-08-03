@@ -14,6 +14,7 @@ export const useCartStore = create((set) => ({
     
      getCart: async (wixClient) => {
         const refreshToken = Cookies.get('refreshToken'); // Ensure refreshToken exists in cookies
+         console.log(refreshToken);
         if (!refreshToken) {
             console.warn("No refresh token found. Reinitializing session...");
             set({ cart: [], isLoading: false, counter: 0 });  // If no refresh token, reset the cart
