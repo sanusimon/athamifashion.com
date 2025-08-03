@@ -28,7 +28,7 @@ function AddQuantity({productId,variantId,stockNumber , isSelected}) {
         const handleAddToCart = () => {
           addItem(wixClient, productId, variantId, quantity);
           if (addItem) {
-            router.push("/cart");
+          //  router.push("/cart");
           }
         }
           
