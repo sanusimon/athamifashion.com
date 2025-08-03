@@ -10,7 +10,19 @@ export const useCartStore = create((set) => ({
     isLoading:true,
     counter:0,
     
-
+type CartState = {
+  cart: currentCart.Cart;
+  isLoading: boolean;
+  counter: number;
+  getCart: (wixClient: WixClient) => void;
+  addItem: (
+    wixClient: WixClient,
+    productId: string,
+    variantId: string,
+    quantity: number
+  ) => void;
+  removeItem: (wixClient: WixClient, itemId: string) => void;
+};
     
      getCart: async (wixClient) => {
         const refreshToken = Cookies.get('refreshToken'); // Ensure refreshToken exists in cookies
