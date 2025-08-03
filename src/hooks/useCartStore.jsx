@@ -1,8 +1,8 @@
 import { create } from 'zustand'
 import { WixClient } from "@/Context/WixContext/WixContext";
 import Cookies from "js-cookie";
-
-    
+import { currentCart } from "@wix/ecom"; 
+ 
 type CartState = {
   cart: currentCart.Cart;
   isLoading: boolean;
