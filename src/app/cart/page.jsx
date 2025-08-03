@@ -72,11 +72,11 @@ console.log('innn');
         return <div className='min_height container text-center empty_page'><p>Loading your cart...</p></div>;
       }
     
-      if (!cart || cart.length === 0) {
+    /*  if (!cart || cart.length === 0) {
         return <div className='min_height container text-center'><p>Your cart is empty..</p></div>;
       }
-      
-      
+      */
+
 
 
     return (
