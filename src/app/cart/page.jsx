@@ -17,13 +17,13 @@ import { currentCart } from '@wix/ecom';
 export const Cart = () => {
 
     const wixClient = useWixClient()
-    const {cart , isLoading , removeItem ,updateQuantity, getCart } = useCartStore();
+    const {cart , isLoading , removeItem ,updateQuantity} = useCartStore();
 
-    useEffect(() => {
+  /*  useEffect(() => {
         if (wixClient) {
           getCart(wixClient); // 🔁 Fetch the persisted cart on load
         }
-      }, [wixClient]);
+      }, [wixClient]);*/
 
     const handleCheckout = async () => {
         try {
