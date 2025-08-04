@@ -4,21 +4,22 @@ import Cookies from "js-cookie";
 import { currentCart } from "@wix/ecom"; 
  
 
-type CartState = {
-  cart: currentCart.Cart;
-  isLoading: boolean;
-  counter: number;
-  getCart: (wixClient: WixClient) => void;
-  addItem: (
-    wixClient: WixClient,
-    productId: string,
-    variantId: string,
-    quantity: number
-  ) => void;
-  removeItem: (wixClient: WixClient, itemId: string) => void;
-};
+// type CartState = {
+//   cart: currentCart.Cart;
+//   isLoading: boolean;
+//   counter: number;
+//   getCart: (wixClient: WixClient) => void;
+//   addItem: (
+//     wixClient: WixClient,
+//     productId: string,
+//     variantId: string,
+//     quantity: number
+//   ) => void;
+//   removeItem: (wixClient: WixClient, itemId: string) => void;
+// };
 
-export const useCartStore = create<CartState>((set) => ({
+// export const useCartStore = create<CartState>((set) => ({
+    export const useCartStore = create((set) => ({
   cart: [],
   isLoading: true,
   counter: 0,
@@ -40,7 +41,7 @@ export const useCartStore = create<CartState>((set) => ({
       lineItems: [
         {
           catalogReference: {
-            appId: process.env.NEXT_PUBLIC_WIX_APP_ID!,
+            appId: process.env.NEXT_PUBLIC_WIX_APP_ID,
             catalogItemId: productId,
             ...(variantId && { options: { variantId } }),
           },
