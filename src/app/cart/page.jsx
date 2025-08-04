@@ -19,11 +19,11 @@ export const Cart = () => {
     const wixClient = useWixClient()
     const {cart , isLoading , removeItem ,updateQuantity} = useCartStore();
 console.log('innn');
-  /*  useEffect(() => {
+     useEffect(() => {
         if (wixClient) {
           getCart(wixClient); // 🔁 Fetch the persisted cart on load
         }
-      }, [wixClient]);*/
+      }, [wixClient]); 
 
     const handleCheckout = async () => {
         try {
