@@ -17,13 +17,19 @@ import { currentCart } from '@wix/ecom';
 export const Cart = () => {
 
     const wixClient = useWixClient()
-    const {cart , isLoading , removeItem ,updateQuantity} = useCartStore();
-console.log('innn');
-     useEffect(() => {
+    const {cart , isLoading , removeItem ,updateQuantity, getCart } = useCartStore();
+
+    useEffect(() => {
         if (wixClient) {
           getCart(wixClient); // 🔁 Fetch the persisted cart on load
         }
-      }, [wixClient]); 
+      }, [wixClient]);
+      useEffect(() => {
+  const fetchCart = async () => {
+    await getCart(wixClient);
+  };
+  fetchCart();
+}, []);
 
     const handleCheckout = async () => {
         try {
@@ -45,7 +51,7 @@ console.log('innn');
             window.location.href = redirectSession.fullUrl;
           }
         } catch (err) {
-            console.error("❌ Checkout failed:", err?.message || err);
+          console.log(err);
         }
       };
       
@@ -72,17 +78,16 @@ console.log('innn');
         return <div className='min_height container text-center empty_page'><p>Loading your cart...</p></div>;
       }
     
-    /*  if (!cart || cart.length === 0) {
+      if (!cart || cart.length === 0) {
         return <div className='min_height container text-center'><p>Your cart is empty..</p></div>;
       }
-      */
-
+      
+      
 
 
     return (
        
         <section className="cart_page">
-            {console.log("in")}
             <div className="container">
                     {
                     // isLoading ? ("Loading..." ): 
