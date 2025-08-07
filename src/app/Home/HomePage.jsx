@@ -28,14 +28,14 @@ const HomePage = async() =>  {
           </Suspense>
         </section>
 
-        <section className="product_page home_product">
+        {/* <section className="product_page home_product">
         <div className="container">
           <h2 className="title">Co-ord set</h2>
         </div>
         <Suspense fallback={<Skeleton />}>
-          <HomeProductList categoryId={process.env.KURTIES_PRODUCTS_CATEGORY_ID} limit={8}/>
+          <HomeProductList categoryId={process.env.KURTIES_CORDSET_PRODUCTS_CATEGORY_ID} limit={8}/>
         </Suspense>
-        </section>
+        </section> */}
         
         <DiscountSection />
 

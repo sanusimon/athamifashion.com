@@ -9,10 +9,10 @@ function Positives() {
                 <img src='/fast-delivery.png'></img>
                 <span>Free shipping on orders above Rs.1500</span>
             </li>
-            <li>
+            {/* <li>
                 <img src='/cash-on-delivery.png'></img>
                 <span>Cash on Delivery</span>
-            </li>
+            </li> */}
             <li>
                 <img src='/customer-satisfaction.png'></img>
                 <span>Exquisitely crafted with care and intention</span>
