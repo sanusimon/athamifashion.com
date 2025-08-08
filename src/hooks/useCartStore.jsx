@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { WixClient } from "@/Context/WixContext/WixContext";
+import { useWixClient } from "@/hooks/useWixClient";
 import { currentCart } from "@wix/ecom";
 
 // type CartState = {
@@ -66,7 +67,8 @@ export const useCartStore = create()(
 
       updateQuantity: async (wixClient, itemId, newQuantity) => {
         set({ isLoading: true });
-        const response = await wixClient.currentCart.updateCurrentCartLineItemQuantity([
+        const wixClint = useWixClient();
+        const response = await wixClint.currentCart.updateCurrentCartLineItemQuantity([
           { id: itemId, quantity: newQuantity },
         ]);
         set({
