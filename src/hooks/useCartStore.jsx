@@ -27,7 +27,7 @@ export const useCartStore = create()(
           set({
             cart: cart || [],
             isLoading: false,
-            counter: cart?.lineItems.length || 0,
+            counter: (cart?.lineItems.length || 0),
           });
         } catch (err) {
           set((prev) => ({ ...prev, isLoading: false }));
@@ -50,7 +50,18 @@ export const useCartStore = create()(
         });
         set({
           cart: response.cart,
-          counter: response.cart?.lineItems.length,
+          counter: (response.cart?.lineItems.length),
+          isLoading: false,
+        });
+      },
+       updateQuantity: async (wixClient, itemId, newQuantity) => {
+        set({ isLoading: true }); 
+        const response = await wixClient.currentCart.updateCurrentCartLineItemQuantity([
+          { id: itemId, quantity: newQuantity },
+        ]);
+        set({
+          cart: response.cart,
+          counter: (response.cart?.lineItems.length),
           isLoading: false,
         });
       },
@@ -65,17 +76,7 @@ export const useCartStore = create()(
         });
       },
 
-      updateQuantity: async (wixClient, itemId, newQuantity) => {
-        set({ isLoading: true }); 
-        const response = await wixClient.currentCart.updateCurrentCartLineItemQuantity([
-          { id: itemId, quantity: newQuantity },
-        ]);
-        set({
-          cart: response.cart,
-          counter: (response.cart?.lineItems.length),
-          isLoading: false,
-        });
-      },
+     
     }),
     {
       name: 'cart-storage', // localStorage key
