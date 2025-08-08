@@ -16,7 +16,8 @@ import { currentCart } from '@wix/ecom';
 
 export const Cart = () => {
 
-    const wixClient = useWixClient()
+    const wixClient = useWixClient();
+    console.log(wixClient);
     const {cart , isLoading , removeItem ,updateQuantity, getCart } = useCartStore();
 
     useEffect(() => {
