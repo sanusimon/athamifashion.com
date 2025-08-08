@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { WixClient } from "@/Context/WixContext/WixContext";
-import { useWixClient } from "@/hooks/useWixClient";
+import { useWixClient } from "./useWixClient";
 import { currentCart } from "@wix/ecom";
 
 // type CartState = {
