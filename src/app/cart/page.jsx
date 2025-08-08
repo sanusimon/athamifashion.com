@@ -69,7 +69,7 @@ export const Cart = () => {
       const totalDiscount = calculateTotalDiscount();
 
     const handleQuantityChange = async (itemId, currentQuantity, action) => {
-        const newQuantity = action === 'increase' ? currentQuantity + 1 : currentQuantity - 1;
+        const newQuantity = action === 'increase' ? (currentQuantity + 1) : (currentQuantity - 1);
         if (newQuantity > 0) {
           await updateQuantity(wixClient, itemId, newQuantity); // Update the quantity in the cart
         }
