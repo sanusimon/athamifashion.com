@@ -60,20 +60,19 @@ export const useCartStore = create()(
         const response = await wixClient.currentCart.removeLineItemsFromCurrentCart([itemId]);
         set({
           cart: response.cart,
-          counter: response.cart?.lineItems.length,
+          counter: (response.cart?.lineItems.length),
           isLoading: false,
         });
       },
 
       updateQuantity: async (wixClient, itemId, newQuantity) => {
-        set({ isLoading: true });
-        const wixClint = useWixClient();
-        const response = await wixClint.currentCart.updateCurrentCartLineItemQuantity([
+        set({ isLoading: true }); 
+        const response = await wixClient.currentCart.updateCurrentCartLineItemQuantity([
           { id: itemId, quantity: newQuantity },
         ]);
         set({
           cart: response.cart,
-          counter: response.cart?.lineItems.length,
+          counter: (response.cart?.lineItems.length),
           isLoading: false,
         });
       },
