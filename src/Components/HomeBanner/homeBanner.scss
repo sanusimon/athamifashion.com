@@ -13,6 +13,9 @@
         img{
             object-fit: cover;
             object-position: top center;
+            @media only screen and (max-width: 767px) {
+                object-position: left;
+            }
         }
     }
     .banner_txt{

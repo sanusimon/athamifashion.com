@@ -40,8 +40,8 @@ const HomeBanner = () => {
   }, []);
 
   const imgArray = [
-    // { imgPath: "/banner1.jpg", bannerText:"	Coord Sets That Define Effortless <br> <span> Style</span>", id: "img1", categorySlug: cats[0]?.slug || "all-products" },
-    { imgPath: "/banner2.jpg",bannerText:"Kurtis for the Modern <br> <span>Muse</span>", id: "img2", categorySlug: cats[1]?.slug || "all-products" },
+    { imgPath: "/banner01.jpg", bannerText:"	Coord Sets That Define Effortless <br> <span> Style</span>", id: "img1", categorySlug: cats[1]?.slug || "all-products" },
+    { imgPath: "/banner02.jpg",bannerText:"Kurtis for the Modern <br> <span>Muse</span>", id: "img2", categorySlug: cats[6]?.slug || "all-products" },
     // { imgPath: "/banner3.jpg",bannerText:"Dresses That Make Every Moment <br> <span> Stylish</span>", id: "This Is A<br> Long Open<br> <span>Robe</span>", categorySlug: cats[2]?.slug || "all-products" },
     // { imgPath: "/banner4.jpg",bannerText:"Short Tops, Big Style  <br> <span>Statements</span>", id: "img4", categorySlug: cats[3]?.slug || "all-products" },
     // { imgPath: "/banner5.jpg",bannerText:"Sarees That Speak Grace and  <br> <span>Glamour</span>", id: "img5", categorySlug: cats[4]?.slug || "all-products" },
@@ -55,7 +55,7 @@ const HomeBanner = () => {
         slidesPerView={1} // Important for fade effect
         navigation
         pagination={{ clickable: true }}
-        autoplay={{ delay: 3000, disableOnInteraction: false }} // Auto-slide every 3s
+        autoplay={{ delay: 5000, disableOnInteraction: false }} // Auto-slide every 3s
         effect="fade" // Enables fade effect
         fadeEffect={{ crossFade: true }} // Smooth transition
       >
