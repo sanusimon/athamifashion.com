@@ -38,11 +38,11 @@ const HomeBanner = () => {
 
     fetchCategories();
   }, []);
-
+  console.log(cats)
   const imgArray = [
+    { imgPath: "/banner3.jpg",bannerText:"Where Comfort Meets Elegance<br> <span> Top & Dupatta</span>", id: "img3", categorySlug: cats[5]?.slug || "all-products" },
     { imgPath: "/banner01.jpg", bannerText:"	Coord Sets That Define Effortless <br> <span> Style</span>", id: "img1", categorySlug: cats[1]?.slug || "all-products" },
     { imgPath: "/banner02.jpg",bannerText:"Kurtis for the Modern <br> <span>Muse</span>", id: "img2", categorySlug: cats[6]?.slug || "all-products" },
-    // { imgPath: "/banner3.jpg",bannerText:"Dresses That Make Every Moment <br> <span> Stylish</span>", id: "This Is A<br> Long Open<br> <span>Robe</span>", categorySlug: cats[2]?.slug || "all-products" },
     // { imgPath: "/banner4.jpg",bannerText:"Short Tops, Big Style  <br> <span>Statements</span>", id: "img4", categorySlug: cats[3]?.slug || "all-products" },
     // { imgPath: "/banner5.jpg",bannerText:"Sarees That Speak Grace and  <br> <span>Glamour</span>", id: "img5", categorySlug: cats[4]?.slug || "all-products" },
   ];
