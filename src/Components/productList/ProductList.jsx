@@ -87,21 +87,28 @@ export default function ProductList({ limit }) {
       });
 
       // Sorting
-      if (sortField === "price") {
-        filteredProducts.sort((a, b) => {
-          const priceA = a.priceData?.price || 0;
-          const priceB = b.priceData?.price || 0;
-          return sortDir === "asc" ? priceA - priceB : priceB - priceA;
-        });
-      }
+      // Always sort by lastUpdated desc unless a sort param is provided
+if (sortField === "price") {
+  filteredProducts.sort((a, b) => {
+    const priceA = a.priceData?.price || 0;
+    const priceB = b.priceData?.price || 0;
+    return sortDir === "asc" ? priceA - priceB : priceB - priceA;
+  });
+} else if (sortField === "lastUpdated") {
+  filteredProducts.sort((a, b) => {
+    const dateA = new Date(a.lastUpdated);
+    const dateB = new Date(b.lastUpdated);
+    return sortDir === "asc" ? dateA - dateB : dateB - dateA;
+  });
+} else {
+  // Default: sort by lastUpdated DESC
+  filteredProducts.sort((a, b) => {
+    const dateA = new Date(a.lastUpdated);
+    const dateB = new Date(b.lastUpdated);
+    return dateB - dateA;
+  });
+}
 
-      if (sortField === "lastUpdated") {
-        filteredProducts.sort((a, b) => {
-          const dateA = new Date(a.lastUpdated);
-          const dateB = new Date(b.lastUpdated);
-          return sortDir === "asc" ? dateA - dateB : dateB - dateA;
-        });
-      }
 
       setTotalProducts(filteredProducts.length);
       setProducts(filteredProducts);

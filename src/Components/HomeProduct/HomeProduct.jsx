@@ -40,6 +40,7 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
                     .queryProducts()
                     .hasSome("collectionIds", [categoryId]) // Filter by category
                     .limit(limit || 8) // Default limit to 8 products
+                    .descending("lastUpdated")
                     .find();
 
                 setProducts(res.items || []);
