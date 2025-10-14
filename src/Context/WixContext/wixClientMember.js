@@ -1,40 +1,38 @@
+// wixClientMember.ts
 "use client";
 
 import { createClient, OAuthStrategy } from "@wix/sdk";
 import { products, collections } from "@wix/stores";
 import { currentCart } from "@wix/ecom";
-import Cookies from "js-cookie";
-import { createContext } from "react";
-import { redirects } from "@wix/redirects";
 import { members } from "@wix/members";
-
+import { redirects } from "@wix/redirects";
+import Cookies from "js-cookie";
 
 let refreshToken = {};
 if (typeof window !== "undefined") {
   try {
     const storedToken = Cookies.get("refreshToken");
     refreshToken = storedToken ? JSON.parse(storedToken) : {};
-    console.log("Loaded refresh token:", refreshToken);
   } catch (err) {
     console.error("Invalid refresh token in cookie:", err);
     refreshToken = {};
-    Cookies.remove("refreshToken"); // Clear invalid token
+    Cookies.remove("refreshToken");
   }
 }
 
-const wixClient = createClient({
+export const wixClientMember = createClient({
   modules: {
     products,
     collections,
     currentCart,
-    redirects,
     members,
+    redirects,
   },
   auth: OAuthStrategy({
     clientId: process.env.NEXT_PUBLIC_WIX_CLIENT_ID,
     tokens: {
       refreshToken,
-      // accessToken: { value: "", expiresAt: 0 },
+      accessToken: { value: "", expiresAt: 0 },
     },
     onTokens: (tokens) => {
       if (tokens?.refreshToken) {
@@ -42,19 +40,9 @@ const wixClient = createClient({
           expires: 30,
           secure: true,
           sameSite: "Lax",
-          path: "/", // ✅ ensure it's accessible everywhere
+          path: "/",
         });
       }
-    }
+    },
   }),
 });
-
-export const WixClientContext = createContext();
-
-export const WixClientContextProvider = ({ children }) => {
-  return (
-    <WixClientContext.Provider value={wixClient}>
-      {children}
-    </WixClientContext.Provider>
-  );
-};

@@ -21,16 +21,10 @@ export const Cart = () => {
     const {cart , isLoading , removeItem ,updateQuantity, getCart } = useCartStore();
 
     useEffect(() => {
-        if (wixClient) {
-          getCart(wixClient); // 🔁 Fetch the persisted cart on load
-        }
-      }, [wixClient]);
-      useEffect(() => {
-  const fetchCart = async () => {
-    await getCart(wixClient);
-  };
-  fetchCart();
-}, []);
+    if (!wixClient) return;
+    getCart(wixClient);
+    }, [wixClient]);
+
 
     const handleCheckout = async () => {
         try {
@@ -70,14 +64,21 @@ export const Cart = () => {
       const totalDiscount = calculateTotalDiscount();
 
     const handleQuantityChange = async (itemId, currentQuantity, action) => {
-        const newQuantity = action === 'increase' ? (currentQuantity + 1) : (currentQuantity - 1);
+        if (!wixClient) return; // Ensure client is available
+        const newQuantity = action === 'increase' ? currentQuantity + 1 : currentQuantity - 1;
         if (newQuantity > 0) {
-          await updateQuantity(wixClient, itemId, newQuantity); // Update the quantity in the cart
+            await updateQuantity(wixClient, itemId, newQuantity);
         }
-      };
-      if (isLoading) {
-        return <div className='min_height container text-center empty_page'><p>Loading your cart...</p></div>;
-      }
+        };
+
+        const handleRemoveItem = async (itemId) => {
+        if (!wixClient) return;
+        await removeItem(wixClient, itemId);
+    };
+
+    //   if (isLoading) {
+    //     return <div className='min_height container text-center empty_page'><p>Loading your cart...</p></div>;
+    //   }
     
       if (!cart || cart.length === 0) {
         return <div className='min_height container text-center'><p>Your cart is empty..</p></div>;
@@ -192,7 +193,7 @@ export const Cart = () => {
                                                     </div>
                                                     
                                                     <div className="delete_cart">
-                                                        <button onClick={()=>removeItem(wixClient, item._id)}><img src="./bin.png" /></button>
+                                                       <button onClick={() => handleRemoveItem(item._id)}><img src="./bin.png" /></button>
                                                     </div>
                                                 </div>
 

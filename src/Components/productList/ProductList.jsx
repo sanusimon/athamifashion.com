@@ -9,7 +9,7 @@ import DOMPurify from "dompurify";
 import "./productList.scss";
 import Head from "next/head";
 
-const PRODUCT_PER_PAGE = 8;
+const PRODUCT_PER_PAGE = 10;
 
 export default function ProductList({ limit }) {
   const searchParams = useSearchParams();
@@ -107,6 +107,14 @@ if (sortField === "price") {
     const dateB = new Date(b.lastUpdated);
     return dateB - dateA;
   });
+   // ✅ 4. Pagination in-memory
+  const start = page * perPage;
+  const end = start + perPage;
+  const paginatedProducts = filteredProducts.slice(start, end);
+
+  setTotalProducts(filteredProducts.length);
+  setProducts(paginatedProducts);
+  setLoading(false);
 }
 
 

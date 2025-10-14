@@ -36,14 +36,24 @@ const LoginPage = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
 
-  useEffect(() => {
-    const checkLoggedIn = async () => {
+useEffect(() => {
+  const checkLoggedIn = async () => {
+    try {
       const logged = await wixClient.auth.loggedIn();
       setIsLoggedIn(logged);
       if (logged) router.push("/");
-    };
-    checkLoggedIn();
-  }, [wixClient, router]);
+    } catch (err) {
+      console.error("Error checking login:", err);
+    }
+  };
+  checkLoggedIn();
+}, [wixClient, router]);
+if (isLoggedIn) return null; // Don't show login page again
+
+if (typeof window !== "undefined" && isLoggedIn === true) {
+  return null;
+}
+
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
