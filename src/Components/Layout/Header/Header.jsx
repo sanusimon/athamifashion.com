@@ -42,6 +42,25 @@ const Header = () => {
 
   const isLoggedIn = wixClient.auth.loggedIn();
 
+
+useEffect(() => {
+  const keepAlive = async () => {
+    try {
+      const storedToken = Cookies.get("refreshToken");
+      if (!storedToken) return;
+      const token = JSON.parse(storedToken);
+      await wixClient.auth.setTokens({ refreshToken: token });
+    } catch (err) {
+      console.error("Session refresh failed");
+    }
+  };
+
+  // Call every X minutes
+  const interval = setInterval(keepAlive, 1000 * 60 * 5); // every 5 minutes
+  return () => clearInterval(interval);
+}, []);
+
+
   useEffect(() => {
     const storedNickname = sessionStorage.getItem("nickname");
     if (storedNickname) {

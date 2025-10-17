@@ -207,7 +207,14 @@ if (typeof window !== "undefined" && isLoggedIn === true) {
         switch (response.loginState) {
           case LoginState.SUCCESS:
             const tokens = await wixClient.auth.getMemberTokensForDirectLogin(response.data.sessionToken);
-            Cookies.set("refreshToken", JSON.stringify(tokens.refreshToken), { expires: 2 });
+            await fetch("/api/set-token", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ refreshToken: tokens.refreshToken }),
+            });
+
             wixClient.auth.setTokens(tokens);
             const user = await wixClient.members.getCurrentMember();
             const nickname = user?.member?.profile?.nickname;
