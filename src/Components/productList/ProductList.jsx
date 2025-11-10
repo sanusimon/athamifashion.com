@@ -9,7 +9,7 @@ import DOMPurify from "dompurify";
 import "./productList.scss";
 import Head from "next/head";
 
-const PRODUCT_PER_PAGE = 10;
+const PRODUCT_PER_PAGE = 20;
 
 export default function ProductList({ limit }) {
   const searchParams = useSearchParams();
