@@ -21,7 +21,7 @@ const HomePage = async() =>  {
       {/* <AgeFilterHome /> */}
       <section className="product_page home_product">
         <div className="container">
-            <h2 className="title">Featured Product</h2>
+            <h2 className="title">New Arrivals</h2>
           </div>
           <Suspense fallback={<Skeleton />}>
             <HomeProductList categoryId={process.env.FEATTURED_PRODUCTS_CATEGORY_ID} limit={8}/>
@@ -47,7 +47,14 @@ const HomePage = async() =>  {
           <HomeProductList categoryId={process.env.KURTIES_TWO_PIECE_PRODUCTS_CATEGORY_ID}  limit={8}/>
         </Suspense>
         </section>
-
+        <section className="product_page home_product">
+          <div className="container">
+            <h2 className="title">Kurties</h2>
+          </div>
+          <Suspense fallback={<Skeleton />}>
+            <HomeProductList categoryId={process.env.KURTIES_PRODUCTS_CATEGORY_ID}  limit={8}/>
+          </Suspense>
+        </section>
         
       
         
