@@ -170,13 +170,13 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
                         <Link className="add_cart" href={`/list?cat=featured-product`}>
                             View All
                         </Link>
-                    ) :  categoryId === "69ad417a-f44a-93ed-14fc-af86a86cacdc" ? 
+                    ) :  categoryId === "9efec466-d925-c73f-c294-210f3cb6701f" ? 
                     (
-                    <Link className="add_cart" href={`/list?cat=kurtis`}>
+                    <Link className="add_cart" href={`/list?cat=kurti-2-pc-set`}>
                         View All
-                    </Link>) : categoryId === "cf4036aa-90de-3889-8248-e0ef3787c8a4" ? 
+                    </Link>) : categoryId === "d16ee365-b5b0-8fa5-dadd-cfcf2cb90ac8" ? 
                     (
-                    <Link className="add_cart" href={`/list?cat=feeding-kurti`}>
+                    <Link className="add_cart" href={`/list?cat=kurtis-1`}>
                         View All
                     </Link>) : ""}
                         
