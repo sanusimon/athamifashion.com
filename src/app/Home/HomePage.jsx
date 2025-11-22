@@ -58,7 +58,7 @@ const HomePage = async() =>  {
           </Suspense>
         </section>
         <section>
-          <InstagramWidget />
+          <div className='container'><InstagramWidget /></div> 
         </section>
       
         
