@@ -579,3 +579,11 @@ input{
 .min_height {
     min-height: calc(100vh - 352px);
 }
+.eapps-widget-toolbar{
+    display: none !important;
+}
+.eapps-instagram-feed .eapps-instagram-feed-container + style + style + a * ,.eapps-instagram-feed .eapps-instagram-feed-container + style + style + a{
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
