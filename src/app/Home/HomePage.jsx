@@ -9,6 +9,8 @@ import Skeleton from '@/Components/Skeleton'
 import { Suspense } from 'react'
 import DiscountSection from '@/Components/DiscountSection/DiscountSection'
 import Positives from '@/Components/Positives/Positives'
+import InstagramWidget from "@/Components/InstagramWidget";
+
 
 
 const HomePage = async() =>  {
@@ -55,7 +57,9 @@ const HomePage = async() =>  {
             <HomeProductList categoryId={process.env.KURTIES_PRODUCTS_CATEGORY_ID}  limit={8}/>
           </Suspense>
         </section>
-        
+        <section>
+          <InstagramWidget />
+        </section>
       
         
       {/* <Electronics /> */}
