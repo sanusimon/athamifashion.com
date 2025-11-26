@@ -6,7 +6,7 @@ import "./DiscountSection.scss";
 
 export default function DiscountSection() {
   const discountValue = 5; // Set the static discount value
-  const imgPath = `/discountimg.jpg`;
+  const imgPath = `/discountimg1.jpg`;
   // const imgPath2 = `/discountimg.jpg`;
 
   const discountText = "Limited Time Offers – <br/>Fashion You Love, Prices You'll Adore</span>";
