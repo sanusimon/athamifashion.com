@@ -89,7 +89,7 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
                         spaceBetween={20}
                         slidesPerView={4}
                         onSwiper={(swiper) => (swiperRef.current = swiper)} // ✅ Store Swiper instance
-                        autoplay={{ delay: 3000, disableOnInteraction: false }}
+                        
                         
                         breakpoints={{
                             320: { slidesPerView: 2 }, // 1 slide on small screens
