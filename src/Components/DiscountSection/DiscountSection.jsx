@@ -24,7 +24,7 @@ export default function DiscountSection() {
             <div className="text_">
               <h3 dangerouslySetInnerHTML={{ __html: discountText }} />
               {/* <h4 dangerouslySetInnerHTML={{ __html: discountText2 }} /> */}
-              <p>{discountValue}% or More</p>
+              <p>Upto 20%</p>
             </div>
           </Link>
         </div>
