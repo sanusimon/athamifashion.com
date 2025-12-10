@@ -26,7 +26,13 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
        if (typeof window !== "undefined") {
          DOMPurifyRef.current = createDOMPurify(window);
        }})
-   
+
+    const formatPrice = (value) => {
+        return new Intl.NumberFormat("en-IN", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        }).format(Math.round(value));
+        };
 
     useEffect(() => {
         if (!categoryId) return;
@@ -53,6 +59,7 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
 
         fetchProducts();
     }, [categoryId, limit]);
+   
 
     if (!categoryId) {
         return <div className="container">Error: No category ID provided</div>;
@@ -144,11 +151,11 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
 
                                         <div className="price_area">
                                             {product.priceData?.price === product.priceData?.discountedPrice ? (
-                                                <label className="cat_price">Rs.{Math.floor(product.priceData?.price)}</label>
+                                                <label className="cat_price">Rs.{formatPrice(product.priceData?.price)}</label>
                                             ) : (
                                                 <div className="discount_sec">
-                                                    <label className="cat_price">Rs.{Math.floor(product.priceData?.discountedPrice)}</label>
-                                                    <label className="cat_price line_throw">Rs.{Math.floor(product.priceData?.price)}</label>
+                                                    <label className="cat_price">Rs.{formatPrice(product.priceData?.discountedPrice)}</label>
+                                                    <label className="cat_price line_throw">Rs.{formatPrice(product.priceData?.price)}</label>
                                                 </div>
                                             )}
                                         </div>

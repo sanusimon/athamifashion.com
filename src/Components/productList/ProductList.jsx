@@ -135,6 +135,13 @@ if (sortField === "price") {
 
   const currentPage = parseInt(searchParams.get("page") || 0);
   const totalPages = Math.ceil(totalProducts / (limit || PRODUCT_PER_PAGE));
+const formatPrice = (value) => {
+  return new Intl.NumberFormat("en-IN", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(Math.round(value));
+};
+
 
   const selectedColors = searchParams.getAll("color");
 
@@ -241,11 +248,11 @@ if (sortField === "price") {
 
                                         <div className="price_area">
                                             {product.price?.price === product.price?.discountedPrice ? (
-                                                <label className="cat_price">Rs.{Math.floor(product.price?.price)}</label>
+                                                <label className="cat_price">Rs.{formatPrice(product.price?.price)}</label>
                                             ) : (
                                                 <div className="discount_sec">
-                                                    <label className="cat_price">Rs.{Math.floor(product.price?.discountedPrice)}</label>
-                                                    <label className="cat_price line_throw">Rs.{Math.floor(product.price?.price)}</label>
+                                                    <label className="cat_price">Rs.{formatPrice(product.price?.discountedPrice)}</label>
+                                                    <label className="cat_price line_throw">Rs.{formatPrice(product.price?.price)}</label>
                                                 </div>
                                             )}
                                         </div>
@@ -312,11 +319,11 @@ if (sortField === "price") {
 
                                         <div className="price_area">
                                             {product.price?.price === product.price?.discountedPrice ? (
-                                                <label className="cat_price">Rs.{Math.floor(product.price?.price)}</label>
+                                                <label className="cat_price">Rs.{formatPrice(product.price?.price)}</label>
                                             ) : (
                                                 <div className="discount_sec">
-                                                    <label className="cat_price">Rs.{Math.floor(product.price?.discountedPrice)}</label>
-                                                    <label className="cat_price line_throw">Rs.{Math.floor(product.price?.price)}</label>
+                                                    <label className="cat_price">Rs.{formatPrice(product.price?.discountedPrice)}</label>
+                                                    <label className="cat_price line_throw">Rs.{formatPrice(product.price?.price)}</label>
                                                 </div>
                                             )}
                                         </div>
