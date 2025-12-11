@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@wix/contacts": "^1.0.27",
-    "@wix/ecom": "^1.0.1519",
+    "@wix/ecom": "^1.0.1520",
     "@wix/members": "^1.0.381",
     "@wix/redirects": "^1.0.106",
     "@wix/sdk": "^1.17.5",

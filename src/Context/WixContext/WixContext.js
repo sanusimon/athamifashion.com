@@ -8,7 +8,6 @@ import { createContext } from "react";
 import { redirects } from "@wix/redirects";
 import { members } from "@wix/members";
 
-
 let refreshToken = {};
 if (typeof window !== "undefined") {
   try {
