@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@next/swc-darwin-arm64": "15.1.7",
     "@wix/contacts": "^1.0.27",
     "@wix/ecom": "^1.0.1003",
     "@wix/members": "^1.0.292",
