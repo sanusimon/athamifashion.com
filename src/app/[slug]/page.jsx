@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 import './productDetail.scss';
 import { wixClientServer } from "@/lib/wixClientServer";
 import AddQuantity from '@/Components/AddQuantity/AddQuantity';
