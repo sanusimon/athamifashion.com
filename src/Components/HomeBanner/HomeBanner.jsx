@@ -42,6 +42,7 @@ const HomeBanner = () => {
   }, []);
   console.log(cats)
   const imgArray = [
+    { imgPath: "/latest-collections.jpg",bannerText:"New arrivals you’ll love", id: "img4", categorySlug: cats[4]?.slug || "all-products" },
     { imgPath: "/banner002.jpg",bannerText:"Discover our handpicked A-Line kurtis <br> <span>collection</span>", id: "img4", categorySlug: cats[2]?.slug || "all-products" },
     { imgPath: "/banner03.jpg",bannerText:"Where Comfort Meets Elegance<br> <span> Top & Pant</span>", id: "img3", categorySlug: cats[8]?.slug || "all-products" },
     { imgPath: "/banner01.jpg", bannerText:"	Coord Sets That Define Effortless <br> <span> Style</span>", id: "img1", categorySlug: cats[1]?.slug || "all-products" },
