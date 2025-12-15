@@ -32,11 +32,39 @@ const jost = Jost({
 
 export const metadata = {
   title: "AthamiFashion",
-  description: "Shop elegant red dresses for girls, perfect for parties and occasions. Discover more at AthamiFashion.",
+  description:
+    "Shop elegant red dresses for girls, perfect for parties and occasions. Discover more at AthamiFashion.",
+
   icons: {
-    icon: './favicon.jpeg', // Ensure the file is in the /public folder
+    icon: "/favicon.jpeg", // MUST start with /
+  },
+
+  openGraph: {
+    title: "AthamiFashion",
+    description:
+      "Shop elegant red dresses for girls, perfect for parties and occasions.",
+    url: "https://athamifashion.com", // replace with your real domain
+    siteName: "AthamiFashion",
+    images: [
+      {
+        url: "/og-image.jpg", // IMPORTANT
+        width: 1200,
+        height: 630,
+        alt: "AthamiFashion Products",
+      },
+    ],
+    type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "AthamiFashion",
+    description:
+      "Shop elegant red dresses for girls, perfect for parties and occasions.",
+    images: ["/og-image.jpg"],
   },
 };
+
 
 export default function RootLayout({ children }) {
   return (
