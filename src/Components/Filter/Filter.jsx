@@ -26,6 +26,32 @@ const Filter = () => {
   });
 
   const [openAccordion, setOpenAccordion] = useState("categories"); // default open
+  const [isFixed, setIsFixed] = useState(false);
+useEffect(() => {
+  const handleScroll = () => {
+    const scrollY = window.scrollY;
+    const footer = document.querySelector("footer"); // or your footer class
+
+    let footerTop = Infinity;
+
+    // if (footer) {
+    //   footerTop = footer.getBoundingClientRect().top;
+    // }
+
+    // Apply class when scroll > 100
+    // Remove when footer enters viewport
+    if (scrollY > 80 && footerTop > window.innerHeight) {
+      setIsFixed(true);
+    } else {
+      setIsFixed(false);
+    }
+  };
+
+  window.addEventListener("scroll", handleScroll, { passive: true });
+
+  return () => window.removeEventListener("scroll", handleScroll);
+}, []);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -115,7 +141,7 @@ const Filter = () => {
   };
 
   return (
-    <div className="filter_area">
+    <div className={`filter_area ${isFixed ? "is-fixed" : ""}`}>
       <div className="sticky_">
         {/* Categories Filter */}
         <div className="filter_group">

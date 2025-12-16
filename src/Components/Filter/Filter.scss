@@ -1,9 +1,17 @@
 @use "../../app/variable" as *;
 
 .filter_area{
-    overflow: auto;
-    max-height: calc(100vh - 260px);
-    padding-right: 20px;
+    // overflow: auto;
+    // max-height: calc(100vh - 260px);
+     padding-right: 20px;
+    //  position: sticky;
+    //  top: 0;
+    &.is-fixed{
+        position: sticky;
+        top: 0;
+        overflow: auto;
+        height: calc(100vh - 10px);
+    }
     @media only screen and (max-width: 767px) {
         display: none;
         .clear_all_btn{
@@ -11,11 +19,7 @@
         }
     }
     .sticky_{
-        position: sticky;
-        top: 20px;
-        @media only screen and (max-width: 767px) {
-            position: static;
-        }
+       
         .filter_group{
             .filtr_hd{
                 margin-bottom: 10px;
@@ -67,6 +71,7 @@
                         height: 12px;
                         border-radius: 50%;
                         display: inline-block;
+                        border: 1px solid $bg-grey;
                     }
                 }
             }
@@ -210,4 +215,7 @@
 .top_bread{
     display: flex;
     justify-content: space-between;
+    @media only screen and (max-width: 767px) {
+        flex-wrap: wrap;
+    }
 }
