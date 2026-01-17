@@ -1,15 +1,17 @@
 "use client";
-
+import "./pagination.scss";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const Pagination = ({
   currentPage,
-  hasPrev,
-  hasNext,
+  totalPages,
 }) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { replace } = useRouter();
+
+  const hasPrev = currentPage > 0;
+  const hasNext = currentPage < totalPages - 1;
 
   const createPageUrl = (pageNumber) => {
     const params = new URLSearchParams(searchParams);
@@ -18,7 +20,7 @@ const Pagination = ({
   };
 
   return (
-    <div className="mt-12 flex justify-between w-full">
+    <div className="pagination_wrap mt-12 flex justify-between w-full items-center">
       <button
         className="cmnBtn"
         disabled={!hasPrev}
@@ -26,6 +28,7 @@ const Pagination = ({
       >
         Previous
       </button>
+      <span className="mx-4">Page {currentPage + 1} of {totalPages}</span>
       <button
         className="cmnBtn"
         disabled={!hasNext}

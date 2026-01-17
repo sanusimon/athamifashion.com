@@ -9,7 +9,7 @@ import DOMPurify from "dompurify";
 import "./productList.scss";
 import Head from "next/head";
 
-const PRODUCT_PER_PAGE = 30;
+const PRODUCT_PER_PAGE = 8;
 
 export default function ProductList({ limit }) {
   const searchParams = useSearchParams();
@@ -47,8 +47,8 @@ export default function ProductList({ limit }) {
       let productQuery = wixClient.products
         .queryProducts()
         .contains("name", searchParams.get("name") || "")
-        .limit(perPage)
-        .skip(page * perPage);
+        .ge("priceData.price", minPrice)
+        .le("priceData.price", maxPrice);
 
       if (selectedCategoryIds.length > 0) {
         productQuery = productQuery.hasSome("collectionIds", selectedCategoryIds);
@@ -61,15 +61,14 @@ export default function ProductList({ limit }) {
       const selectedColors = searchParams.getAll("color");
 
       let filteredProducts = res.items.filter((product) => {
+        // Only filter color, size, discount in-memory
+        const discountedPrice = product.priceData?.discountedPrice || product.priceData?.price || 0;
         const price = product.priceData?.price || 0;
-        const discountedPrice = product.priceData?.discountedPrice || price;
         const discountPercent = ((price - discountedPrice) / price) * 100;
 
         const meetsDiscount =
           selectedDiscountLevels.length === 0 ||
           selectedDiscountLevels.some((level) => discountPercent >= level);
-
-        const matchesPrice = price >= minPrice && price <= maxPrice;
 
         const matchesSize =
           selectedSizes.length === 0 ||
@@ -83,43 +82,50 @@ export default function ProductList({ limit }) {
             selectedColors.includes(variant.choices?.Color)
           );
 
-        return matchesPrice && meetsDiscount && matchesSize && matchesColor;
+        return meetsDiscount && matchesSize && matchesColor;
       });
 
       // Sorting
       // Always sort by lastUpdated desc unless a sort param is provided
-if (sortField === "price") {
-  filteredProducts.sort((a, b) => {
-    const priceA = a.priceData?.price || 0;
-    const priceB = b.priceData?.price || 0;
-    return sortDir === "asc" ? priceA - priceB : priceB - priceA;
-  });
-} else if (sortField === "lastUpdated") {
-  filteredProducts.sort((a, b) => {
-    const dateA = new Date(a.lastUpdated);
-    const dateB = new Date(b.lastUpdated);
-    return sortDir === "asc" ? dateA - dateB : dateB - dateA;
-  });
-} else {
-  // Default: sort by lastUpdated DESC
-  filteredProducts.sort((a, b) => {
-    const dateA = new Date(a.lastUpdated);
-    const dateB = new Date(b.lastUpdated);
-    return dateB - dateA;
-  });
-   // ✅ 4. Pagination in-memory
-  const start = page * perPage;
-  const end = start + perPage;
-  const paginatedProducts = filteredProducts.slice(start, end);
+      if (sortField === "price") {
+        filteredProducts.sort((a, b) => {
+          const priceA = a.priceData?.price || 0;
+          const priceB = b.priceData?.price || 0;
+          return sortDir === "asc" ? priceA - priceB : priceB - priceA;
+        });
+      } else if (sortField === "lastUpdated") {
+        filteredProducts.sort((a, b) => {
+          const dateA = new Date(a.lastUpdated);
+          const dateB = new Date(b.lastUpdated);
+          return sortDir === "asc" ? dateA - dateB : dateB - dateA;
+        });
+      } else {
+        // Default: sort by lastUpdated DESC
+        filteredProducts.sort((a, b) => {
+          const dateA = new Date(a.lastUpdated);
+          const dateB = new Date(b.lastUpdated);
+          return dateB - dateA;
+        });
+      }
 
-  setTotalProducts(filteredProducts.length);
-  setProducts(paginatedProducts);
-  setLoading(false);
-}
+      // Always paginate after sorting
+      const start = page * perPage;
+      const end = start + perPage;
+      const paginatedProducts = filteredProducts.slice(start, end);
 
+      // If filter change causes page to be out of range, reset to page 0
+      if (filteredProducts.length > 0 && start >= filteredProducts.length) {
+        const params = new URLSearchParams(window.location.search);
+        params.set("page", "0");
+        window.history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+        setTotalProducts(filteredProducts.length);
+        setProducts(filteredProducts.slice(0, perPage));
+        setLoading(false);
+        return;
+      }
 
       setTotalProducts(filteredProducts.length);
-      setProducts(filteredProducts);
+      setProducts(paginatedProducts);
       setLoading(false);
     };
 
@@ -336,8 +342,8 @@ const formatPrice = (value) => {
   })}
 </ul>
 
-
-      {totalProducts > PRODUCT_PER_PAGE && (
+      {/* Show Pagination if more than one page */}
+      {totalPages > 1 && (
         <Pagination currentPage={currentPage} totalPages={totalPages} />
       )}
     </>
