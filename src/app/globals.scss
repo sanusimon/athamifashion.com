@@ -598,3 +598,21 @@ input{
     left: 0;
     z-index: 99999;
 }
+.doble_box{
+   display: grid;
+   grid-template-columns: 50% 50%;
+   @media only screen and (max-width: 767px) {
+    display: block;
+   }
+   >.container{
+    padding: 0;
+   }
+   .title{
+    text-align: left;
+    @media only screen and (max-width: 767px) {
+    text-align: center;
+   }
+   }
+    .col-6{
+    }
+}

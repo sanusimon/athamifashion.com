@@ -10,6 +10,7 @@ import { Suspense } from 'react'
 import DiscountSection from '@/Components/DiscountSection/DiscountSection'
 import Positives from '@/Components/Positives/Positives'
 import InstagramWidget from "@/Components/InstagramWidget";
+import HomeProductListSub from '@/Components/HomeProduct/HomeProductSub'
 
 
 
@@ -48,6 +49,24 @@ const HomePage = async() =>  {
         <Suspense fallback={<Skeleton />}>
           <HomeProductList categoryId={process.env.KURTIES_TWO_PIECE_PRODUCTS_CATEGORY_ID}  limit={8}/>
         </Suspense>
+        </section>
+        <section className="doble_box product_page home_product">
+          <div className='col-6'>
+            <div className="container">
+              <h2 className="title">Salwar Suit</h2>
+              <Suspense fallback={<Skeleton />}>
+                <HomeProductListSub categoryId={process.env.KURTIES_THREE_PIECE_PRODUCTS_CATEGORY_ID}  limit={8}/>
+              </Suspense>
+            </div>
+          </div>
+          <div className='col-6'>
+            <div className="container">
+              <h2 className="title">Top & Dupatta</h2>
+              <Suspense fallback={<Skeleton />}>
+                <HomeProductListSub categoryId={process.env.KURTIES_TOP_DUPPATA_PRODUCTS_CATEGORY_ID}  limit={8}/>
+              </Suspense>
+            </div>
+          </div>
         </section>
         <section className="product_page home_product">
           <div className="container">
