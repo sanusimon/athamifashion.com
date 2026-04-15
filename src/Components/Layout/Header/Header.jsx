@@ -11,6 +11,7 @@ import SearchBar from "@/Components/SearchBar/SearchBar";
 import Breadcrumbs from "@/Components/Breadcrumbs/Breadcrumbs";
 import Filter from "@/Components/Filter/Filter";
 import "./Header.scss";
+import Head from "next/head";
 
 const Header = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -159,6 +160,19 @@ useEffect(() => {
   };
 
   return (
+    <>
+    <Head>
+      {/* Google tag (gtag.js) */}
+      <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18091721355"></script>
+      <script dangerouslySetInnerHTML={{
+        __html: `
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'AW-18091721355');
+        `
+      }} />
+    </Head>
     <header className="header">
       <div className="container">
         <div className="inner_">
@@ -263,6 +277,7 @@ useEffect(() => {
         </div>
       </div>
     </header>
+     </>
   );
 };
 
