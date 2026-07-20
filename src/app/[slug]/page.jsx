@@ -9,6 +9,10 @@ import { notFound } from 'next/navigation';
 import CustomizeProductsWrapper from '@/Components/CustomizeProductsWrapper/CustomizeProductsWrapper';
 import Link from 'next/link';
 import Head from 'next/head';
+import ReviewSummary from '@/components/Review/ReviewSummary';
+import ReviewList from '@/components/Review/ReviewList';
+import { getReviewSummaryByProductId } from '@/lib/reviewService';
+import RelatedProductsClient from '@/Components/RelatedProductsClient';
 
 const DetailPage = async ({ params, searchParams }) => {
   const category = searchParams?.cat || "all-products";
@@ -24,6 +28,7 @@ const DetailPage = async ({ params, searchParams }) => {
   }
 
   const product = products.items[0];
+  const reviewSummary = await getReviewSummaryByProductId(product._id);
   const collectionId = product.collectionIds?.[0];
   let relatedProducts = [];
 
@@ -97,55 +102,11 @@ const DetailPage = async ({ params, searchParams }) => {
             />
           )}
         </div>
+        <ReviewSummary summary={reviewSummary} />
+        {reviewSummary.reviewCount > 0 && <ReviewList reviews={reviewSummary.reviews} />}
         {relatedProducts.length > 0 && (
-        <div className="related_products">
-          <h3 className='title'>Related Products</h3>
-          <ul className="product_list">
-            {relatedProducts.map((item) => (
-              <li key={item._id} className="product_card">
-                <Link href={`/${item.slug}?cat=${category}`}>
-                    <div className='top_area'>
-                        <div className="img_wrap">
-                            <img src={item.media?.items[0]?.image?.url} alt={item.name} />
-                            {item.ribbon && <div className="ribbon_">{item.ribbon}</div>}
-                            {item.priceData?.price > item.priceData?.discountedPrice && (
-                            <div className="discount_percent">
-                                {Math.round(
-                                ((item.priceData.price - item.priceData.discountedPrice) /
-                                    item.priceData.price) *
-                                    100
-                                )}
-                                % OFF
-                            </div>
-                            )}
-                        </div>
-                        <button className="add_cart">Add to Cart</button>
-                    </div>
-                    <div className="btm_area">
-                    <div className="name__">
-                        <label className="cat_name">{item.name}</label>
-                    </div>
-                    <div className="var_price">
-                    <div className="price_area">
-                        {item.priceData?.price === item.priceData?.discountedPrice ? (
-                            <label className="cat_price">Rs.{Math.floor(item.priceData?.price)}</label>
-                        ) : (
-                            <div className="discount_sec">
-                                <label className="cat_price">Rs.{Math.floor(item.priceData?.discountedPrice)}</label>
-                                <label className="cat_price line_throw">Rs.{Math.floor(item.priceData?.price)}</label>
-                            </div>
-                        )}
-                    </div>
-                </div>
-                
-                    
-                </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+          <RelatedProductsClient products={relatedProducts} category={category} />
+        )}
       </div>
     </section>
   );

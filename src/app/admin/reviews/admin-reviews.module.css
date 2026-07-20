@@ -1,0 +1,315 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  font-family: system-ui, -apple-system, Arial, sans-serif;
+  background: #f9fafb;
+  min-height: 100vh;
+}
+
+.header {
+  margin-bottom: 32px;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 16px;
+}
+
+.header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 8px 0;
+}
+
+.header p {
+  color: #6b7280;
+  margin: 0;
+  font-size: 14px;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.tab {
+  padding: 10px 16px;
+  border: none;
+  background: white;
+  color: #6b7280;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  border-radius: 4px 4px 0 0;
+}
+
+.tab:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.tab.active {
+  background: white;
+  color: #111827;
+  border-bottom-color: #3b82f6;
+}
+
+.content {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+}
+
+.content h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 16px 0;
+}
+
+.empty {
+  text-align: center;
+  color: #6b7280;
+  padding: 32px 0;
+  font-size: 14px;
+}
+
+.table {
+  overflow-x: auto;
+}
+
+.table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.table thead {
+  background: #f9fafb;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.table th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+}
+
+.table td {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #111827;
+}
+
+.table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: #dbeafe;
+  color: #0369a1;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.reviews {
+  display: grid;
+  gap: 16px;
+}
+
+.reviewCard {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  background: #fff;
+  transition: box-shadow 0.2s ease;
+}
+
+.reviewCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.reviewHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.customerEmail {
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 4px 0;
+  font-size: 14px;
+}
+
+.orderId {
+  color: #6b7280;
+  font-size: 12px;
+  margin: 0;
+}
+
+.rating {
+  font-size: 16px;
+  letter-spacing: 2px;
+}
+
+.reviewText {
+  color: #374151;
+  margin: 0 0 12px 0;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.photos {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.photos img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #e5e7eb;
+}
+
+.reviewFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 12px;
+}
+
+.date {
+  color: #6b7280;
+  font-size: 12px;
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.approveBtn,
+.rejectBtn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.approveBtn {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.approveBtn:hover {
+  background: #a7f3d0;
+}
+
+.rejectBtn {
+  background: #fee2e2;
+  color: #7f1d1d;
+}
+
+.rejectBtn:hover {
+  background: #fecaca;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-top: 1px solid #e5e7eb;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.footer a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+.hint {
+  margin: 0;
+  color: #9ca3af;
+  font-size: 12px;
+}
+
+.error {
+  color: #dc2626;
+  padding: 16px;
+  background: #fee2e2;
+  border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .tabs {
+    flex-direction: column;
+  }
+
+  .tab {
+    border-bottom: none;
+    border-left: 4px solid transparent;
+  }
+
+  .tab.active {
+    border-left-color: #3b82f6;
+    border-bottom: none;
+  }
+
+  .reviewHeader {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .reviewFooter {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .actions {
+    width: 100%;
+  }
+
+  .approveBtn,
+  .rejectBtn {
+    flex: 1;
+  }
+
+  .table {
+    font-size: 12px;
+  }
+
+  .table th,
+  .table td {
+    padding: 8px;
+  }
+}

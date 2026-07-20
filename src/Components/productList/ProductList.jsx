@@ -8,6 +8,7 @@ import Link from "next/link";
 import DOMPurify from "dompurify";
 import "./productList.scss";
 import Head from "next/head";
+import ReviewStars from "@/components/Review/ReviewStars";
 
 const PRODUCT_PER_PAGE = 8;
 
@@ -17,6 +18,21 @@ export default function ProductList({ limit }) {
   const [totalProducts, setTotalProducts] = useState(0);
   const [loading, setLoading] = useState(true);
   const [slugToIdMap, setSlugToIdMap] = useState({});
+  const [ratings, setRatings] = useState({});
+
+  const fetchRatingsForIds = async (productIds) => {
+    if (!productIds || productIds.length === 0) {
+      setRatings({});
+      return;
+    }
+    try {
+      const response = await fetch(`/api/reviews/ratings?ids=${productIds.join(",")}`);
+      const result = await response.json();
+      setRatings(result.summaries || {});
+    } catch (error) {
+      setRatings({});
+    }
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -126,11 +142,22 @@ export default function ProductList({ limit }) {
 
       setTotalProducts(filteredProducts.length);
       setProducts(paginatedProducts);
+      await fetchRatingsForIds(paginatedProducts.map((product) => product._id));
       setLoading(false);
     };
 
     fetchProducts();
   }, [searchParams]);
+
+  // Poll ratings every 30 seconds so listings update after approvals
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (products && products.length > 0) {
+        fetchRatingsForIds(products.map((p) => p._id));
+      }
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [products]);
 
   useEffect(() => {
     document.body.classList.add("product-list-page");
@@ -227,6 +254,9 @@ const formatPrice = (value) => {
               <div className="btm_area">
                 <div className="name__">
                   <label className="cat_name">{product.name} - {choice.description}</label>
+                  <div style={{ marginTop: 8 }}>
+                    <ReviewStars rating={ratings[product._id]?.averageRating || 0} count={ratings[product._id]?.reviewCount || 0} />
+                  </div>
                   {product.description &&
                     product.description.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, "").trim() && (
                       <span
@@ -298,6 +328,9 @@ const formatPrice = (value) => {
             <div className="btm_area">
               <div className="name__">
                 <label className="cat_name">{product.name}</label>
+                <div style={{ marginTop: 8 }}>
+                  <ReviewStars rating={ratings[product._id]?.averageRating || 0} count={ratings[product._id]?.reviewCount || 0} />
+                </div>
                 {product.description &&
                   product.description.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, "").trim() && (
                     <span

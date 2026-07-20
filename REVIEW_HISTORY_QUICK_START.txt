@@ -1,0 +1,219 @@
+# QUICK START: Review System - Email & Review History
+
+## 🔗 Access Points
+
+### 1. Admin Dashboard (Recommended)
+URL: http://localhost:3000/admin/reviews
+- Visual interface to view all email sending history
+- See pending, approved, and rejected reviews
+- Action buttons to approve/reject reviews
+
+### 2. JSON Data File
+Location: /reviews-data/reviews.json
+- Raw data storage
+- Can be edited directly with text editor
+- Backup this file regularly
+
+### 3. API Endpoints
+- GET http://localhost:3000/api/admin/reviews
+  → Returns all review requests and reviews with summary stats
+- GET http://localhost:3000/api/reviews/pending
+  → Returns only pending reviews awaiting approval
+- POST http://localhost:3000/api/reviews/send-pending
+  → Triggers sending pending review request emails
+
+---
+
+## 📧 Email Sending History
+
+### What's Tracked?
+- Customer email address
+- Order ID & Product ID
+- When email was scheduled (sendAt)
+- When email was actually sent (updatedAt)
+- Email status: pending, sent, reviewed, expired
+
+### Find Email History
+```bash
+# Option 1: Admin Dashboard
+http://localhost:3000/admin/reviews → "Email History" tab
+
+# Option 2: View JSON
+cat reviews-data/reviews.json | jq '.requests'
+
+# Option 3: Terminal
+jq '.requests[] | select(.status == "sent")' reviews-data/reviews.json
+
+# Option 4: API
+curl http://localhost:3000/api/admin/reviews
+```
+
+### Example Email Record
+```json
+{
+  "id": "req-123",
+  "orderId": "order-456",
+  "customerEmail": "john@example.com",
+  "sendAt": "2026-07-20T09:00:00Z",
+  "status": "sent",
+  "token": "secure-token-abc",
+  "createdAt": "2026-07-20T08:00:00Z",
+  "updatedAt": "2026-07-20T09:00:00Z"
+}
+```
+
+---
+
+## 📝 Review History (Customer Reviews)
+
+### What's Tracked?
+- Customer email & name
+- Product ID reviewed
+- Rating (1-5 stars)
+- Review text
+- Photos uploaded
+- Review status: pending (awaiting approval), approved, rejected
+- Submission date & approval date
+
+### Find Review History
+```bash
+# Option 1: Admin Dashboard
+http://localhost:3000/admin/reviews → "Pending/Approved" tabs
+
+# Option 2: View JSON
+cat reviews-data/reviews.json | jq '.reviews'
+
+# Option 3: Terminal - View pending reviews
+jq '.reviews[] | select(.status == "pending")' reviews-data/reviews.json
+
+# Option 4: Terminal - View approved reviews for a product
+jq '.reviews[] | select(.productId == "PROD_ID" and .status == "approved")' reviews-data/reviews.json
+
+# Option 5: API
+curl http://localhost:3000/api/admin/reviews
+```
+
+### Example Review Record
+```json
+{
+  "id": "review-789",
+  "orderId": "order-456",
+  "productId": "prod-123",
+  "customerEmail": "john@example.com",
+  "rating": 4,
+  "text": "Great quality, arrived on time!",
+  "photos": ["url1", "url2"],
+  "status": "pending",
+  "submittedAt": "2026-07-20T14:30:00Z",
+  "createdAt": "2026-07-20T14:30:00Z",
+  "updatedAt": "2026-07-20T14:30:00Z"
+}
+```
+
+---
+
+## 🎯 Common Tasks
+
+### Task 1: See all customers who received review emails
+```bash
+cat reviews-data/reviews.json | jq '.requests[] | {email: .customerEmail, sentAt: .sendAt, status: .status}'
+```
+
+### Task 2: Find reviews awaiting approval
+```bash
+cat reviews-data/reviews.json | jq '.reviews[] | select(.status == "pending") | {email: .customerEmail, rating: .rating, text: .text}'
+```
+
+### Task 3: Get average rating for a product
+```bash
+PRODUCT_ID="abc123"
+cat reviews-data/reviews.json | jq "[.reviews[] | select(.productId == \"$PRODUCT_ID\" and .status == \"approved\")] | {count: length, averageRating: (map(.rating) | add / length)}"
+```
+
+### Task 4: Count statistics
+```bash
+cat reviews-data/reviews.json | jq '{emails_sent: [.requests[] | select(.status == "sent")] | length, reviews_pending: [.reviews[] | select(.status == "pending")] | length, reviews_approved: [.reviews[] | select(.status == "approved")] | length}'
+```
+
+### Task 5: Approve a review (via UI)
+- Go to http://localhost:3000/admin/reviews
+- Click "Pending Reviews" tab
+- Click "✅ Approve" button on the review
+
+### Task 6: Trigger sending pending emails
+```bash
+curl -X POST http://localhost:3000/api/reviews/send-pending
+```
+
+---
+
+## 📊 Status Reference
+
+### Email Request Statuses
+| Status | Meaning |
+|--------|---------|
+| `pending` | Scheduled to send, but not yet sent |
+| `sent` | Email successfully sent to customer |
+| `reviewed` | Customer submitted a review (purpose fulfilled) |
+| `expired` | Send deadline passed, marked as expired |
+
+### Review Statuses
+| Status | Meaning |
+|--------|---------|
+| `pending` | Customer submitted, awaiting admin approval |
+| `approved` | Admin approved, visible to customers |
+| `rejected` | Admin rejected, not visible to customers |
+
+---
+
+## 📁 File Locations
+
+| Item | Location |
+|------|----------|
+| Review Data (JSON) | `/reviews-data/reviews.json` |
+| Admin Dashboard | `src/app/admin/reviews/page.tsx` |
+| Admin API | `src/app/api/admin/reviews/route.ts` |
+| Review Service | `src/lib/reviewService.ts` |
+| Review Store | `src/lib/reviewStore.ts` |
+| Review Types | `src/types/review.ts` |
+| Admin Guide | `REVIEW_SYSTEM_GUIDE.md` |
+
+---
+
+## ⚠️ Important Notes
+
+1. **Backup your data** - The JSON file is the single source of truth
+   ```bash
+   cp reviews-data/reviews.json reviews-data/reviews.backup.json
+   ```
+
+2. **Don't edit while running** - Stop server before directly editing reviews-data/reviews.json
+
+3. **Emails use SMTP** - Configure environment variables for actual email sending
+   ```
+   EMAIL_HOST=...
+   EMAIL_USER=...
+   EMAIL_PASS=...
+   ```
+
+4. **For Production** - Migrate from JSON to database (PostgreSQL/MongoDB) for better scalability
+
+---
+
+## 🆘 Troubleshooting
+
+**Q: I don't see any email history**
+A: Emails are only created when orders are delivered. Use the backfill API to send emails for past orders.
+
+**Q: Reviews show as "pending" but I don't see them in admin**
+A: Go to http://localhost:3000/admin/reviews → "Pending Reviews" tab
+
+**Q: Email not sending**
+A: Check if SMTP credentials are set in .env. If not, emails go into fallback mode (logged to console).
+
+**Q: Can't find a customer's email history**
+A: Query the JSON: `jq '.requests[] | select(.customerEmail == "email@example.com")' reviews-data/reviews.json`
+
+---
+
+For detailed information, see: REVIEW_SYSTEM_GUIDE.md
