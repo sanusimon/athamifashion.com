@@ -42,21 +42,23 @@ const Order = async () => {
     },
   });
 
+  const orders = Array.isArray(orderRes.orders) ? orderRes.orders : [];
+
   return (
     <div className="common_page">
       <div className="container">
         <h1 className="text-2xl">Orders</h1>
         <div className="mt-12 flex flex-col">
-        {orderRes.orders.length === 0 ? (
+          {orders.length === 0 ? (
             <div className="text-center text-gray-500 mt-8 empty_page">You have no orders yet.</div>
-        ) : (
-            orderRes.orders.map((order) => (
+          ) : (
+            orders.map((order) => (
                 <div className="item" key={order._id}>
                   
                     <div className="head_">
                         <div className="box_">
                             <span>Date</span>
-                            <span>{format(new Date(order._createdDate), 'dd-MM-yyyy')}</span>
+                            <span>{order._createdDate ? format(new Date(order._createdDate), 'dd-MM-yyyy') : '—'}</span>
                         </div>
                         <div className="box_">
                             <span>Total</span>
@@ -76,35 +78,43 @@ const Order = async () => {
                         </div>
                     </div>
                     <div className="body_">
-                        {order.lineItems.map((lineItem,index)=>(
-                            
-                            <div className="inner_" key={index}>
-                            <div className="left_">
-                                <div className="prod_img">
-                                    <img src={wixMedia.getScaledToFillImageUrl(lineItem.image,72,96,{})} />
+                        {Array.isArray(order.lineItems) && order.lineItems.length > 0 ? (
+                            order.lineItems.map((lineItem,index)=>(
+                                <div className="inner_" key={index}>
+                                    <div className="left_">
+                                        <div className="prod_img">
+                                            {lineItem?.image ? (
+                                                <img
+                                                    src={wixMedia.getScaledToFillImageUrl(lineItem.image,72,96,{})}
+                                                    alt={lineItem?.productName?.original || 'product image'}
+                                                />
+                                            ) : (
+                                                <div className="w-[72px] h-[96px] bg-gray-100" />
+                                            )}
+                                        </div>
+                                        <div className="prod_name cat_name">
+                                            {lineItem?.productName?.original || lineItem?.name || 'Product'}
+                                        </div>
+                                    </div>
+                                    <div className="right_ flex gap-4" >
+                                        <div className="shipping_address">
+                                            <p>{order.recipientInfo?.address?.addressLine1 ?? ''}</p>
+                                            <p>{order.recipientInfo?.address?.city ?? ''}</p>
+                                            <p>{order.recipientInfo?.address?.postalCode ?? ''}</p>
+                                            <p>{order.recipientInfo?.address?.subdivisionFullname ?? ''}</p>
+                                            <p>{order.recipientInfo?.address?.countryFullname ?? ''}</p>
+                                        </div>
+                                        <Link
+                                            href={`/orders/${order._id}`} 
+                                            className="underline block"
+                                        ><span>View order detail</span>
+                                        </Link>
+                                    </div>
                                 </div>
-                                <div className="prod_name cat_name">
-                                {lineItem?.productName?.original}
-                                </div>
-                            </div>
-                            <div className="right_ flex gap-4" >
-                              <div className="shipping_address">
-                                <p>{order.recipientInfo?.address?.addressLine1}</p>
-                                <p>{order.recipientInfo?.address?.city}</p>
-                                <p>{order.recipientInfo?.address?.postalCode}</p>
-                                <p>{order.recipientInfo?.address?.subdivisionFullname}</p>
-                                <p>{order.recipientInfo?.address?.countryFullname}</p>
-                                
-                              </div>
-                            <Link
-                                href={`/orders/${order._id}`} 
-                                className="underline block"
-                              ><span>View order detail</span>
-                            </Link>
-                            </div>
-                            </div>
-                        ))}
-                        
+                            ))
+                        ) : (
+                            <div className="text-sm text-gray-500">No items available for this order.</div>
+                        )}
                     </div>
                
              
