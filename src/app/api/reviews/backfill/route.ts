@@ -23,7 +23,9 @@ export async function POST(request: Request) {
   let totalProcessed = 0;
   let totalSent = 0;
   let totalSkipped = 0;
+  let totalFailed = 0;
   const sentSamples: Array<{ orderId: string; requestId: string }> = [];
+  const failedSamples: Array<{ orderId: string; error: string }> = [];
 
   while (true) {
     let res: any;
@@ -98,12 +100,29 @@ export async function POST(request: Request) {
         });
 
         const emailResult = await sendReviewRequestEmail(reviewRequest);
-        await markReviewRequestSent(reviewRequest.token);
-        totalSent++;
-        sentSamples.push({ orderId: order._id, requestId: reviewRequest.id });
+        if (emailResult && emailResult.success) {
+          await markReviewRequestSent(reviewRequest.token);
+          totalSent++;
+          sentSamples.push({ orderId: order._id, requestId: reviewRequest.id });
+
+          // Best-effort: mark the Wix order with a flag to indicate we've sent the review email.
+          try {
+            if ((wixClient.orders as any)?.updateOrder) {
+              // use a runtime-any call to avoid strict SDK typings; this is non-critical
+              await (wixClient.orders as any).updateOrder(order._id, { metadata: { reviewEmailSent: true } });
+            }
+          } catch (orderMarkErr) {
+            console.warn('Failed to mark order with reviewEmailSent flag', order._id, String(orderMarkErr));
+          }
+        } else {
+          totalFailed++;
+          failedSamples.push({ orderId: order._id, error: JSON.stringify(emailResult) });
+        }
       } catch (err) {
         // log and continue
         console.error('Failed to create/send for order', order._id, err);
+        totalFailed++;
+        failedSamples.push({ orderId: order._id, error: String(err) });
       }
     }
 
