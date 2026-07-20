@@ -6,7 +6,7 @@ import ReviewForm from "@/Components/Review/ReviewForm";
 
 const ReviewSubmitPage = () => {
   const searchParams = useSearchParams();
-  const token = searchParams.get("token") || "";
+  const token = searchParams?.get("token") || "";
   const [reviewTokenValid, setReviewTokenValid] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");

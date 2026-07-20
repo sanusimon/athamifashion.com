@@ -18,7 +18,7 @@ export async function POST(request: Request) {
   }
 
   const wixClient = await wixClientServer();
-  let page = 0;
+  let nextCursor: string | null = null;
   const pageSize = 50;
   let totalProcessed = 0;
   let totalSent = 0;
@@ -26,10 +26,9 @@ export async function POST(request: Request) {
   const sentSamples: Array<{ orderId: string; requestId: string }> = [];
 
   while (true) {
-    // Try to fetch a page of orders; SDK expects a `search` object in existing code
     let res: any;
     try {
-      res = await wixClient.orders.searchOrders({ limit: pageSize, page });
+      res = await wixClient.orders.searchOrders({ cursorPaging: { limit: pageSize, cursor: nextCursor } });
     } catch (err) {
       return NextResponse.json({ error: 'Failed to fetch orders from Wix', details: String(err) }, { status: 500 });
     }
@@ -108,7 +107,8 @@ export async function POST(request: Request) {
       }
     }
 
-    page++;
+    nextCursor = res?.pagingMetadata?.nextCursor || null;
+    if (!nextCursor) break;
   }
 
   return NextResponse.json({ processed: totalProcessed, sent: totalSent, skipped: totalSkipped, samples: sentSamples });
