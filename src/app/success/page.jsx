@@ -63,7 +63,7 @@ const SuccessPage = () => {
     if (!orderId) return;
 
     const timer = setTimeout(() => {
-      router.push(`/success/orders/${orderId}`);
+      router.push(`/orders/${orderId}`);
     }, 3000);
 
     return () => clearTimeout(timer);
