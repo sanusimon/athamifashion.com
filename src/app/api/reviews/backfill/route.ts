@@ -10,7 +10,11 @@ function getProductIdFromLineItem(item: any): string | null {
   return item.productId || item.catalogItemId || item.productCatalogId || item.catalogItem?.id || item.product?.id || item._id || null;
 }
 
-export async function POST(request: Request) {
+function hasEmailBeenSentByMetadata(order: any): boolean {
+  return Boolean(order?.metadata?.reviewEmailSent || order?.metadata?.reviewEmailSent === true);
+}
+
+async function runBackfill(request: Request) {
   const url = new URL(request.url);
   const secret = url.searchParams.get('secret') || request.headers.get('x-backfill-secret');
   if (!secret || secret !== process.env.REVIEWS_BACKFILL_SECRET) {
@@ -25,6 +29,7 @@ export async function POST(request: Request) {
   let totalSkipped = 0;
   let totalFailed = 0;
   const sentSamples: Array<{ orderId: string; requestId: string }> = [];
+  const skippedSamples: Array<{ orderId: string; reason: string }> = [];
   const failedSamples: Array<{ orderId: string; error: string }> = [];
 
   while (true) {
@@ -35,7 +40,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Failed to fetch orders from Wix', details: String(err) }, { status: 500 });
     }
 
-    const orders = res?.orders || [];
+    const orders = Array.isArray(res?.orders) ? res.orders : [];
     if (!orders.length) break;
 
     for (const order of orders) {
@@ -44,16 +49,23 @@ export async function POST(request: Request) {
       const status = (order.status || '').toString().toUpperCase();
       if (!ALLOWED_STATUSES.has(status)) {
         totalSkipped++;
+        skippedSamples.push({ orderId: order._id, reason: `status ${order.status || 'undefined'}` });
         continue;
       }
 
-      const lineItems = order.lineItems || [];
+      if (hasEmailBeenSentByMetadata(order)) {
+        totalSkipped++;
+        skippedSamples.push({ orderId: order._id, reason: 'metadata reviewEmailSent' });
+        continue;
+      }
+
+      const lineItems = Array.isArray(order.lineItems) ? order.lineItems : [];
       if (!lineItems.length) {
         totalSkipped++;
+        skippedSamples.push({ orderId: order._id, reason: 'no line items' });
         continue;
       }
 
-      // Check if any product in this order already has a review request
       let alreadyRequested = false;
       for (const li of lineItems) {
         const pid = getProductIdFromLineItem(li);
@@ -67,10 +79,10 @@ export async function POST(request: Request) {
 
       if (alreadyRequested) {
         totalSkipped++;
+        skippedSamples.push({ orderId: order._id, reason: 'existing review request' });
         continue;
       }
 
-      // Choose primary product from first line item that provides an id
       let primaryProductId: string | null = null;
       for (const li of lineItems) {
         const pid = getProductIdFromLineItem(li);
@@ -82,21 +94,28 @@ export async function POST(request: Request) {
 
       if (!primaryProductId) {
         totalSkipped++;
+        skippedSamples.push({ orderId: order._id, reason: 'no valid product id' });
         continue;
       }
 
-      const customerId = order.buyerInfo?.contactId || order.buyerInfo?.contactId || '';
+      const customerId = order.buyerInfo?.contactId || order.buyerInfo?.memberId || '';
       const customerEmail = order.buyerInfo?.email || order.buyerInfo?.contactEmail || '';
       const deliveryDate = order.purchasedDate || new Date().toISOString();
+
+      if (!customerEmail) {
+        totalSkipped++;
+        skippedSamples.push({ orderId: order._id, reason: 'missing customer email' });
+        continue;
+      }
 
       try {
         const reviewRequest = await createReviewRequest({
           orderId: order._id,
           productId: primaryProductId,
           customerId: customerId || '',
-          customerEmail: customerEmail || '',
-          deliveryDate: deliveryDate,
-          sendAt: new Date().toISOString(), // send immediately
+          customerEmail,
+          deliveryDate,
+          sendAt: new Date().toISOString(),
         });
 
         const emailResult = await sendReviewRequestEmail(reviewRequest);
@@ -105,10 +124,8 @@ export async function POST(request: Request) {
           totalSent++;
           sentSamples.push({ orderId: order._id, requestId: reviewRequest.id });
 
-          // Best-effort: mark the Wix order with a flag to indicate we've sent the review email.
           try {
             if ((wixClient.orders as any)?.updateOrder) {
-              // use a runtime-any call to avoid strict SDK typings; this is non-critical
               await (wixClient.orders as any).updateOrder(order._id, { metadata: { reviewEmailSent: true } });
             }
           } catch (orderMarkErr) {
@@ -119,7 +136,6 @@ export async function POST(request: Request) {
           failedSamples.push({ orderId: order._id, error: JSON.stringify(emailResult) });
         }
       } catch (err) {
-        // log and continue
         console.error('Failed to create/send for order', order._id, err);
         totalFailed++;
         failedSamples.push({ orderId: order._id, error: String(err) });
@@ -130,5 +146,19 @@ export async function POST(request: Request) {
     if (!nextCursor) break;
   }
 
-  return NextResponse.json({ processed: totalProcessed, sent: totalSent, skipped: totalSkipped, samples: sentSamples });
+  return NextResponse.json({
+    processed: totalProcessed,
+    sent: totalSent,
+    skipped: totalSkipped,
+    failed: totalFailed,
+    sentSamples,
+    skippedSamples,
+    failedSamples,
+  });
+}
+
+export async function GET() {
+  return NextResponse.json({
+    message: 'Use POST to run the one-time backfill. Example: POST /api/reviews/backfill?secret=YOUR_SECRET',
+  });
 }

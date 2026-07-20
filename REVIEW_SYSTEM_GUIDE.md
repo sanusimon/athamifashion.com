@@ -78,6 +78,22 @@ curl http://localhost:3000/api/reviews/send-pending
 }
 ```
 
+### Run the one-time backfill for existing eligible orders
+
+```bash
+curl -X POST "http://localhost:3000/api/reviews/backfill?secret=YOUR_SECRET"
+```
+
+This endpoint will:
+- scan past Wix orders with allowed statuses
+- skip orders that already have a review request
+- skip orders already marked with `reviewEmailSent` metadata if present
+- create review requests and send review emails immediately for eligible orders
+- return counts for processed, sent, skipped, and failed orders
+
+> Make sure `REVIEWS_BACKFILL_SECRET` is set and, if your server-side Wix client needs it,
+> `WIX_REFRESH_TOKEN` is configured in your deployment environment.
+
 ### Method 2: Directly Read the JSON File
 Open `reviews-data/reviews.json` with a text editor or use terminal:
 
