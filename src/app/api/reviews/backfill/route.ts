@@ -29,14 +29,9 @@ export async function POST(request: Request) {
     // Try to fetch a page of orders; SDK expects a `search` object in existing code
     let res: any;
     try {
-      res = await wixClient.orders.searchOrders({ search: { limit: pageSize, page: page } });
+      res = await wixClient.orders.searchOrders({ limit: pageSize, page });
     } catch (err) {
-      // as a fallback, try without search wrapper
-      try {
-        res = await wixClient.orders.searchOrders({ limit: pageSize, page: page });
-      } catch (err2) {
-        return NextResponse.json({ error: 'Failed to fetch orders from Wix', details: String(err) }, { status: 500 });
-      }
+      return NextResponse.json({ error: 'Failed to fetch orders from Wix', details: String(err) }, { status: 500 });
     }
 
     const orders = res?.orders || [];

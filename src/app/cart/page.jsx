@@ -14,7 +14,7 @@ import { currentCart } from '@wix/ecom';
 // import Quantity from '../../Components/Quantity/Quantity';
 // import Link from 'next/link';
 
-export const Cart = () => {
+const Cart = () => {
 
     const wixClient = useWixClient();
     console.log(wixClient);
