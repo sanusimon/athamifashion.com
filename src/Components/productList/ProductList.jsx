@@ -8,7 +8,7 @@ import Link from "next/link";
 import DOMPurify from "dompurify";
 import "./productList.scss";
 import Head from "next/head";
-import ReviewStars from "@/components/Review/ReviewStars";
+import ReviewStars from "@/Components/Review/ReviewStars";
 
 const PRODUCT_PER_PAGE = 8;
 

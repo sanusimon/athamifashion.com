@@ -7,7 +7,7 @@ import { Navigation, Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from "swiper";
 import { useEffect, useRef, useState } from "react";
-import ReviewStars from "@/components/Review/ReviewStars";
+import ReviewStars from "@/Components/Review/ReviewStars";
 import createDOMPurify from "dompurify";
 
 // Import Swiper styles

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import ReviewForm from "@/components/Review/ReviewForm";
+import ReviewForm from "@/Components/Review/ReviewForm";
 
 const ReviewSubmitPage = () => {
   const searchParams = useSearchParams();

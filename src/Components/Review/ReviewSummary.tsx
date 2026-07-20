@@ -1,6 +1,6 @@
 "use client";
 
-import ReviewStars from "@/components/Review/ReviewStars";
+import ReviewStars from "@/Components/Review/ReviewStars";
 import { ReviewSummary as ReviewSummaryType } from "@/types/review";
 
 type Props = {

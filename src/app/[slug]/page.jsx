@@ -9,8 +9,8 @@ import { notFound } from 'next/navigation';
 import CustomizeProductsWrapper from '@/Components/CustomizeProductsWrapper/CustomizeProductsWrapper';
 import Link from 'next/link';
 import Head from 'next/head';
-import ReviewSummary from '@/components/Review/ReviewSummary';
-import ReviewList from '@/components/Review/ReviewList';
+import ReviewSummary from '@/Components/Review/ReviewSummary';
+import ReviewList from '@/Components/Review/ReviewList';
 import { getReviewSummaryByProductId } from '@/lib/reviewService';
 import RelatedProductsClient from '@/Components/RelatedProductsClient';
 

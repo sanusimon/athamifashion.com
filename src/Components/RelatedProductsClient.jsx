@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import ReviewStars from "@/components/Review/ReviewStars";
+import ReviewStars from "@/Components/Review/ReviewStars";
 
 const RelatedProductsClient = ({ products = [], category }) => {
   const [ratings, setRatings] = useState({});

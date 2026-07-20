@@ -1,7 +1,7 @@
 "use client";
 
 import { Review } from "@/types/review";
-import ReviewStars from "@/components/Review/ReviewStars";
+import ReviewStars from "@/Components/Review/ReviewStars";
 
 type Props = {
   reviews: Review[];
