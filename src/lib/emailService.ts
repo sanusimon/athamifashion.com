@@ -49,7 +49,7 @@ style="background:#ffffff;border-radius:12px;padding:40px;">
 <td align="center">
 
 <img
-src="${appUrl}/logo.png"
+src="${appUrl}/Athamifashion-logo.svg"
 width="170"
 alt="AthamiFashion"
 style="margin-bottom:25px;" />
