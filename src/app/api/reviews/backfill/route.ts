@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { wixClientServer } from '@/lib/wixClientServer';
+import wixClientServer from "@/lib/wixClientServer";
 import { getReviewRequestByOrderAndProduct, createReviewRequest, markReviewRequestSent } from '@/lib/reviewService';
 import { sendReviewRequestEmail } from '@/lib/emailService';
 

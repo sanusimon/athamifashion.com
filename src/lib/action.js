@@ -1,7 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { wixClientServer } from "./wixClientServer";
+import wixClientServer from "@/lib/wixClientServer";
 // import { redirect } from "next/navigation";
 
 export const updateUser = async (formData) => {
