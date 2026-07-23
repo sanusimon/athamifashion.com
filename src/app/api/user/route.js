@@ -1,7 +1,7 @@
 // app/api/user/route.ts
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { wixClientServer } from "@/lib/wixClientServer";
+import wixClientServer from "@/lib/wixClientServer";
 import { members } from "@wix/members";
 
 export async function GET() {

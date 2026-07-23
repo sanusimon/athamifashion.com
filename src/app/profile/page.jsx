@@ -1,6 +1,6 @@
 
 import { cookies } from "next/headers";
-import { wixClientServer } from "@/lib/wixClientServer";
+import wixClientServer from "@/lib/wixClientServer";
 // import { updateUser } from "@/lib/action";
 import { members } from "@wix/members";
 import Link from "next/link";

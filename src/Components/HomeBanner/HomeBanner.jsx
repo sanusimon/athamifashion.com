@@ -2,7 +2,7 @@
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import "./homeBanner.scss";
-import { wixClientServer } from "@/lib/wixClientServer";
+import wixClientServer from "@/lib/wixClientServer";
 import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from "swiper";

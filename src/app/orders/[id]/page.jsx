@@ -1,4 +1,4 @@
-import { wixClientServer } from "@/lib/wixClientServer";
+import wixClientServer from "@/lib/wixClientServer";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";

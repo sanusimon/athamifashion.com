@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { wixClientServer } from "@/lib/wixClientServer";
+import wixClientServer from "@/lib/wixClientServer";
 
 export async function GET() {
   try {

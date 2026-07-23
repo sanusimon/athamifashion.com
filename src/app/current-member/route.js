@@ -1,4 +1,4 @@
-import { wixClientServer } from "@/lib/wixClientServer";
+import wixClientServer from "@/lib/wixClientServer";
 import { cookies } from "next/headers";
 import { members } from "@wix/members";
 

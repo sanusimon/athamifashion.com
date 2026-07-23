@@ -2,7 +2,7 @@
 import React from 'react'
 import './Categories.scss'
 import Link from 'next/link';
-import { wixClientServer } from '@/lib/wixClientServer';
+import wixClientServer from "@/lib/wixClientServer";
 
 const Categories = async () => {
   const wixClient = await wixClientServer();

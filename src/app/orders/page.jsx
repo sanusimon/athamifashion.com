@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { wixClientServer } from "@/lib/wixClientServer";
+import wixClientServer from "@/lib/wixClientServer";
 import {media as wixMedia} from '@wix/sdk'
 import { members } from "@wix/members";
 import Link from "next/link";
