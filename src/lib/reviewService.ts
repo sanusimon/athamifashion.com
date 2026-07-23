@@ -45,11 +45,18 @@ export async function createReviewRequest(input: {
   return request;
 }
 
-export async function getReviewRequestByToken(token: string): Promise<ReviewRequest | undefined> {
+export async function getReviewRequestByToken(token: string) {
   const data = await readReviewData();
-  return data.requests.find((request) => request.token === token);
-}
 
+  console.log("Searching token:", token);
+  console.log("Total requests:", data.requests.length);
+
+  const request = data.requests.find((r) => r.token === token);
+
+  console.log("Matched request:", request);
+
+  return request;
+}
 export async function markReviewRequestSent(token: string): Promise<void> {
   const data = await readReviewData();
   const request = data.requests.find((item) => item.token === token);
