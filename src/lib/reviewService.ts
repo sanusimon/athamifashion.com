@@ -58,11 +58,11 @@ export async function getReviewRequestByToken(
   console.log("Searching token:", token);
   
 
-  const result = await query(
-    "ReviewRequests",
-    "token",
-    token
-);
+  const result = (await query(
+  "ReviewRequests",
+  "token",
+  token
+)) as ReviewRequest[];
 
 const request = result[0];
 
@@ -143,11 +143,11 @@ export async function submitReview(input: {
 
 export async function approveReview(reviewId: string): Promise<Review | undefined> {
   
-  const reviews = await query(
-   "Reviews",
-   "id",
-   reviewId
-);
+ const reviews = (await query(
+  "Reviews",
+  "id",
+  reviewId
+)) as Review[];
 
 const review = reviews[0];
 
@@ -228,22 +228,22 @@ export async function getReviewSummaryByProductId(productId: string): Promise<Re
 
 export async function getPendingReviews(): Promise<Review[]> {
 
-  const reviews = await query(
-    "Reviews",
-    "status",
-    "pending"
-  );
+  const reviews = (await query(
+  "Reviews",
+  "status",
+  "pending"
+)) as Review[];
 
-  return reviews;
+return reviews;
 }
 
 export async function getPendingReviewRequests(): Promise<ReviewRequest[]> {
 
-  const requests = await query(
-    "ReviewRequests",
-    "status",
-    "pending"
-  );
+  const requests = (await query(
+  "ReviewRequests",
+  "status",
+  "pending"
+)) as ReviewRequest[];
 
   const now = Date.now();
 
@@ -257,11 +257,11 @@ export async function getReviewRequestByOrderAndProduct(
   productId: string
 ) {
 
-  const requests = await query(
-    "ReviewRequests",
-    "orderId",
-    orderId
-  );
+  const requests = (await query(
+  "ReviewRequests",
+  "orderId",
+  orderId
+)) as ReviewRequest[];
 
   return requests.find(
     r => r.productId === productId
