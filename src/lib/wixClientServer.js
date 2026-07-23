@@ -1,5 +1,6 @@
 import { createClient, ApiKeyStrategy, OAuthStrategy } from "@wix/sdk";
 import { products, collections } from "@wix/stores";
+import { items } from "@wix/data";
 import { orders } from "@wix/ecom";
 import { members } from "@wix/members";
 
@@ -21,6 +22,7 @@ const buildOAuthClient = (refreshToken) => {
       collections,
       orders,
       members,
+      items,
     },
     auth: OAuthStrategy({
       clientId: process.env.NEXT_PUBLIC_WIX_CLIENT_ID,
@@ -46,6 +48,7 @@ const buildApiKeyClient = () => {
       collections,
       orders,
       members,
+      items,
     },
     auth: ApiKeyStrategy({
       apiKey: process.env.WIX_API_KEY,
@@ -55,7 +58,7 @@ const buildApiKeyClient = () => {
   });
 };
 
-export const wixClientServer = async (refreshToken) => {
+const wixClientServer = async (refreshToken) => {
   // Logged-in customer
   if (refreshToken) {
     return buildOAuthClient(refreshToken);
@@ -73,3 +76,4 @@ export const wixClientServer = async (refreshToken) => {
     "Missing WIX_API_KEY or WIX_SITE_ID"
   );
 };
+export default wixClientServer;

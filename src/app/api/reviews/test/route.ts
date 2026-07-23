@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { wixClientServer } from '@/lib/wixClientServer';
+import  wixClientServer  from '@/lib/wixClientServer';
 import { getReviewRequestByOrderAndProduct, createReviewRequest, markReviewRequestSent } from '@/lib/reviewService';
 import { sendReviewRequestEmail } from '@/lib/emailService';
 
@@ -121,12 +121,32 @@ console.log("STEP 4 - searchOrders completed");
     }
 
     const existing = await getReviewRequestByOrderAndProduct(order._id, productId);
-    if (existing && existing.status === "sent") {
-    results.step.push(
-      `ℹ️ Review request already sent`
-    );
-    return NextResponse.json(results);
-}
+
+console.log("EXISTING =", JSON.stringify(existing, null, 2));
+
+results.existing = existing;
+
+// TEMPORARY - DON'T RETURN
+// if (existing && existing.status === "sent") {
+//   results.step.push("ℹ️ Review request already sent");
+//   return NextResponse.json(results);
+// }
+
+
+  //  const existing = await getReviewRequestByOrderAndProduct(
+  //     order._id,
+  //     productId
+  //   );
+
+  //   console.log("EXISTING REQUEST =", existing);
+
+  //   if (existing && existing.status === "sent") {
+  //     console.log(existing);
+
+  //     results.existing = existing;
+
+  //     return NextResponse.json(results);
+  //   }
 
     // 4. Create and send test email
     const customerId = order.buyerInfo?.contactId || order.buyerInfo?.memberId || '';

@@ -1,7 +1,11 @@
 import crypto from "crypto";
 import { formatISO, addDays } from "date-fns";
-import { readReviewData, writeReviewData } from "@/lib/reviewStore";
-import { Review, ReviewRequest, ReviewStatus, ReviewRequestStatus, ReviewSummary } from "@/types/review";
+import {
+    insert,
+    query,
+    update,
+} from "@/lib/wixReviewStore";
+import { Review, ReviewRequest, ReviewSummary } from "@/types/review";
 
 export async function createReviewRequest(input: {
   orderId: string;
@@ -11,11 +15,12 @@ export async function createReviewRequest(input: {
   deliveryDate: string;
   sendAt?: string;
 }): Promise<ReviewRequest> {
-  const data = await readReviewData();
-  const existing = data.requests.find(
-    (request) =>
-      request.orderId === input.orderId && request.productId === input.productId
-  );
+  
+ const existing = await getReviewRequestByOrderAndProduct(
+  input.orderId,
+  input.productId
+);
+
 
   if (existing) {
     return existing;
@@ -40,39 +45,63 @@ export async function createReviewRequest(input: {
     updatedAt: now.toISOString(),
   };
 
-  data.requests.push(request);
-  await writeReviewData(data);
+  await insert("ReviewRequests", request);
+  
   return request;
 }
 
-export async function getReviewRequestByToken(token: string) {
-  const data = await readReviewData();
+export async function getReviewRequestByToken(
+  token: string
+): Promise<ReviewRequest | undefined> {
+  
 
   console.log("Searching token:", token);
-  console.log("Total requests:", data.requests.length);
+  
 
-  const request = data.requests.find((r) => r.token === token);
+  const result = await query(
+    "ReviewRequests",
+    "token",
+    token
+);
+
+const request = result[0];
 
   console.log("Matched request:", request);
 
   return request;
 }
-export async function markReviewRequestSent(token: string): Promise<void> {
-  const data = await readReviewData();
-  const request = data.requests.find((item) => item.token === token);
-  if (!request) return;
-  request.status = request.status === "reviewed" ? "reviewed" : "sent";
-  request.updatedAt = new Date().toISOString();
-  await writeReviewData(data);
-}
+export async function markReviewRequestSent(token: string) {
+  const request = await getReviewRequestByToken(token);
 
-export async function markReviewRequestReviewed(token: string): Promise<void> {
-  const data = await readReviewData();
-  const request = data.requests.find((item) => item.token === token);
   if (!request) return;
-  request.status = "reviewed";
-  request.updatedAt = new Date().toISOString();
-  await writeReviewData(data);
+
+  await update(
+    "ReviewRequests",
+    request._id,
+    {
+      ...request,
+      status:
+        request.status === "reviewed"
+          ? "reviewed"
+          : "sent",
+      updatedAt: new Date().toISOString(),
+    }
+  );
+}
+export async function markReviewRequestReviewed(token: string) {
+  const request = await getReviewRequestByToken(token);
+
+  if (!request) return;
+
+  await update(
+    "ReviewRequests",
+    request._id,
+    {
+      ...request,
+      status: "reviewed",
+      updatedAt: new Date().toISOString(),
+    }
+  );
 }
 
 export async function submitReview(input: {
@@ -91,7 +120,7 @@ export async function submitReview(input: {
   const now = new Date();
   const review: Review = {
     id: crypto.randomUUID(),
-    requestId: request.id,
+    requestId: request.id || request._id,
     orderId: request.orderId,
     productId: request.productId,
     customerId: request.customerId,
@@ -105,46 +134,82 @@ export async function submitReview(input: {
     updatedAt: now.toISOString(),
   };
 
-  const data = await readReviewData();
-  data.reviews.push(review);
-  await writeReviewData(data);
+  
+  await insert("Reviews", review);
   await markReviewRequestReviewed(input.token);
 
   return review;
 }
 
 export async function approveReview(reviewId: string): Promise<Review | undefined> {
-  const data = await readReviewData();
-  const review = data.reviews.find((item) => item.id === reviewId);
-  if (!review) {
-    return undefined;
+  
+  const reviews = await query(
+   "Reviews",
+   "id",
+   reviewId
+);
+
+const review = reviews[0];
+
+if (!review) return undefined;
+  
+  await update(
+  "Reviews",
+  review._id,
+  {
+    ...review,
+    status: "approved",
+    approvedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   }
-  review.status = "approved";
-  review.approvedAt = new Date().toISOString();
-  review.updatedAt = new Date().toISOString();
-  await writeReviewData(data);
-  return review;
+);
+
+return {
+  ...review,
+  status: "approved"
+};
 }
+export async function getApprovedReviewsByProductId(
+  productId: string
+): Promise<Review[]> {
 
-export async function getApprovedReviewsByProductId(productId: string): Promise<Review[]> {
-  const data = await readReviewData();
-  return data.reviews
-    .filter((review) => review.productId === productId && review.status === "approved")
-    .sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime());
-}
+  const reviews = await query(
+    "Reviews",
+    "productId",
+    productId
+  );
 
-export async function getRatingSummariesByProductIds(productIds: string[]): Promise<Record<string, { averageRating: number; reviewCount: number }>> {
-  const data = await readReviewData();
-  const result: Record<string, { averageRating: number; reviewCount: number }> = {};
-
-  productIds.forEach((productId) => {
-    const reviews = data.reviews.filter(
-      (review) => review.productId === productId && review.status === "approved"
+  return reviews
+    .filter(r => r.status === "approved")
+    .sort(
+      (a, b) =>
+        new Date(b.submittedAt).getTime() -
+        new Date(a.submittedAt).getTime()
     );
+}
+export async function getRatingSummariesByProductIds(productIds: string[]) {
+
+  const result: Record<
+    string,
+    { averageRating: number; reviewCount: number }
+  > = {};
+
+  for (const productId of productIds) {
+
+    const reviews = await getApprovedReviewsByProductId(productId);
+
     const reviewCount = reviews.length;
-    const averageRating = reviewCount === 0 ? 0 : reviews.reduce((sum, item) => sum + item.rating, 0) / reviewCount;
-    result[productId] = { averageRating, reviewCount };
-  });
+
+    const averageRating =
+      reviewCount === 0
+        ? 0
+        : reviews.reduce((s, r) => s + r.rating, 0) / reviewCount;
+
+    result[productId] = {
+      averageRating,
+      reviewCount,
+    };
+  }
 
   return result;
 }
@@ -162,33 +227,60 @@ export async function getReviewSummaryByProductId(productId: string): Promise<Re
 }
 
 export async function getPendingReviews(): Promise<Review[]> {
-  const data = await readReviewData();
-  return data.reviews.filter((review) => review.status === "pending");
+
+  const reviews = await query(
+    "Reviews",
+    "status",
+    "pending"
+  );
+
+  return reviews;
 }
 
 export async function getPendingReviewRequests(): Promise<ReviewRequest[]> {
-  const data = await readReviewData();
-  const now = new Date();
-  return data.requests.filter((request) => {
-    return (
-      request.status === "pending" &&
-      new Date(request.sendAt).getTime() <= now.getTime()
-    );
-  });
-}
 
-export async function getReviewRequestByOrderAndProduct(orderId: string, productId: string): Promise<ReviewRequest | undefined> {
-  const data = await readReviewData();
-  return data.requests.find(
-    (item) => item.orderId === orderId && item.productId === productId
+  const requests = await query(
+    "ReviewRequests",
+    "status",
+    "pending"
+  );
+
+  const now = Date.now();
+
+  return requests.filter(
+    r => new Date(r.sendAt).getTime() <= now
   );
 }
 
-export async function markRequestExpired(token: string): Promise<void> {
-  const data = await readReviewData();
-  const request = data.requests.find((item) => item.token === token);
+export async function getReviewRequestByOrderAndProduct(
+  orderId: string,
+  productId: string
+) {
+
+  const requests = await query(
+    "ReviewRequests",
+    "orderId",
+    orderId
+  );
+
+  return requests.find(
+    r => r.productId === productId
+  );
+}
+
+export async function markRequestExpired(token: string) {
+
+  const request = await getReviewRequestByToken(token);
+
   if (!request) return;
-  request.status = "expired";
-  request.updatedAt = new Date().toISOString();
-  await writeReviewData(data);
+
+  await update(
+    "ReviewRequests",
+    request._id,
+    {
+      ...request,
+      status: "expired",
+      updatedAt: new Date().toISOString(),
+    }
+  );
 }
