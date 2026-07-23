@@ -155,7 +155,7 @@ if (!review) return undefined;
   
   await update(
   "Reviews",
-  review._id,
+  review._id!,
   {
     ...review,
     status: "approved",
