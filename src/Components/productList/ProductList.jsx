@@ -2,13 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { wixClientServer } from "@/lib/wixClientServer";
 import Pagination from "@/Components/Pagination/Pagination";
 import Link from "next/link";
 import DOMPurify from "dompurify";
 import "./productList.scss";
 import Head from "next/head";
-import ReviewStars from "@/Components/Review/ReviewStars";
 
 const PRODUCT_PER_PAGE = 8;
 
@@ -18,30 +16,24 @@ export default function ProductList({ limit }) {
   const [totalProducts, setTotalProducts] = useState(0);
   const [loading, setLoading] = useState(true);
   const [slugToIdMap, setSlugToIdMap] = useState({});
-  const [ratings, setRatings] = useState({});
-
-  const fetchRatingsForIds = async (productIds) => {
-    if (!productIds || productIds.length === 0) {
-      setRatings({});
-      return;
-    }
-    try {
-      const response = await fetch(`/api/reviews/ratings?ids=${productIds.join(",")}`);
-      const result = await response.json();
-      setRatings(result.summaries || {});
-    } catch (error) {
-      setRatings({});
-    }
-  };
+  const [reviewSummaries, setReviewSummaries] = useState({});
 
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
-      const wixClient = await wixClientServer();
+      const response = await fetch("/api/products");
+        const data = await response.json();
 
-      const categoryData = await wixClient.collections.queryCollections().find();
+        if (!data.success) {
+          throw new Error(data.message);
+        }
+
+        const allProducts = data.products;
+        const collections = data.collections;
+
+      
       const map = {};
-      categoryData.items.forEach((cat) => {
+      collections.forEach((cat) => {
         map[cat.slug] = cat._id;
       });
       setSlugToIdMap(map);
@@ -60,46 +52,68 @@ export default function ProductList({ limit }) {
       const page = parseInt(searchParams.get("page") || "0");
       const perPage = limit || PRODUCT_PER_PAGE;
 
-      let productQuery = wixClient.products
-        .queryProducts()
-        .contains("name", searchParams.get("name") || "")
-        .ge("priceData.price", minPrice)
-        .le("priceData.price", maxPrice);
+      
 
-      if (selectedCategoryIds.length > 0) {
-        productQuery = productQuery.hasSome("collectionIds", selectedCategoryIds);
-      }
-
-      const res = await productQuery.find();
+    
 
       const selectedSizes = searchParams.getAll("size");
       const selectedDiscountLevels = searchParams.getAll("discount").map(Number);
       const selectedColors = searchParams.getAll("color");
 
-      let filteredProducts = res.items.filter((product) => {
-        // Only filter color, size, discount in-memory
-        const discountedPrice = product.priceData?.discountedPrice || product.priceData?.price || 0;
-        const price = product.priceData?.price || 0;
-        const discountPercent = ((price - discountedPrice) / price) * 100;
+      let filteredProducts = allProducts.filter((product) => {
+  const discountedPrice =
+    product.priceData?.discountedPrice ??
+    product.priceData?.price ??
+    0;
 
-        const meetsDiscount =
-          selectedDiscountLevels.length === 0 ||
-          selectedDiscountLevels.some((level) => discountPercent >= level);
+  const originalPrice = product.priceData?.price ?? 0;
 
-        const matchesSize =
-          selectedSizes.length === 0 ||
-          product.variants.some((variant) =>
-            selectedSizes.includes(variant.choices?.Size)
-          );
+  const discountPercent =
+    originalPrice > 0
+      ? ((originalPrice - discountedPrice) / originalPrice) * 100
+      : 0;
 
-        const matchesColor =
-          selectedColors.length === 0 ||
-          product.variants.some((variant) =>
-            selectedColors.includes(variant.choices?.Color)
-          );
+  // Category
+  const matchesCategory =
+    selectedCategoryIds.length === 0 ||
+    product.collectionIds?.some((id) =>
+      selectedCategoryIds.includes(id)
+    );
 
-        return meetsDiscount && matchesSize && matchesColor;
-      });
+  // Price
+  const matchesPrice =
+    discountedPrice >= minPrice &&
+    discountedPrice <= maxPrice;
+
+  // Discount
+  const matchesDiscount =
+    selectedDiscountLevels.length === 0 ||
+    selectedDiscountLevels.some(
+      (level) => discountPercent >= level
+    );
+
+  // Size
+  const matchesSize =
+    selectedSizes.length === 0 ||
+    product.variants?.some((variant) =>
+      selectedSizes.includes(variant.choices?.Size)
+    );
+
+  // Color
+  const matchesColor =
+    selectedColors.length === 0 ||
+    product.variants?.some((variant) =>
+      selectedColors.includes(variant.choices?.Color)
+    );
+
+  return (
+    matchesCategory &&
+    matchesPrice &&
+    matchesDiscount &&
+    matchesSize &&
+    matchesColor
+  );
+});
 
       // Sorting
       // Always sort by lastUpdated desc unless a sort param is provided
@@ -142,22 +156,22 @@ export default function ProductList({ limit }) {
 
       setTotalProducts(filteredProducts.length);
       setProducts(paginatedProducts);
-      await fetchRatingsForIds(paginatedProducts.map((product) => product._id));
+      const ids = paginatedProducts.map((p) => p._id);
+
+      if (ids.length) {
+        const res = await fetch(
+          `/api/reviews/summary?ids=${ids.join(",")}`
+        );
+
+        const data = await res.json();
+
+        setReviewSummaries(data.summaries || {});
+      }
       setLoading(false);
     };
 
     fetchProducts();
   }, [searchParams]);
-
-  // Poll ratings every 30 seconds so listings update after approvals
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (products && products.length > 0) {
-        fetchRatingsForIds(products.map((p) => p._id));
-      }
-    }, 30000);
-    return () => clearInterval(interval);
-  }, [products]);
 
   useEffect(() => {
     document.body.classList.add("product-list-page");
@@ -229,7 +243,7 @@ const formatPrice = (value) => {
         const colorImage = choice?.media?.mainMedia?.image?.url || product.media?.items[0]?.image?.url;
 
         return (
-          <li key={`product-${index}-color-${colorIndex}`}>
+          <li key={`${product._id}-${choice.description}`}>
             <Link href={`/${product.slug}?cat=${searchParams.get("cat")}`}>
               <div className="top_area">
                 <div className="img_wrap">
@@ -254,9 +268,6 @@ const formatPrice = (value) => {
               <div className="btm_area">
                 <div className="name__">
                   <label className="cat_name">{product.name} - {choice.description}</label>
-                  <div style={{ marginTop: 8 }}>
-                    <ReviewStars rating={ratings[product._id]?.averageRating || 0} count={ratings[product._id]?.reviewCount || 0} />
-                  </div>
                   {product.description &&
                     product.description.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, "").trim() && (
                       <span
@@ -267,6 +278,7 @@ const formatPrice = (value) => {
                   )}
 
                 </div>
+                
                 <div className="var_price">
                 <div className="variant">
   {[...new Set(
@@ -303,7 +315,7 @@ const formatPrice = (value) => {
       const defaultImage = product.media?.items[0]?.image?.url || "/placeholder.jpg";
 
       return (
-        <li key={`product-${index}`}>
+        <li key={product._id}>
           <Link href={`/${product.slug}?cat=${searchParams.get("cat")}`}>
             <div className="top_area">
               <div className="img_wrap">
@@ -326,21 +338,65 @@ const formatPrice = (value) => {
               <button className="add_cart">Add to Cart</button>
             </div>
             <div className="btm_area">
-              <div className="name__">
-                <label className="cat_name">{product.name}</label>
-                <div style={{ marginTop: 8 }}>
-                  <ReviewStars rating={ratings[product._id]?.averageRating || 0} count={ratings[product._id]?.reviewCount || 0} />
-                </div>
-                {product.description &&
-                  product.description.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, "").trim() && (
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: DOMPurify.sanitize(product.description),
-                      }}
-                    />
-                )}
+             <div className="name__">
+  <label className="cat_name">{product.name}</label>
 
-              </div>
+  {product.description &&
+    product.description
+      .replace(/<[^>]*>/g, "")
+      .replace(/&nbsp;/g, "")
+      .trim() && (
+      <span
+        dangerouslySetInnerHTML={{
+          __html: DOMPurify.sanitize(product.description),
+        }}
+      />
+  )}
+
+  <div style={{ marginTop: 8 }}>
+    {(() => {
+      const summary = reviewSummaries[product._id] || {
+        averageRating: 0,
+        reviewCount: 0,
+      };
+
+      return (
+        <div
+          className="review-stars"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 4,
+          }}
+        >
+          {[1, 2, 3, 4, 5].map((star) => (
+            <span
+              key={star}
+              style={{
+                color:
+                  star <= Math.round(summary.averageRating)
+                    ? "#f59e0b"
+                    : "#d1d5db",
+              }}
+            >
+              ★
+            </span>
+          ))}
+
+          <span
+            style={{
+              marginLeft: 8,
+              color: "#6b7280",
+              fontSize: 12,
+            }}
+          >
+            ({summary.reviewCount})
+          </span>
+        </div>
+      );
+    })()}
+  </div>
+</div>
               <div className="var_price">
               <div className="variant">
                 {[...new Set(

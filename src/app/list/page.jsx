@@ -1,6 +1,5 @@
 "use client";
 
-import { wixClientServer } from "@/lib/wixClientServer";
 import Filter from "@/Components/Filter/Filter";
 import ProductList from "../../Components/productList/ProductList";
 import Breadcrumbs from "@/Components/Breadcrumbs/Breadcrumbs";
@@ -14,41 +13,49 @@ const List = () => {
   const [cat, setCat] = useState(null);
 
   useEffect(() => {
-    const fetchCategory = async () => {
-      const wixClient = await wixClientServer();
-      const catSlug = searchParams.get("cat") || "all-products";
-  
-      const allCategories = await wixClient.collections.queryCollections().find();
-      const category = allCategories.items.find((cat) => cat.slug === catSlug);
-  
-      setCat(category);
-      document.body.classList.add("product_list_page");
-  
-      return () => {
-        document.body.classList.remove("product_list_page");
-      };
-    };
-  
-    fetchCategory();
-  }, [searchParams]);
-  
+    async function fetchCategory() {
+      try {
+        const res = await fetch("/api/products");
+        const data = await res.json();
 
-  if (!cat) return <Skeleton />;  // Return a loading skeleton until category data is fetched
+        if (!data.success) return;
+
+        const slug = searchParams.get("cat") || "all-products";
+
+        const category = data.collections.find(
+          (c) => c.slug === slug
+        );
+
+        setCat(category || null);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    fetchCategory();
+
+    document.body.classList.add("product_list_page");
+
+    return () => {
+      document.body.classList.remove("product_list_page");
+    };
+  }, [searchParams]);
+
+  if (!cat) return <Skeleton />;
 
   return (
     <section className="product_page inner_product">
       <div className="container">
         <div className="top_bread">
-          <Breadcrumbs categoryName={cat?.collection?.name} />
+          <Breadcrumbs categoryName={cat?.name} />
           <Sort />
         </div>
+
         <div className="inner_">
           <Filter />
+
           <Suspense fallback={<Skeleton />}>
-            <ProductList
-              categoryId={cat.collection?._id || "00000000-000000-000000-000000000001"}
-              searchParams={searchParams}
-            />
+            <ProductList />
           </Suspense>
         </div>
       </div>

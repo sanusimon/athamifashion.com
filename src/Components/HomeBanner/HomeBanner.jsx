@@ -28,12 +28,15 @@ const HomeBanner = () => {
 
     const fetchCategories = async () => {
       try {
-        const wixClient = await wixClientServer();
-        const result = await wixClient.collections.queryCollections().find();
-        setCats(result.items || []);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
+        const res = await fetch("/api/collections");
+        const data = await res.json();
+
+        if (data.success) {
+          setCats(data.collections);
+        }
+        } catch (error) {
+          console.error(error);
+        }
     };
 
 

@@ -79,18 +79,25 @@ export default function AdminReviewsPage() {
   };
 
   const handleApprove = async (reviewId: string) => {
-    try {
-      const res = await fetch(`/api/reviews/${reviewId}/approve`, {
-        method: "PATCH",
-      });
-      if (res.ok) {
-        // Refresh data
-        window.location.reload();
-      }
-    } catch (err) {
-      console.error("Failed to approve review", err);
+  try {
+    const res = await fetch(`/api/reviews/${reviewId}/approve`, {
+      method: "POST",
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to approve");
     }
-  };
+
+    const data = await res.json();
+    console.log(data);
+
+    // Refresh list
+    window.location.reload();
+  } catch (err) {
+    console.error(err);
+    alert("Failed to approve review");
+  }
+};
 
   if (loading) return <div className={styles.container}><p>Loading...</p></div>;
   if (error) return <div className={styles.container}><p className={styles.error}>Error: {error}</p></div>;

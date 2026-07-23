@@ -91,8 +91,7 @@ This endpoint will:
 - create review requests and send review emails immediately for eligible orders
 - return counts for processed, sent, skipped, and failed orders
 
-> Make sure `REVIEWS_BACKFILL_SECRET` is set and, if your server-side Wix client needs it,
-> `WIX_REFRESH_TOKEN` is configured in your deployment environment.
+> Make sure `REVIEWS_BACKFILL_SECRET` is set and your server-side Wix credentials are configured: `WIX_APP_ID`, `WIX_APP_SECRET`, and either `WIX_REFRESH_TOKEN` or `WIX_INSTANCE_ID`.
 
 ### Method 2: Directly Read the JSON File
 Open `reviews-data/reviews.json` with a text editor or use terminal:

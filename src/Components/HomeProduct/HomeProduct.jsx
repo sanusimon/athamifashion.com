@@ -1,13 +1,12 @@
 "use client";
 
 import Pagination from "@/Components/Pagination/Pagination";
-import { wixClientServer } from "@/lib/wixClientServer";
+
 import Link from "next/link";
 import { Navigation, Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from "swiper";
 import { useEffect, useRef, useState } from "react";
-import ReviewStars from "@/Components/Review/ReviewStars";
 import createDOMPurify from "dompurify";
 
 // Import Swiper styles
@@ -21,7 +20,6 @@ SwiperCore.use([Navigation, Autoplay]);
 export default function HomeProductList({ categoryId, limit, searchParams }) {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [ratings, setRatings] = useState({});
     const swiperRef = useRef(null); // ✅ Swiper reference
    const DOMPurifyRef = useRef(null);
      useEffect(() => {
@@ -41,53 +39,31 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
 
         const fetchProducts = async () => {
             try {
-                const wixClient = await wixClientServer();
+                const res = await fetch("/api/products");
+                const data = await res.json();
 
-                // ✅ Correct way to fetch products
-                const res = await wixClient.products
-                    .queryProducts()
-                    .hasSome("collectionIds", [categoryId]) // Filter by category
-                    .limit(limit || 8) // Default limit to 8 products
-                    .descending("lastUpdated")
-                    .find();
+                if (!data.success) {
+                throw new Error(data.message);
+                }
 
-                setProducts(res.items || []);
-                            // fetch ratings for these products
-                            try {
-                                const ids = (res.items || []).map(p => p._id);
-                                if (ids.length > 0) {
-                                    const r = await fetch(`/api/reviews/ratings?ids=${ids.join(',')}`);
-                                    const jr = await r.json();
-                                    setRatings(jr.summaries || {});
-                                }
-                            } catch (e) {
-                                setRatings({});
-                            }
+                let filteredProducts = data.products.filter((product) =>
+                product.collectionIds?.includes(categoryId)
+                );
+
+                filteredProducts.sort(
+                (a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated)
+                );
+
+                setProducts(filteredProducts.slice(0, limit || 8));
             } catch (error) {
                 console.error("Error fetching products:", error);
             } finally {
                 setLoading(false);
             }
-        };
+            };
 
         fetchProducts();
     }, [categoryId, limit]);
-
-        // Poll ratings every 30s
-        useEffect(() => {
-            const interval = setInterval(async () => {
-                try {
-                    const ids = products.map(p => p._id);
-                    if (ids.length === 0) return;
-                    const r = await fetch(`/api/reviews/ratings?ids=${ids.join(',')}`);
-                    const jr = await r.json();
-                    setRatings(jr.summaries || {});
-                } catch (e) {
-                    // ignore
-                }
-            }, 30000);
-            return () => clearInterval(interval);
-        }, [products]);
    
 
     if (!categoryId) {
@@ -161,13 +137,10 @@ export default function HomeProductList({ categoryId, limit, searchParams }) {
                                         </div>
                                         <button className="add_cart">Add to Cart</button>
                                     </div>
-                                                                        <div className="btm_area">
+                                    <div className="btm_area">
                                     <div className="name__">
                                         <label className="cat_name">{product.name}</label>
-                                                                                <div style={{ marginTop: 8 }}>
-                                                                                    <ReviewStars rating={ratings[product._id]?.averageRating || 0} count={ratings[product._id]?.reviewCount || 0} />
-                                                                                </div>
-                                                                                {DOMPurifyRef.current &&
+                                        {DOMPurifyRef.current &&
                                             product.description &&
                                             product.description.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, "").trim() && (
                                                 <span

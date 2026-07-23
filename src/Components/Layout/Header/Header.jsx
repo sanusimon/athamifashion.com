@@ -179,7 +179,7 @@ useEffect(() => {
           <div>
             <div className="logo">
               <Link href="/">
-                <img src="./Athamifashion-logo.svg" alt="Logo" />
+                <img src="/Athamifashion-logo.svg" alt="Logo" />
               </Link>
             </div>
             <div className="navigation">

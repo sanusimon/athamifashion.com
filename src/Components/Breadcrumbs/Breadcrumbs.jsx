@@ -1,9 +1,9 @@
-"use client";
+
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSearchParams, usePathname } from "next/navigation";
-import { wixClientServer } from "@/lib/wixClientServer";
+
 
 const Breadcrumbs = ({ product }) => {
   const searchParams = useSearchParams();
@@ -15,19 +15,26 @@ const Breadcrumbs = ({ product }) => {
   const discountParams = searchParams.getAll("discount");
   const sizeParams = searchParams.getAll("size");
 
-  useEffect(() => {
-    setIsClient(true);
+useEffect(() => {
+  setIsClient(true);
 
-    const fetchCategoryNames = async () => {
-      if (pathname.startsWith("/list") && catSlugs.length > 0) {
-        const wixClient = await wixClientServer();
-        const result = await wixClient.collections.queryCollections().find();
-        setAllCategories(result.items);
+  async function fetchCategoryNames() {
+    if (!pathname.startsWith("/list")) return;
+
+    try {
+      const res = await fetch("/api/products");
+      const data = await res.json();
+
+      if (data.success) {
+        setAllCategories(data.collections);
       }
-    };
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
-    fetchCategoryNames();
-  }, [pathname, catSlugs]);
+  fetchCategoryNames();
+}, [pathname]);
 
   if (!isClient || pathname === "/") return null;
 

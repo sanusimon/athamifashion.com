@@ -1,6 +1,9 @@
 import { getReviewRequestByToken } from '@/lib/reviewService';
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || 'http://localhost:3000';
+const appUrl =
+  process.env.APP_URL ||
+  process.env.NEXT_PUBLIC_APP_URL ||
+  "https://athamifashion.com";
 
 export default async function EmailPreview({ searchParams }) {
   const token = searchParams?.token;

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
-import { wixClientServer } from "@/lib/wixClientServer";
 import "./Filter.scss";
 
 const Filter = () => {
@@ -55,48 +54,46 @@ useEffect(() => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const wixClient = await wixClientServer();
-    
-        const cats = await wixClient.collections.queryCollections().find();
-        setCategories(cats.items);
-    
-        const products = await wixClient.products.queryProducts().find();
-        const discountSet = new Set();
-        const colorSet = new Set();
-    
-        products.items.forEach((product) => {
-          const price = product.priceData?.price;
-          const discounted = product.priceData?.discountedPrice;
-          if (price && discounted && discounted < price) {
-            const discountPercent = Math.round(((price - discounted) / price) * 100);
-        
-            // Ensure 100% discounts are correctly added to the set
-            if (discountPercent === 100) {
-              discountSet.add(100);
-            } else if (discountPercent < 100) {
-              discountSet.add(discountPercent);
-            }
-          }
-          // ✅ Add this block to populate colorSet
-          product.variants?.forEach((variant) => {
-            const color = variant.choices?.Color;
-            if (color) {
-              colorSet.add(color);
-            }
-          });
+  try {
+    const res = await fetch("/api/products");
 
-        });
-        
-    
-        setAvailableDiscounts(Array.from(discountSet).sort((a, b) => a - b));
-        setAvailableColors(Array.from(colorSet));
-      } catch (err) {
-        console.error("Failed to load filters from Wix:", err);
-        setAvailableDiscounts([]); // Fallback: no filter shown
-        setAvailableColors([]);
+    const data = await res.json();
+
+    if (!data.success) {
+      throw new Error(data.message);
+    }
+
+    setCategories(data.collections);
+
+    const discountSet = new Set();
+    const colorSet = new Set();
+
+    data.products.forEach((product) => {
+      const price = product.priceData?.price;
+      const discounted = product.priceData?.discountedPrice;
+
+      if (price && discounted && discounted < price) {
+        discountSet.add(
+          Math.round(((price - discounted) / price) * 100)
+        );
       }
-    };
+
+      product.variants?.forEach((variant) => {
+        if (variant.choices?.Color) {
+          colorSet.add(variant.choices.Color);
+        }
+      });
+    });
+
+    setAvailableDiscounts(
+      [...discountSet].sort((a, b) => a - b)
+    );
+
+    setAvailableColors([...colorSet]);
+  } catch (err) {
+    console.error(err);
+  }
+};
     
     
   

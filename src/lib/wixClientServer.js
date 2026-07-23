@@ -1,12 +1,21 @@
-import { createClient, OAuthStrategy } from "@wix/sdk";
+import { createClient, ApiKeyStrategy, OAuthStrategy } from "@wix/sdk";
 import { products, collections } from "@wix/stores";
 import { orders } from "@wix/ecom";
 import { members } from "@wix/members";
 
-export const wixClientServer = async (refreshToken) => {
-  const token = refreshToken || process.env.WIX_REFRESH_TOKEN || "";
+const normalizeRefreshToken = (refreshToken) => {
+  if (!refreshToken) return undefined;
 
-  const wixClient = createClient({
+  return typeof refreshToken === "string"
+    ? { value: refreshToken }
+    : refreshToken;
+};
+
+/**
+ * Visitor / logged-in member
+ */
+const buildOAuthClient = (refreshToken) => {
+  return createClient({
     modules: {
       products,
       collections,
@@ -16,11 +25,51 @@ export const wixClientServer = async (refreshToken) => {
     auth: OAuthStrategy({
       clientId: process.env.NEXT_PUBLIC_WIX_CLIENT_ID,
       tokens: {
-        refreshToken: token,
-        accessToken: { value: "", expiresAt: 0 },
+        refreshToken: normalizeRefreshToken(refreshToken),
+        accessToken: {
+          value: "",
+          expiresAt: 0,
+        },
       },
     }),
   });
+};
 
-  return wixClient;
+/**
+ * Server Admin Client
+ * Uses API Key
+ */
+const buildApiKeyClient = () => {
+  return createClient({
+    modules: {
+      products,
+      collections,
+      orders,
+      members,
+    },
+    auth: ApiKeyStrategy({
+      apiKey: process.env.WIX_API_KEY,
+      siteId: process.env.WIX_SITE_ID,
+      // accountId: process.env.WIX_ACCOUNT_ID, // optional
+    }),
+  });
+};
+
+export const wixClientServer = async (refreshToken) => {
+  // Logged-in customer
+  if (refreshToken) {
+    return buildOAuthClient(refreshToken);
+  }
+
+  // Server-side admin
+  if (
+    process.env.WIX_API_KEY &&
+    process.env.WIX_SITE_ID
+  ) {
+    return buildApiKeyClient();
+  }
+
+  throw new Error(
+    "Missing WIX_API_KEY or WIX_SITE_ID"
+  );
 };

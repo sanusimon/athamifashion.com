@@ -3,7 +3,14 @@ import { wixClientServer } from '@/lib/wixClientServer';
 import { getReviewRequestByOrderAndProduct, createReviewRequest, markReviewRequestSent } from '@/lib/reviewService';
 import { sendReviewRequestEmail } from '@/lib/emailService';
 
-const ALLOWED_STATUSES = new Set(['DELIVERED', 'FULFILLED', 'COMPLETED', 'SHIPPED', 'DELIVERED_TO_CUSTOMER']);
+const ALLOWED_STATUSES = new Set([
+  "APPROVED",              // Add this for testing
+  "DELIVERED",
+  "FULFILLED",
+  "COMPLETED",
+  "SHIPPED",
+  "DELIVERED_TO_CUSTOMER",
+]);
 
 function getProductIdFromLineItem(item: any): string | null {
   if (!item) return null;
@@ -161,4 +168,8 @@ export async function GET() {
   return NextResponse.json({
     message: 'Use POST to run the one-time backfill. Example: POST /api/reviews/backfill?secret=YOUR_SECRET',
   });
+}
+
+export async function POST(request: Request) {
+  return runBackfill(request);
 }

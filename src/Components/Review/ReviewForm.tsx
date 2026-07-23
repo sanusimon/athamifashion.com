@@ -11,15 +11,9 @@ const ReviewForm = ({ token, productId }: Props) => {
   const [rating, setRating] = useState(5);
   const [text, setText] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
-  const [photoUrl, setPhotoUrl] = useState("");
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
 
-  const addPhoto = () => {
-    if (!photoUrl.trim()) return;
-    setPhotos((current) => [...current, photoUrl.trim()]);
-    setPhotoUrl("");
-  };
 
   const removePhoto = (index: number) => {
     setPhotos((current) => current.filter((_, idx) => idx !== index));
@@ -53,6 +47,16 @@ const ReviewForm = ({ token, productId }: Props) => {
       setMessage("Unable to submit review. Please try again later.");
     }
   };
+  const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const files = e.target.files;
+  if (!files) return;
+
+  const urls = Array.from(files).map((file) =>
+    URL.createObjectURL(file)
+  );
+
+  setPhotos((prev) => [...prev, ...urls]);
+};
 
   return (
     <form onSubmit={handleSubmit} style={{ marginTop: 24, maxWidth: 680 }}>
@@ -91,47 +95,60 @@ const ReviewForm = ({ token, productId }: Props) => {
         </div>
 
         <div>
-          <label htmlFor="photoUrl" style={{ display: "block", marginBottom: 8, fontWeight: 600 }}>
-            Optional photo URL
-          </label>
-          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-            <input
-              id="photoUrl"
-              type="url"
-              value={photoUrl}
-              onChange={(event) => setPhotoUrl(event.target.value)}
-              placeholder="https://example.com/photo.jpg"
-              style={{ flex: 1, padding: 12, borderRadius: 8, border: "1px solid #d1d5db" }}
-            />
-            <button type="button" onClick={addPhoto} style={{ padding: "12px 18px", borderRadius: 8, background: "#2563eb", color: "#fff", border: "none" }}>
-              Add
-            </button>
-          </div>
+          <label
+  style={{
+    display: "block",
+    marginBottom: 8,
+    fontWeight: 600,
+  }}
+>
+  Upload Photos (Optional)
+</label>
+
+<input
+  type="file"
+  accept="image/*"
+  multiple
+  onChange={handleFiles}
+  style={{ marginBottom: 10 }}
+/>
+          
           {photos.length > 0 && (
             <div style={{ marginTop: 12, display: "flex", gap: 10, flexWrap: "wrap" }}>
               {photos.map((photo, index) => (
-                <div key={index} style={{ position: "relative" }}>
-                  <img src={photo} alt={`Review photo ${index + 1}`} style={{ width: 90, height: 90, objectFit: "cover", borderRadius: 8, border: "1px solid #e5e7eb" }} />
-                  <button
-                    type="button"
-                    onClick={() => removePhoto(index)}
-                    style={{
-                      position: "absolute",
-                      top: -8,
-                      right: -8,
-                      borderRadius: "50%",
-                      width: 24,
-                      height: 24,
-                      border: "none",
-                      background: "#ef4444",
-                      color: "#fff",
-                      cursor: "pointer",
-                    }}
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
+  <div key={index} style={{ position: "relative" }}>
+    <img
+      src={photo}
+      alt={`Review photo ${index + 1}`}
+      style={{
+        width: 90,
+        height: 90,
+        objectFit: "cover",
+        borderRadius: 8,
+        border: "1px solid #e5e7eb",
+      }}
+    />
+
+    <button
+      type="button"
+      onClick={() => removePhoto(index)}
+      style={{
+        position: "absolute",
+        top: -8,
+        right: -8,
+        width: 24,
+        height: 24,
+        borderRadius: "50%",
+        border: "none",
+        background: "#ef4444",
+        color: "#fff",
+        cursor: "pointer",
+      }}
+    >
+      ×
+    </button>
+  </div>
+))}
             </div>
           )}
         </div>
