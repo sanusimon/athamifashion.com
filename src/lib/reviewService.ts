@@ -58,11 +58,11 @@ export async function getReviewRequestByToken(
   console.log("Searching token:", token);
   
 
-  const result = (await query(
+  const result = (await query<ReviewRequest>(
   "ReviewRequests",
   "token",
   token
-)) as ReviewRequest[];
+));
 
 const request = result[0];
 
@@ -143,11 +143,11 @@ export async function submitReview(input: {
 
 export async function approveReview(reviewId: string): Promise<Review | undefined> {
   
- const reviews = (await query(
+ const reviews = (await query<Review>(
   "Reviews",
   "id",
   reviewId
-)) as Review[];
+));
 
 const review = reviews[0];
 
@@ -173,16 +173,16 @@ export async function getApprovedReviewsByProductId(
   productId: string
 ): Promise<Review[]> {
 
-  const reviews = await query(
+  const reviews = (await query<Review>(
     "Reviews",
     "productId",
     productId
-  );
+  ));
 
   return reviews
-    .filter(r => r.status === "approved")
+    .filter((r: Review) => r.status === "approved")
     .sort(
-      (a, b) =>
+      (a: Review, b: Review) =>
         new Date(b.submittedAt).getTime() -
         new Date(a.submittedAt).getTime()
     );
@@ -201,9 +201,12 @@ export async function getRatingSummariesByProductIds(productIds: string[]) {
     const reviewCount = reviews.length;
 
     const averageRating =
-      reviewCount === 0
-        ? 0
-        : reviews.reduce((s, r) => s + r.rating, 0) / reviewCount;
+  reviewCount === 0
+    ? 0
+    : reviews.reduce(
+        (s: number, r: Review) => s + r.rating,
+        0
+      ) / reviewCount;
 
     result[productId] = {
       averageRating,
@@ -217,7 +220,12 @@ export async function getRatingSummariesByProductIds(productIds: string[]) {
 export async function getReviewSummaryByProductId(productId: string): Promise<ReviewSummary> {
   const reviews = await getApprovedReviewsByProductId(productId);
   const reviewCount = reviews.length;
-  const averageRating = reviewCount === 0 ? 0 : reviews.reduce((sum, item) => sum + item.rating, 0) / reviewCount;
+  const averageRating = reviewCount === 0
+  ? 0
+  : reviews.reduce(
+      (sum: number, item: Review) => sum + item.rating,
+      0
+    ) / reviewCount;
   return {
     productId,
     averageRating,
@@ -228,22 +236,22 @@ export async function getReviewSummaryByProductId(productId: string): Promise<Re
 
 export async function getPendingReviews(): Promise<Review[]> {
 
-  const reviews = (await query(
+  const reviews = (await query<Review>(
   "Reviews",
   "status",
   "pending"
-)) as Review[];
+));
 
 return reviews;
 }
 
 export async function getPendingReviewRequests(): Promise<ReviewRequest[]> {
 
-  const requests = (await query(
+  const requests = (await query<ReviewRequest>(
   "ReviewRequests",
   "status",
   "pending"
-)) as ReviewRequest[];
+));
 
   const now = Date.now();
 
@@ -257,11 +265,11 @@ export async function getReviewRequestByOrderAndProduct(
   productId: string
 ) {
 
-  const requests = (await query(
+  const requests = (await query<ReviewRequest>(
   "ReviewRequests",
   "orderId",
   orderId
-)) as ReviewRequest[];
+));
 
   return requests.find(
     r => r.productId === productId

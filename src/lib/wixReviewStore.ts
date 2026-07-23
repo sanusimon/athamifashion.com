@@ -15,11 +15,11 @@ export async function insert(collectionId: string, data: any) {
   return result;
 }
 
-export async function query(
+export async function query<T>(
   collectionId: string,
   field: string,
   value: any
-) {
+): Promise<T[]> {
   const wixClient = await wixClientServer();
 
   const result = await wixClient.items
@@ -30,7 +30,7 @@ export async function query(
   return (result.items ?? []).map((item: any) => ({
     _id: item._id,
     ...item.data,
-  }));
+  })) as T[];
 }
 
 export async function update(collectionId: string, id: string, data: any) {
