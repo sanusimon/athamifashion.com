@@ -77,7 +77,7 @@ export async function markReviewRequestSent(token: string) {
 
   await update(
     "ReviewRequests",
-    request._id,
+    request._id!,
     {
       ...request,
       status:
@@ -95,7 +95,7 @@ export async function markReviewRequestReviewed(token: string) {
 
   await update(
     "ReviewRequests",
-    request._id,
+    request._id!,
     {
       ...request,
       status: "reviewed",
@@ -120,7 +120,7 @@ export async function submitReview(input: {
   const now = new Date();
   const review: Review = {
     id: crypto.randomUUID(),
-    requestId: request.id || request._id,
+    requestId: request.id || request._id!,
     orderId: request.orderId,
     productId: request.productId,
     customerId: request.customerId,
@@ -276,7 +276,7 @@ export async function markRequestExpired(token: string) {
 
   await update(
     "ReviewRequests",
-    request._id,
+    request._id!,
     {
       ...request,
       status: "expired",

@@ -2,6 +2,7 @@ export type ReviewStatus = "pending" | "approved" | "rejected";
 export type ReviewRequestStatus = "pending" | "sent" | "reviewed" | "expired";
 
 export type ReviewRequest = {
+ _id?: string;   // ← Add this
   id: string;
   orderId: string;
   productId: string;
@@ -16,6 +17,7 @@ export type ReviewRequest = {
 };
 
 export type Review = {
+  _id?: string;
   id: string;
   requestId: string;
   orderId: string;
