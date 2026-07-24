@@ -13,18 +13,18 @@ export async function POST(request: Request) {
       );
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer());
+    const arrayBuffer = await file.arrayBuffer();
 
     const cloudName = process.env.CLOUDINARY_CLOUD_NAME!;
     const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET!;
 
     const uploadForm = new FormData();
 
-    uploadForm.append(
-      "file",
-      new Blob([buffer], { type: file.type }),
-      file.name
-    );
+  uploadForm.append(
+  "file",
+  new Blob([arrayBuffer], { type: file.type }),
+  file.name
+);
 
     uploadForm.append("upload_preset", uploadPreset);
 
