@@ -1,16 +1,13 @@
-// app/api/admin/reviews/route.ts
-
 import { NextResponse } from "next/server";
 import {
   getPendingReviewRequests,
   getPendingReviews,
 } from "@/lib/reviewService";
-import { query } from "@/lib/wixReviewStore";
 
 export async function GET() {
   try {
-    const requests = await query("ReviewRequests");
-    const reviews = await query("Reviews");
+    const requests = await getPendingReviewRequests();
+    const reviews = await getPendingReviews();
 
     return NextResponse.json({
       requests,
