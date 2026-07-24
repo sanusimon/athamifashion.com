@@ -85,14 +85,11 @@ async function runBackfill(request: Request) {
 
       let alreadyRequested = false;
       for (const li of lineItems) {
-        console.log("==================================");
-        console.log("LINE ITEM");
-        console.log(JSON.stringify(li, null, 2));
+       
 
         const pid = getProductIdFromLineItem(li);
 
-        console.log("PID =", pid);
-        console.log("==================================");
+       
         if (!pid) continue;
         const existing = await getReviewRequestByOrderAndProduct(order._id, pid);
         if (existing) {
@@ -126,11 +123,21 @@ async function runBackfill(request: Request) {
       const customerEmail = order.buyerInfo?.email || order.buyerInfo?.contactEmail || '';
       const deliveryDate = order.purchasedDate || new Date().toISOString();
 
-      if (!customerEmail) {
-        totalSkipped++;
-        skippedSamples.push({ orderId: order._id, reason: 'missing customer email' });
-        continue;
-      }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+if (
+  !customerEmail ||
+  !emailRegex.test(customerEmail)
+) {
+  totalSkipped++;
+
+  skippedSamples.push({
+    orderId: order._id,
+    reason: "invalid customer email",
+  });
+
+  continue;
+}
 
       try {
         const reviewRequest = await createReviewRequest({
