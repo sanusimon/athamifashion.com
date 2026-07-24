@@ -84,18 +84,25 @@ export default function AdminReviewsPage() {
       method: "POST",
     });
 
+    const data = await res.json();
+
+    console.log("Status:", res.status);
+    console.log("Response:", data);
+
     if (!res.ok) {
-      throw new Error("Failed to approve");
+    alert(JSON.stringify(data));
+    return;
     }
 
-    const data = await res.json();
-    console.log(data);
-
-    // Refresh list
-    window.location.reload();
+    setReviews(prev =>
+      prev.map(r =>
+        r.id === reviewId
+          ? { ...r, status: "approved", approvedAt: new Date().toISOString() }
+          : r
+      )
+    );
   } catch (err) {
     console.error(err);
-    alert("Failed to approve review");
   }
 };
 

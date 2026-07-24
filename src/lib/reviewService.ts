@@ -46,7 +46,9 @@ export async function createReviewRequest(input: {
   };
 
   await insert("ReviewRequests", request);
-  
+  console.log("Saving Review Request");
+    console.log(request);
+   
   return request;
 }
 
@@ -142,52 +144,64 @@ export async function submitReview(input: {
 }
 
 export async function approveReview(reviewId: string): Promise<Review | undefined> {
-  
- const reviews = (await query<Review>(
-  "Reviews",
-  "id",
-  reviewId
-));
 
-const review = reviews[0];
+  console.log("Review ID received:", reviewId);
 
-if (!review) return undefined;
-  
+  const reviews = await query<Review>(
+    "Reviews",
+    "id",
+    reviewId
+  );
+
+  console.log("Query returned:", reviews);
+
+  const review = reviews[0];
+
+  if (!review) {
+    console.log("Review not found!");
+    return undefined;
+  }
+
   await update(
-  "Reviews",
-  review._id!,
-  {
+    "Reviews",
+    review._id!,
+    {
+      ...review,
+      status: "approved",
+      approvedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }
+  );
+
+  return {
     ...review,
     status: "approved",
-    approvedAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  }
-);
-
-return {
-  ...review,
-  status: "approved"
-};
+  };
 }
 export async function getApprovedReviewsByProductId(
   productId: string
 ): Promise<Review[]> {
 
-  const reviews = (await query<Review>(
+  console.log("Looking for Product ID:", productId);
+
+  const reviews = await query<Review>(
     "Reviews",
     "productId",
     productId
-  ));
+  );
+
+  console.log("Matched Reviews:", reviews);
 
   return reviews
-    .filter((r: Review) => r.status === "approved")
+    .filter((r) => r.status === "approved")
     .sort(
-      (a: Review, b: Review) =>
+      (a, b) =>
         new Date(b.submittedAt).getTime() -
         new Date(a.submittedAt).getTime()
     );
 }
 export async function getRatingSummariesByProductIds(productIds: string[]) {
+    console.log(productIds);
 
   const result: Record<
     string,

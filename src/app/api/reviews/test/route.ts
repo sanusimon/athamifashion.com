@@ -74,6 +74,10 @@ console.log("STEP 4 - searchOrders completed");
     const order = orders[0];
     const status = (order.status || '').toString().toUpperCase();
     const lineItems = Array.isArray(order.lineItems) ? order.lineItems : [];
+    console.log("=================================");
+    console.log("LINE ITEMS");
+    console.log(JSON.stringify(lineItems, null, 2));
+    console.log("=================================");
 
     results.first_order_found = {
       id: order._id,
@@ -120,51 +124,51 @@ console.log("STEP 4 - searchOrders completed");
       return NextResponse.json(results);
     }
 
-    const existing = await getReviewRequestByOrderAndProduct(order._id, productId);
+   const existing = await getReviewRequestByOrderAndProduct(
+  order._id,
+  productId
+);
+console.log("========== LINE ITEM ==========");
+console.log(JSON.stringify(lineItems, null, 2));
+
+console.log("========== PRODUCT ID ==========");
+console.log(productId);
 
 console.log("EXISTING =", JSON.stringify(existing, null, 2));
 
 results.existing = existing;
 
-// TEMPORARY - DON'T RETURN
-// if (existing && existing.status === "sent") {
-//   results.step.push("ℹ️ Review request already sent");
-//   return NextResponse.json(results);
-// }
+let reviewRequest;
 
+if (existing) {
+  reviewRequest = existing;
+  results.step.push("ℹ Existing review request found");
+} else {
+  const customerId =
+    order.buyerInfo?.contactId ||
+    order.buyerInfo?.memberId ||
+    "";
 
-  //  const existing = await getReviewRequestByOrderAndProduct(
-  //     order._id,
-  //     productId
-  //   );
+  const deliveryDate =
+    typeof order.purchasedDate === "string"
+      ? order.purchasedDate
+      : order.purchasedDate instanceof Date
+      ? order.purchasedDate.toISOString()
+      : new Date().toISOString();
 
-  //   console.log("EXISTING REQUEST =", existing);
+  reviewRequest = await createReviewRequest({
+    orderId: order._id,
+    productId,
+    customerId,
+    customerEmail,
+    deliveryDate,
+    sendAt: new Date().toISOString(),
+  });
 
-  //   if (existing && existing.status === "sent") {
-  //     console.log(existing);
-
-  //     results.existing = existing;
-
-  //     return NextResponse.json(results);
-  //   }
-
-    // 4. Create and send test email
-    const customerId = order.buyerInfo?.contactId || order.buyerInfo?.memberId || '';
-    const deliveryDate = typeof order.purchasedDate === 'string' 
-      ? order.purchasedDate 
-      : (order.purchasedDate instanceof Date 
-        ? order.purchasedDate.toISOString() 
-        : new Date().toISOString());
-
-    const reviewRequest = await createReviewRequest({
-      orderId: order._id,
-      productId,
-      customerId: customerId || '',
-      customerEmail,
-      deliveryDate,
-      sendAt: new Date().toISOString(),
-    });
-    results.step.push(`✅ Created review request with token: ${reviewRequest.token.substring(0, 8)}...`);
+  results.step.push(
+    `✅ Created review request with token: ${reviewRequest.token.substring(0, 8)}...`
+  );
+}
 
     const emailResult = await sendReviewRequestEmail(reviewRequest);
     if (emailResult && emailResult.success) {

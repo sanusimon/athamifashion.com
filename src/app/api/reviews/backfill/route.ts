@@ -12,9 +12,19 @@ const ALLOWED_STATUSES = new Set([
   "DELIVERED_TO_CUSTOMER",
 ]);
 
-function getProductIdFromLineItem(item: any): string | null {
+function getProductIdFromLineItem(item: any): string |null {
   if (!item) return null;
-  return item.productId || item.catalogItemId || item.productCatalogId || item.catalogItem?.id || item.product?.id || item._id || null;
+
+  return (
+    item.catalogReference?.catalogItemId ||
+    item.rootCatalogItemId ||
+    item.productId ||
+    item.catalogItemId ||
+    item.productCatalogId ||
+    item.catalogItem?.id ||
+    item.product?.id ||
+    null
+  );
 }
 
 function hasEmailBeenSentByMetadata(order: any): boolean {
@@ -75,7 +85,14 @@ async function runBackfill(request: Request) {
 
       let alreadyRequested = false;
       for (const li of lineItems) {
+        console.log("==================================");
+        console.log("LINE ITEM");
+        console.log(JSON.stringify(li, null, 2));
+
         const pid = getProductIdFromLineItem(li);
+
+        console.log("PID =", pid);
+        console.log("==================================");
         if (!pid) continue;
         const existing = await getReviewRequestByOrderAndProduct(order._id, pid);
         if (existing) {

@@ -3,17 +3,23 @@ import wixClientServer from "@/lib/wixClientServer";
 
 
 export async function insert(collectionId: string, data: any) {
-  const wixClient = await wixClientServer();
+  try {
+    const wixClient = await wixClientServer();
 
-  const result = await wixClient.items.insert(collectionId, {
-    data,
-  });
+    const result = await wixClient.items.insert(collectionId, {
+      data,
+    });
 
-  console.log("INSERT RESULT");
-  console.log(result);
+    console.log("========== INSERT RESULT ==========");
+    console.log(JSON.stringify(result, null, 2));
 
-  return result;
+    return result;
+  } catch (err) {
+    console.error("INSERT ERROR:", err);
+    throw err;
+  }
 }
+
 
 export async function query<T>(
   collectionId: string,
@@ -22,12 +28,23 @@ export async function query<T>(
 ): Promise<T[]> {
   const wixClient = await wixClientServer();
 
+  // Get all records first
   const result = await wixClient.items
     .query(collectionId)
-    .eq(`data.${field}`, value)
     .find();
 
-  return (result.items ?? []).map((item: any) => ({
+  console.log("=================================");
+  console.log("Collection:", collectionId);
+  console.log("Searching:", field, "=", value);
+  console.log("All records:", JSON.stringify(result.items, null, 2));
+
+  const filtered = (result.items ?? []).filter((item: any) => {
+    return item.data?.[field] === value;
+  });
+
+  console.log("Matched records:", JSON.stringify(filtered, null, 2));
+
+  return filtered.map((item: any) => ({
     _id: item._id,
     ...item.data,
   })) as T[];

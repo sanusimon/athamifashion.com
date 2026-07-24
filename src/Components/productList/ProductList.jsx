@@ -158,6 +158,8 @@ export default function ProductList({ limit }) {
       setProducts(paginatedProducts);
       const ids = paginatedProducts.map((p) => p._id);
 
+      console.log("Product IDs:", ids);
+
       if (ids.length) {
         const res = await fetch(
           `/api/reviews/summary?ids=${ids.join(",")}`
@@ -165,8 +167,22 @@ export default function ProductList({ limit }) {
 
         const data = await res.json();
 
+        console.log("Review summaries:", data);
+
         setReviewSummaries(data.summaries || {});
       }
+
+      // if (ids.length) {
+      //   const res = await fetch(
+      //     `/api/reviews/summary?ids=${ids.join(",")}`
+      //   );
+
+      //   const data = await res.json();
+
+      //   setReviewSummaries(data.summaries || {});
+        
+      //   console.log("Review summaries:", data.summaries);
+      // }
       setLoading(false);
     };
 
@@ -355,6 +371,10 @@ const formatPrice = (value) => {
 
   <div style={{ marginTop: 8 }}>
     {(() => {
+      
+
+      console.log(reviewSummaries);
+
       const summary = reviewSummaries[product._id] || {
         averageRating: 0,
         reviewCount: 0,
@@ -369,19 +389,19 @@ const formatPrice = (value) => {
             gap: 4,
           }}
         >
-          {[1, 2, 3, 4, 5].map((star) => (
-            <span
-              key={star}
-              style={{
-                color:
-                  star <= Math.round(summary.averageRating)
-                    ? "#f59e0b"
-                    : "#d1d5db",
-              }}
-            >
-              ★
-            </span>
-          ))}
+          {[1,2,3,4,5].map((star) => (
+          <span
+            key={star}
+            style={{
+              color:
+                star <= Math.round(summary.averageRating)
+                  ? "#f59e0b"
+                  : "#d1d5db",
+            }}
+          >
+            ★
+          </span>
+        ))}
 
           <span
             style={{
