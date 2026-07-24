@@ -47,15 +47,27 @@ const ReviewForm = ({ token, productId }: Props) => {
       setMessage("Unable to submit review. Please try again later.");
     }
   };
-  const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFiles = async (
+  e: React.ChangeEvent<HTMLInputElement>
+) => {
   const files = e.target.files;
   if (!files) return;
 
-  const urls = Array.from(files).map((file) =>
-    URL.createObjectURL(file)
-  );
+  for (const file of Array.from(files)) {
+    const formData = new FormData();
+    formData.append("file", file);
 
-  setPhotos((prev) => [...prev, ...urls]);
+    const res = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!res.ok) continue;
+
+    const data = await res.json();
+
+    setPhotos((prev) => [...prev, data.url]);
+  }
 };
 
   return (
