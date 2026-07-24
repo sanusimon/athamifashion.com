@@ -47,14 +47,17 @@ const ReviewForm = ({ token, productId }: Props) => {
       setMessage("Unable to submit review. Please try again later.");
     }
   };
-  const handleFiles = async (
+ const handleFiles = async (
   e: React.ChangeEvent<HTMLInputElement>
 ) => {
   const files = e.target.files;
+
   if (!files) return;
 
   for (const file of Array.from(files)) {
+
     const formData = new FormData();
+
     formData.append("file", file);
 
     const res = await fetch("/api/upload", {
@@ -62,7 +65,10 @@ const ReviewForm = ({ token, productId }: Props) => {
       body: formData,
     });
 
-    if (!res.ok) continue;
+    if (!res.ok) {
+      alert("Image upload failed");
+      continue;
+    }
 
     const data = await res.json();
 
