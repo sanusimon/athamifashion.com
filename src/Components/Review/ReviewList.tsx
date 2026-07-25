@@ -33,23 +33,25 @@ const ReviewList = ({ reviews }: Props) => {
             </span>
           </div>
           <p style={{ marginTop: 12, color: "#111827" }}>{review.text}</p>
-          {review.photos?.length > 0 && (
+          {/* {review.photos?.length > 0 && (
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 12 }}>
-              {review.photos.map((photo, index) => {
-                console.log(photo);
+              {review.photos?.map((photo,index)=>(
 
-                return (
-                    <img
-                    key={index}
-                    src={photo}
-                    alt=""
-                    width={80}
-                    height={80}
-                    />
-                );
-                })}
+<img
+
+key={index}
+
+src={photo}
+
+alt="Review"
+
+className="w-24 h-24 rounded-lg object-cover cursor-pointer"
+
+/>
+
+))}
             </div>
-          )}
+          )} */}
         </div>
       ))}
     </div>
