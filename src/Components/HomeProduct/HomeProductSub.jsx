@@ -20,6 +20,7 @@ export default function HomeProductListSub({ categoryId, limit, searchParams }) 
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const swiperRef = useRef(null); // ✅ Swiper reference
+    const [reviewSummaries, setReviewSummaries] = useState({});
    const DOMPurifyRef = useRef(null);
      useEffect(() => {
         if (typeof window !== "undefined") {
@@ -54,7 +55,22 @@ export default function HomeProductListSub({ categoryId, limit, searchParams }) 
             (a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated)
             );
 
-            setProducts(filteredProducts.slice(0, limit || 8));
+            const finalProducts = filteredProducts.slice(0, limit || 8);
+
+            setProducts(finalProducts);
+
+            // Fetch review summaries
+            const ids = finalProducts.map((p) => p._id);
+
+            if (ids.length > 0) {
+            const res = await fetch(
+                `/api/reviews/summary?ids=${ids.join(",")}`
+            );
+
+            const data = await res.json();
+
+            setReviewSummaries(data.summaries || {});
+            }
         } catch (error) {
             console.error("Error fetching products:", error);
         } finally {
@@ -139,6 +155,51 @@ export default function HomeProductListSub({ categoryId, limit, searchParams }) 
                                     <div className="btm_area">
                                     <div className="name__">
                                         <label className="cat_name">{product.name}</label>
+                                        <div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent:"center",
+    gap: 4,
+    marginTop: 6,
+  }}
+>
+  {(() => {
+    const summary = reviewSummaries[product._id] || {
+      averageRating: 0,
+      reviewCount: 0,
+    };
+
+    return (
+      <>
+        {[1, 2, 3, 4, 5].map((star) => (
+          <span
+            key={star}
+            style={{
+              color:
+                star <= Math.round(summary.averageRating)
+                  ? "#f59e0b"
+                  : "#d1d5db",
+              fontSize: 14,
+            }}
+          >
+            ★
+          </span>
+        ))}
+
+        <span
+          style={{
+            color: "#6b7280",
+            fontSize: 12,
+            marginLeft: 4,
+          }}
+        >
+          ({summary.reviewCount})
+        </span>
+      </>
+    );
+  })()}
+</div>
                                         {DOMPurifyRef.current &&
                                             product.description &&
                                             product.description.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, "").trim() && (
