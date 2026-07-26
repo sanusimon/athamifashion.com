@@ -1,259 +1,273 @@
 import crypto from "crypto";
 import { formatISO, addDays } from "date-fns";
 import {
-    insert,
-    query,
-    update,
+insert,
+query,
+update,
 } from "@/lib/wixReviewStore";
 import { Review, ReviewRequest, ReviewSummary } from "@/types/review";
+import { getAll } from "@/lib/wixReviewStore";
+
+export async function getAllReviews(): Promise<Review[]> {
+  return await getAll("Reviews");
+}
+
+export async function getAllReviewRequests(): Promise<ReviewRequest[]> {
+  return await getAll("ReviewRequests");
+}
 
 export async function createReviewRequest(input: {
-  orderId: string;
-  productId: string;
-  customerId: string;
-  customerEmail: string;
-  deliveryDate: string;
-  sendAt?: string;
+orderId: string;
+productId: string;
+customerId: string;
+customerEmail: string;
+deliveryDate: string;
+sendAt?: string;
 }): Promise<ReviewRequest> {
-  
- const existing = await getReviewRequestByOrderAndProduct(
-  input.orderId,
-  input.productId
+
+const existing = await getReviewRequestByOrderAndProduct(
+input.orderId,
+input.productId
 );
 
 
-  if (existing) {
-    return existing;
-  }
+if (existing) {
+return existing;
+}
 
-  const now = new Date();
-  const deliveryDate = new Date(input.deliveryDate);
-  const sendAt = input.sendAt || formatISO(addDays(deliveryDate, 5));
-  const token = crypto.randomUUID();
+const now = new Date();
+const deliveryDate = new Date(input.deliveryDate);
+const sendAt = input.sendAt || formatISO(addDays(deliveryDate, 5));
+const token = crypto.randomUUID();
 
-  const request: ReviewRequest = {
-    id: crypto.randomUUID(),
-    orderId: input.orderId,
-    productId: input.productId,
-    customerId: input.customerId,
-    customerEmail: input.customerEmail,
-    deliveryDate: deliveryDate.toISOString(),
-    sendAt,
-    token,
-    status: "pending",
-    createdAt: now.toISOString(),
-    updatedAt: now.toISOString(),
-  };
+const request: ReviewRequest = {
+id: crypto.randomUUID(),
+orderId: input.orderId,
+productId: input.productId,
+customerId: input.customerId,
+customerEmail: input.customerEmail,
+deliveryDate: deliveryDate.toISOString(),
+sendAt,
+token,
+status: "pending",
+createdAt: now.toISOString(),
+updatedAt: now.toISOString(),
+};
 
-  await insert("ReviewRequests", request);
-  console.log("Saving Review Request");
-    console.log(request);
-   
-  return request;
+await insert("ReviewRequests", request);
+console.log("Saving Review Request");
+console.log(request);
+
+return request;
 }
 
 export async function getReviewRequestByToken(
-  token: string
+token: string
 ): Promise<ReviewRequest | undefined> {
-  
 
-  console.log("Searching token:", token);
-  
 
-  const result = (await query<ReviewRequest>(
-  "ReviewRequests",
-  "token",
-  token
+console.log("Searching token:", token);
+
+
+const result = (await query<ReviewRequest>(
+"ReviewRequests",
+"token",
+token
 ));
 
 const request = result[0];
 
-  console.log("Matched request:", request);
+console.log("Matched request:", request);
 
-  return request;
+return request;
 }
 export async function markReviewRequestSent(token: string) {
-  const request = await getReviewRequestByToken(token);
+const request = await getReviewRequestByToken(token);
 
-  if (!request) return;
+if (!request) return;
 
-  await update(
-    "ReviewRequests",
-    request._id!,
-    {
-      ...request,
-      status:
-        request.status === "reviewed"
-          ? "reviewed"
-          : "sent",
-      updatedAt: new Date().toISOString(),
-    }
-  );
+await update(
+"ReviewRequests",
+request._id!,
+{
+    ...request,
+    status:
+    request.status === "reviewed"
+        ? "reviewed"
+        : "sent",
+    updatedAt: new Date().toISOString(),
+}
+);
 }
 export async function markReviewRequestReviewed(token: string) {
-  const request = await getReviewRequestByToken(token);
+const request = await getReviewRequestByToken(token);
 
-  if (!request) return;
+if (!request) return;
 
-  await update(
-    "ReviewRequests",
-    request._id!,
-    {
-      ...request,
-      status: "reviewed",
-      updatedAt: new Date().toISOString(),
-    }
-  );
+await update(
+"ReviewRequests",
+request._id!,
+{
+    ...request,
+    status: "reviewed",
+    updatedAt: new Date().toISOString(),
+}
+);
 }
 
 export async function submitReview(input: {
-  token: string;
-  rating: number;
-  text: string;
-  photos?: string[];
+token: string;
+rating: number;
+text: string;
+photos?: string[];
 }): Promise<Review> {
-  const request = await getReviewRequestByToken(input.token);
-  if (!request) {
-    throw new Error("Invalid review token.");
-  }
-  if (request.status === "reviewed") {
-    throw new Error("A review has already been submitted for this request.");
-  }
-  const now = new Date();
-  const review: Review = {
-    id: crypto.randomUUID(),
-    requestId: request.id || request._id!,
-    orderId: request.orderId,
-    productId: request.productId,
-    customerId: request.customerId,
-    customerEmail: request.customerEmail,
-    rating: input.rating,
-    text: input.text,
-    photos: input.photos || [],
-    status: "pending",
-    submittedAt: now.toISOString(),
-    createdAt: now.toISOString(),
-    updatedAt: now.toISOString(),
-  };
+const request = await getReviewRequestByToken(input.token);
+if (!request) {
+throw new Error("Invalid review token.");
+}
+if (request.status === "reviewed") {
+throw new Error("A review has already been submitted for this request.");
+}
+const now = new Date();
+const review: Review = {
+id: crypto.randomUUID(),
+requestId: request.id || request._id!,
+orderId: request.orderId,
+productId: request.productId,
+customerId: request.customerId,
+customerEmail: request.customerEmail,
+rating: input.rating,
+text: input.text,
+photos: input.photos || [],
+status: "pending",
+submittedAt: now.toISOString(),
+createdAt: now.toISOString(),
+updatedAt: now.toISOString(),
+};
 
-  
-  await insert("Reviews", review);
-  await markReviewRequestReviewed(input.token);
 
-  return review;
+await insert("Reviews", review);
+await markReviewRequestReviewed(input.token);
+
+return review;
 }
 
 export async function approveReview(reviewId: string): Promise<Review | undefined> {
 
-  console.log("Review ID received:", reviewId);
+console.log("Review ID received:", reviewId);
 
-  const reviews = await query<Review>(
-    "Reviews",
-    "id",
-    reviewId
-  );
+const reviews = await query<Review>(
+"Reviews",
+"id",
+reviewId
+);
 
-  console.log("Query returned:", reviews);
+console.log("Query returned:", reviews);
 
-  const review = reviews[0];
+const review = reviews[0];
 
-  if (!review) {
-    console.log("Review not found!");
-    return undefined;
-  }
+if (!review) {
+console.log("Review not found!");
+return undefined;
+}
 
-  await update(
-    "Reviews",
-    review._id!,
-    {
-      ...review,
-      status: "approved",
-      approvedAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }
-  );
-
-  return {
+await update(
+"Reviews",
+review._id!,
+{
     ...review,
     status: "approved",
-  };
+    approvedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+}
+);
+
+return {
+...review,
+status: "approved",
+};
 }
 export async function getApprovedReviewsByProductId(
-  productId: string
+productId: string
 ): Promise<Review[]> {
 
-  console.log("Looking for Product ID:", productId);
+console.log("Looking for Product ID:", productId);
 
-  const reviews = await query<Review>(
-    "Reviews",
-    "productId",
-    productId
+const reviews = await query<Review>(
+"Reviews",
+"productId",
+productId
+);
+
+ console.log("All reviews:", reviews);
+
+  console.log(
+    "Approved:",
+    reviews.filter(r => r.status === "approved")
   );
 
-  console.log("Matched Reviews:", reviews);
-
-  return reviews
-    .filter((r) => r.status === "approved")
-    .sort(
-      (a, b) =>
-        new Date(b.submittedAt).getTime() -
-        new Date(a.submittedAt).getTime()
-    );
+return reviews
+.filter((r) => r.status === "approved")
+.sort(
+    (a, b) =>
+    new Date(b.submittedAt).getTime() -
+    new Date(a.submittedAt).getTime()
+);
 }
 export async function getRatingSummariesByProductIds(productIds: string[]) {
-    console.log(productIds);
+console.log(productIds);
 
-  const result: Record<
-    string,
-    { averageRating: number; reviewCount: number }
-  > = {};
+const result: Record<
+string,
+{ averageRating: number; reviewCount: number }
+> = {};
 
-  for (const productId of productIds) {
+for (const productId of productIds) {
 
-    const reviews = await getApprovedReviewsByProductId(productId);
+const reviews = await getApprovedReviewsByProductId(productId);
 
-    const reviewCount = reviews.length;
+const reviewCount = reviews.length;
 
-    const averageRating =
-  reviewCount === 0
-    ? 0
-    : reviews.reduce(
-        (s: number, r: Review) => s + r.rating,
-        0
-      ) / reviewCount;
+const averageRating =
+reviewCount === 0
+? 0
+: reviews.reduce(
+    (s: number, r: Review) => s + r.rating,
+    0
+    ) / reviewCount;
 
-    result[productId] = {
-      averageRating,
-      reviewCount,
-    };
-  }
+result[productId] = {
+    averageRating,
+    reviewCount,
+};
+}
 
-  return result;
+return result;
 }
 
 export async function getReviewSummaryByProductId(productId: string): Promise<ReviewSummary> {
-  const reviews = await getApprovedReviewsByProductId(productId);
-  const reviewCount = reviews.length;
-  const averageRating = reviewCount === 0
-  ? 0
-  : reviews.reduce(
-      (sum: number, item: Review) => sum + item.rating,
-      0
-    ) / reviewCount;
-  return {
-    productId,
-    averageRating,
-    reviewCount,
-    reviews,
-  };
+const reviews = await getApprovedReviewsByProductId(productId);
+const reviewCount = reviews.length;
+const averageRating = reviewCount === 0
+? 0
+: reviews.reduce(
+    (sum: number, item: Review) => sum + item.rating,
+    0
+) / reviewCount;
+return {
+productId,
+averageRating,
+reviewCount,
+reviews,
+};
 }
 
 export async function getPendingReviews(): Promise<Review[]> {
 
-  const reviews = (await query<Review>(
-  "Reviews",
-  "status",
-  "pending"
+const reviews = (await query<Review>(
+"Reviews",
+"status",
+"pending"
 ));
 
 return reviews;
@@ -261,48 +275,48 @@ return reviews;
 
 export async function getPendingReviewRequests(): Promise<ReviewRequest[]> {
 
-  const requests = (await query<ReviewRequest>(
-  "ReviewRequests",
-  "status",
-  "pending"
+const requests = (await query<ReviewRequest>(
+"ReviewRequests",
+"status",
+"pending"
 ));
 
-  const now = Date.now();
+const now = Date.now();
 
-  return requests.filter(
-    r => new Date(r.sendAt).getTime() <= now
-  );
+return requests.filter(
+r => new Date(r.sendAt).getTime() <= now
+);
 }
 
 export async function getReviewRequestByOrderAndProduct(
-  orderId: string,
-  productId: string
+orderId: string,
+productId: string
 ) {
 
-  const requests = (await query<ReviewRequest>(
-  "ReviewRequests",
-  "orderId",
-  orderId
+const requests = (await query<ReviewRequest>(
+"ReviewRequests",
+"orderId",
+orderId
 ));
 
-  return requests.find(
-    r => r.productId === productId
-  );
+return requests.find(
+r => r.productId === productId
+);
 }
 
 export async function markRequestExpired(token: string) {
 
-  const request = await getReviewRequestByToken(token);
+const request = await getReviewRequestByToken(token);
 
-  if (!request) return;
+if (!request) return;
 
-  await update(
-    "ReviewRequests",
-    request._id!,
-    {
-      ...request,
-      status: "expired",
-      updatedAt: new Date().toISOString(),
-    }
-  );
+await update(
+"ReviewRequests",
+request._id!,
+{
+    ...request,
+    status: "expired",
+    updatedAt: new Date().toISOString(),
+}
+);
 }

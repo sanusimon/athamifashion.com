@@ -1,6 +1,4 @@
-import { items } from "@wix/data";
 import wixClientServer from "@/lib/wixClientServer";
-
 
 export async function insert(collectionId: string, data: any) {
   try {
@@ -10,9 +8,6 @@ export async function insert(collectionId: string, data: any) {
       data,
     });
 
-    console.log("========== INSERT RESULT ==========");
-    console.log(JSON.stringify(result, null, 2));
-
     return result;
   } catch (err) {
     console.error("INSERT ERROR:", err);
@@ -20,6 +15,18 @@ export async function insert(collectionId: string, data: any) {
   }
 }
 
+export async function getAll(collectionId: string): Promise<any[]> {
+  const wixClient = await wixClientServer();
+
+  const result = await wixClient.items
+    .query(collectionId)
+    .find();
+
+  return (result.items ?? []).map((item: any) => ({
+    _id: item._id,
+    ...item.data,
+  }));
+}
 
 export async function query<T>(
   collectionId: string,
@@ -28,21 +35,13 @@ export async function query<T>(
 ): Promise<T[]> {
   const wixClient = await wixClientServer();
 
-  // Get all records first
   const result = await wixClient.items
     .query(collectionId)
     .find();
 
-  console.log("=================================");
-  console.log("Collection:", collectionId);
-  console.log("Searching:", field, "=", value);
-  console.log("All records:", JSON.stringify(result.items, null, 2));
-
-  const filtered = (result.items ?? []).filter((item: any) => {
-    return item.data?.[field] === value;
-  });
-
-  console.log("Matched records:", JSON.stringify(filtered, null, 2));
+  const filtered = (result.items ?? []).filter(
+    (item: any) => item.data?.[field] === value
+  );
 
   return filtered.map((item: any) => ({
     _id: item._id,
@@ -50,7 +49,11 @@ export async function query<T>(
   })) as T[];
 }
 
-export async function update(collectionId: string, id: string, data: any) {
+export async function update(
+  collectionId: string,
+  id: string,
+  data: any
+) {
   const wixClient = await wixClientServer();
 
   return wixClient.items.update(collectionId, {
