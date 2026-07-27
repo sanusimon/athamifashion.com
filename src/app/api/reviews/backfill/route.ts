@@ -9,8 +9,10 @@ import {
 
 function getProductId(item: any): string | null {
   return (
-    item?.productId ||
+    item?.rootCatalogItemId ||
+    item?.catalogReference?.catalogItemId ||
     item?.catalogItemId ||
+    item?.productId ||
     item?.productCatalogId ||
     item?.catalogItem?.id ||
     item?.product?.id ||
@@ -86,10 +88,7 @@ if (fulfillmentStatus !== "FULFILLED") {
  const lineItems = order.lineItems || [];
 
 if (lineItems.length > 0) {
-  return NextResponse.json({
-    success: true,
-    firstLineItem: lineItems[0],
-  });
+  
 }
   
 
