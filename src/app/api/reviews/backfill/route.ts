@@ -4,14 +4,8 @@ import {
   createReviewRequest,
   getReviewRequestByOrderAndProduct,
 } from "@/lib/reviewService";
-const debugOrders: any[] = [];
-const ALLOWED_STATUSES = new Set([
-  "DELIVERED",
-  "FULFILLED",
-  "COMPLETED",
-  "SHIPPED",
-  "DELIVERED_TO_CUSTOMER",
-]);
+
+
 
 function getProductId(item: any): string | null {
   return (
@@ -42,7 +36,7 @@ export async function POST(req: Request) {
   const wixClient = await wixClientServer();
 
   const results: any[] = [];
-  const statuses = new Set<string>();
+  
   let totalOrders = 0;
   let eligibleOrders = 0;
   let skippedStatus = 0;
@@ -67,23 +61,18 @@ export async function POST(req: Request) {
     cursor = nextCursor;
     
     for (const order of orders) {
-      debugOrders.push({
-        orderId: order._id,
-        orderStatus: order.status,
-        fulfillmentStatus: (order as any).fulfillmentStatus,
-        fulfillment: (order as any).fulfillment,
-        fulfillments: (order as any).fulfillments,
-      });
-    console.log("Order:", order._id);
-    console.log("Status:", order.status);
+      
+    
     totalOrders++;
-    statuses.add(String(order.status));
-    const status = (order.status || "").toUpperCase();
+    
+   const fulfillmentStatus = String(
+  (order as any).fulfillmentStatus || ""
+).toUpperCase();
 
-  if (!ALLOWED_STATUSES.has(status)) {
-    skippedStatus++;
-    continue;
-  }
+if (fulfillmentStatus !== "FULFILLED") {
+  skippedStatus++;
+  continue;
+}
 
   eligibleOrders++;
 
@@ -153,8 +142,11 @@ export async function POST(req: Request) {
   totalOrders,
   eligibleOrders,
   created: results.length,
-  statuses: [...statuses],
-  debugOrders,
+  skippedExisting,
+  skippedStatus,
+  skippedNoEmail,
+  skippedNoProduct,
+  requests: results,
 });
 }catch (err) {
 
