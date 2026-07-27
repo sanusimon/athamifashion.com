@@ -6,7 +6,7 @@ import {
 } from "@/lib/reviewService";
 
 
-
+let sampleItem: any = null;
 function getProductId(item: any): string | null {
   return (
     item?.productId ||
@@ -61,7 +61,9 @@ export async function POST(req: Request) {
     cursor = nextCursor;
     
     for (const order of orders) {
-      
+    //   if (!sampleItem) {
+    //   sampleItem = item;
+    // }
     
     totalOrders++;
     
@@ -85,7 +87,13 @@ if (fulfillmentStatus !== "FULFILLED") {
 
   const lineItems = order.lineItems || [];
 
-  for (const item of lineItems) {
+for (const item of lineItems) {
+
+  if (!sampleItem) {
+    sampleItem = item;
+  }
+
+
 
     const productId = getProductId(item);
 
@@ -147,6 +155,7 @@ if (fulfillmentStatus !== "FULFILLED") {
   skippedNoEmail,
   skippedNoProduct,
   requests: results,
+  sampleItem
 });
 }catch (err) {
 
