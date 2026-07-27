@@ -6,7 +6,7 @@ import {
 } from "@/lib/reviewService";
 
 
-let sampleItem: any = null;
+
 function getProductId(item: any): string | null {
   return (
     item?.productId ||
@@ -61,9 +61,7 @@ export async function POST(req: Request) {
     cursor = nextCursor;
     
     for (const order of orders) {
-    //   if (!sampleItem) {
-    //   sampleItem = item;
-    // }
+   
     
     totalOrders++;
     
@@ -89,9 +87,7 @@ if (fulfillmentStatus !== "FULFILLED") {
 
 for (const item of lineItems) {
 
-  if (!sampleItem) {
-    sampleItem = item;
-  }
+ 
 
 
 
@@ -155,7 +151,6 @@ for (const item of lineItems) {
   skippedNoEmail,
   skippedNoProduct,
   requests: results,
-  sampleItem
 });
 }catch (err) {
 
