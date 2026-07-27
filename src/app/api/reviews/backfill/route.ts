@@ -83,7 +83,15 @@ if (fulfillmentStatus !== "FULFILLED") {
     continue;
   }
 
-  const lineItems = order.lineItems || [];
+ const lineItems = order.lineItems || [];
+
+if (lineItems.length > 0) {
+  return NextResponse.json({
+    success: true,
+    firstLineItem: lineItems[0],
+  });
+}
+  
 
 for (const item of lineItems) {
 
