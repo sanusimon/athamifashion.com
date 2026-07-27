@@ -1,57 +1,57 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import cloudinary from "@/lib/cloudinary";
+import { UploadApiResponse } from "cloudinary";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+     console.log("UPLOAD API CALLED");
     const formData = await request.formData();
 
-    const file = formData.get("file");
+    const file = formData.get("file") as File | null;
 
-    if (!(file instanceof File)) {
+    if (!file) {
       return NextResponse.json(
-        { error: "No file uploaded" },
+        { error: "No file provided." },
         { status: 400 }
       );
     }
 
-    const cloudinaryForm = new FormData();
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
 
-    cloudinaryForm.append("file", file);
-
-    cloudinaryForm.append(
-      "upload_preset",
-      process.env.CLOUDINARY_UPLOAD_PRESET!
-    );
-
-    const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload`,
-      {
-        method: "POST",
-        body: cloudinaryForm,
-      }
-    );
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.error(data);
-
-      return NextResponse.json(
-        { error: "Cloudinary upload failed" },
-        { status: 500 }
-      );
-    }
-
+    const result = await new Promise<UploadApiResponse>((resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream(
+          {
+            folder: "reviews",
+          },
+          (error, result) => {
+            if (error) {
+              reject(error);
+            } else if (result) {
+              resolve(result);
+            } else {
+              reject(new Error("Upload failed"));
+            }
+          }
+        )
+        .end(buffer);
+    });
+console.log(result.secure_url);
     return NextResponse.json({
       success: true,
-      url: data.secure_url,
+      url: result.secure_url,
     });
-
-  } catch (err) {
-    console.error(err);
+  } catch (err: any) {
+    console.error("Cloudinary Upload Error:", err);
 
     return NextResponse.json(
-      { error: "Upload failed" },
-      { status: 500 }
+      {
+        error: err.message || "Upload failed",
+      },
+      {
+        status: 500,
+      }
     );
   }
 }

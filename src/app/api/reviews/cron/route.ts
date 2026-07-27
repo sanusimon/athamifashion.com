@@ -35,23 +35,23 @@ export async function GET(request: Request) {
     let sent = 0;
     let failed = 0;
 
-    for (const req of pending) {
+    for (const request of pending) {
       try {
-        const emailResult = await sendReviewRequestEmail(req);
+        const emailResult = await sendReviewRequestEmail(request);
         if (emailResult && emailResult.success) {
-          await markReviewRequestSent(req.token);
+          await markReviewRequestSent(request.token);
           results.push({
-            requestId: req.id,
-            orderId: req.orderId,
-            customerEmail: req.customerEmail,
+            requestId: request.id,
+            orderId: request.orderId,
+            customerEmail: request.customerEmail,
             status: 'sent',
           });
           sent++;
         } else {
           results.push({
-            requestId: req.id,
-            orderId: req.orderId,
-            customerEmail: req.customerEmail,
+            requestId: request.id,
+            orderId: request.orderId,
+            customerEmail: request.customerEmail,
             status: 'failed',
             error: JSON.stringify(emailResult),
           });
@@ -59,9 +59,9 @@ export async function GET(request: Request) {
         }
       } catch (err) {
         results.push({
-          requestId: req.id,
-          orderId: req.orderId,
-          customerEmail: req.customerEmail,
+          requestId: request.id,
+          orderId: request.orderId,
+          customerEmail: request.customerEmail,
           status: 'failed',
           error: String(err),
         });

@@ -4,7 +4,6 @@ import { getReviewRequestByOrderAndProduct, createReviewRequest, markReviewReque
 import { sendReviewRequestEmail } from '@/lib/emailService';
 
 const ALLOWED_STATUSES = new Set([
-  "APPROVED",              // Add this for testing
   "DELIVERED",
   "FULFILLED",
   "COMPLETED",

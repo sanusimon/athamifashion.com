@@ -320,3 +320,41 @@ request._id!,
 }
 );
 }
+export async function getAllReviewRequestsByOrder(
+  orderId: string
+): Promise<ReviewRequest[]> {
+  return await query<ReviewRequest>(
+    "ReviewRequests",
+    "orderId",
+    orderId
+  );
+}
+
+export async function getPendingReviewRequestsGroupedByOrder(): Promise<
+  Record<string, ReviewRequest[]>
+> {
+  const pending = await getPendingReviewRequests();
+
+  const grouped: Record<string, ReviewRequest[]> = {};
+
+  for (const request of pending) {
+    if (!grouped[request.orderId]) {
+      grouped[request.orderId] = [];
+    }
+
+    grouped[request.orderId].push(request);
+  }
+
+  return grouped;
+}
+export async function reviewRequestExists(
+  orderId: string,
+  productId: string
+): Promise<boolean> {
+  const existing = await getReviewRequestByOrderAndProduct(
+    orderId,
+    productId
+  );
+
+  return !!existing;
+}
