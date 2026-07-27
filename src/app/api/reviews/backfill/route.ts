@@ -42,6 +42,12 @@ export async function POST(req: Request) {
   const wixClient = await wixClientServer();
 
   const results: any[] = [];
+  let totalOrders = 0;
+  let eligibleOrders = 0;
+  let skippedStatus = 0;
+  let skippedNoEmail = 0;
+  let skippedNoProduct = 0;
+  let skippedExisting = 0;
 
   let cursor: string | undefined;
 
@@ -60,90 +66,89 @@ export async function POST(req: Request) {
         
     for (const order of orders) {
 
-      const status = (order.status || "").toUpperCase();
+  totalOrders++;
 
-      if (!ALLOWED_STATUSES.has(status))
-        continue;
+  const status = (order.status || "").toUpperCase();
 
-      const email = order.buyerInfo?.email;
+  if (!ALLOWED_STATUSES.has(status)) {
+    skippedStatus++;
+    continue;
+  }
 
-      if (!email)
-        continue;
+  eligibleOrders++;
 
-      const lineItems = order.lineItems || [];
+  const email = order.buyerInfo?.email;
 
-      for (const item of lineItems) {
+  if (!email) {
+    skippedNoEmail++;
+    continue;
+  }
 
-        const productId = getProductId(item);
+  const lineItems = order.lineItems || [];
 
-        if (!productId)
-          continue;
+  for (const item of lineItems) {
 
-        const existing =
-          await getReviewRequestByOrderAndProduct(
-            order._id!,
-            productId
-          );
+    const productId = getProductId(item);
 
-        if (existing)
-          continue;
-
-        const rawDeliveryDate =
-        (order as any).fulfillment?.deliveredDate ||
-        order.purchasedDate ||
-        order._createdDate;
-
-        const deliveryDate = rawDeliveryDate
-        ? new Date(rawDeliveryDate).toISOString()
-        : new Date().toISOString();
-
-        const request =
-          await createReviewRequest({
-
-            orderId: order._id!,
-
-            productId,
-
-            customerId:
-              order.buyerInfo?.contactId ||
-              order.buyerInfo?.memberId ||
-              "",
-
-            customerEmail: email,
-
-            deliveryDate,
-
-            sendAt: new Date().toISOString(),
-
-          });
-
-        results.push({
-
-          orderId: order._id,
-
-          productId,
-
-          email,
-
-          token: request.token,
-
-        });
-
-      }
-
+    if (!productId) {
+      skippedNoProduct++;
+      continue;
     }
+
+    const existing =
+      await getReviewRequestByOrderAndProduct(
+        order._id!,
+        productId
+      );
+
+    if (existing) {
+      skippedExisting++;
+      continue;
+    }
+
+    const rawDeliveryDate =
+      (order as any).fulfillment?.deliveredDate ||
+      order.purchasedDate ||
+      order._createdDate;
+
+    const deliveryDate = rawDeliveryDate
+      ? new Date(rawDeliveryDate).toISOString()
+      : new Date().toISOString();
+
+    const request = await createReviewRequest({
+      orderId: order._id!,
+      productId,
+      customerId:
+        order.buyerInfo?.contactId ||
+        order.buyerInfo?.memberId ||
+        "",
+      customerEmail: email,
+      deliveryDate,
+      sendAt: new Date().toISOString(),
+    });
+
+    results.push({
+      orderId: order._id,
+      productId,
+      email,
+      token: request.token,
+    });
+  }
+}
 
   } while (cursor);
 
   return NextResponse.json({
-
-    success: true,
-
-    created: results.length,
-
-    requests: results,
-
-  });
+  success: true,
+  totalOrders,
+  eligibleOrders,
+  created: results.length,
+  skippedExisting,
+  skippedStatus,
+  skippedNoEmail,
+  skippedNoProduct,
+  requests: results,
+});
 }catch (err) {
 
     console.error(err);
