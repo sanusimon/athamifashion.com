@@ -42,6 +42,7 @@ export async function POST(req: Request) {
   const wixClient = await wixClientServer();
 
   const results: any[] = [];
+  const statuses = new Set<string>();
   let totalOrders = 0;
   let eligibleOrders = 0;
   let skippedStatus = 0;
@@ -54,21 +55,23 @@ export async function POST(req: Request) {
   do {
 
     const response = await wixClient.orders.searchOrders({
-    cursorPaging: {
+      cursorPaging: {
         limit: 100,
-    },
+        ...(cursor ? { cursor } : {}),
+      },
     });
 
     const orders = response.orders || [];
 
     const nextCursor = (response as any).metadata?.cursors?.next;
     cursor = nextCursor;
-        
+    
     for (const order of orders) {
-
-  totalOrders++;
-
-  const status = (order.status || "").toUpperCase();
+    console.log("Order:", order._id);
+    console.log("Status:", order.status);
+    totalOrders++;
+    statuses.add(String(order.status));
+    const status = (order.status || "").toUpperCase();
 
   if (!ALLOWED_STATUSES.has(status)) {
     skippedStatus++;
@@ -147,6 +150,7 @@ export async function POST(req: Request) {
   skippedStatus,
   skippedNoEmail,
   skippedNoProduct,
+  statuses: [...statuses],
   requests: results,
 });
 }catch (err) {
