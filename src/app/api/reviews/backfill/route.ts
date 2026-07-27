@@ -4,7 +4,7 @@ import {
   createReviewRequest,
   getReviewRequestByOrderAndProduct,
 } from "@/lib/reviewService";
-
+const debugOrders: any[] = [];
 const ALLOWED_STATUSES = new Set([
   "DELIVERED",
   "FULFILLED",
@@ -67,6 +67,13 @@ export async function POST(req: Request) {
     cursor = nextCursor;
     
     for (const order of orders) {
+      debugOrders.push({
+        orderId: order._id,
+        orderStatus: order.status,
+        fulfillmentStatus: (order as any).fulfillmentStatus,
+        fulfillment: (order as any).fulfillment,
+        fulfillments: (order as any).fulfillments,
+      });
     console.log("Order:", order._id);
     console.log("Status:", order.status);
     totalOrders++;
@@ -146,12 +153,8 @@ export async function POST(req: Request) {
   totalOrders,
   eligibleOrders,
   created: results.length,
-  skippedExisting,
-  skippedStatus,
-  skippedNoEmail,
-  skippedNoProduct,
   statuses: [...statuses],
-  requests: results,
+  debugOrders,
 });
 }catch (err) {
 
