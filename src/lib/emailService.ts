@@ -120,6 +120,29 @@ Thank you for shopping with us.
 `,
 };
 
+  try {
+  await transporter.verify();
+  console.log("SMTP connection successful");
+
   const info = await transporter.sendMail(message);
-  return { success: true, info };
+
+  console.log("Email sent:", info.messageId);
+
+  return {
+    success: true,
+    info,
+  };
+} catch (err) {
+  if (err instanceof Error) {
+  console.error("SMTP Error:", err.message);
+  console.error(err.stack);
+} else {
+  console.error("SMTP Error:", err);
+}
+
+  return {
+    success: false,
+    error: err,
+  };
+}
 }
