@@ -169,7 +169,7 @@ if (existing) {
   );
 }
 
-    const emailResult = await sendReviewRequestEmail(reviewRequest);
+    const emailResult = await sendReviewRequestEmail([reviewRequest]);
     if (emailResult && emailResult.success) {
       await markReviewRequestSent(reviewRequest.token);
       results.step.push(`✅ Test email sent to: ${customerEmail}`);

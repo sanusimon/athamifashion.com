@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
 import {
-  getPendingReviewRequests,
+  getPendingReviewRequestsGroupedByOrder,
   markReviewRequestSent,
 } from "@/lib/reviewService";
 import { sendReviewRequestEmail } from "@/lib/emailService";
 
 export async function GET(request: Request) {
   try {
-    // Optional security
     const authHeader = request.headers.get("authorization");
 
     if (
@@ -20,17 +19,27 @@ export async function GET(request: Request) {
       );
     }
 
-    const pending = await getPendingReviewRequests();
+    const grouped = await getPendingReviewRequestsGroupedByOrder();
+
+    const pending = Object.values(grouped).reduce(
+      (count, requests) => count + requests.length,
+      0
+    );
 
     let sent = 0;
     let failed = 0;
 
-    for (const reviewRequest of pending) {
+    for (const orderId in grouped) {
+      const requests = grouped[orderId];
+
       try {
-        const result = await sendReviewRequestEmail(reviewRequest);
+        const result = await sendReviewRequestEmail(requests);
 
         if (result.success) {
-          await markReviewRequestSent(reviewRequest.token);
+          for (const request of requests) {
+            await markReviewRequestSent(request.token);
+          }
+
           sent++;
         } else {
           failed++;
@@ -43,10 +52,11 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       success: true,
-      pending: pending.length,
-      sent,
+      pending,
+      emailsSent: sent,
       failed,
     });
+
   } catch (err) {
     console.error(err);
 
@@ -61,6 +71,7 @@ export async function GET(request: Request) {
     );
   }
 }
+
 export async function POST(request: Request) {
   return GET(request);
 }

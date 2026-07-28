@@ -8,7 +8,7 @@ export async function POST() {
   const results = [];
 
   for (const request of pending) {
-    const emailResult = await sendReviewRequestEmail(request);
+    const emailResult = await sendReviewRequestEmail([request]);
     await markReviewRequestSent(request.token);
     results.push({ requestId: request.id, emailResult });
   }

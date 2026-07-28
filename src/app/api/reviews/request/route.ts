@@ -18,6 +18,6 @@ export async function POST(request: Request) {
     deliveryDate,
   });
 
-  const emailResult = await sendReviewRequestEmail(reviewRequest);
+  const emailResult = await sendReviewRequestEmail([reviewRequest]);
   return NextResponse.json({ reviewRequest, emailResult });
 }
