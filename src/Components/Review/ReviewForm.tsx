@@ -29,11 +29,17 @@ const ReviewForm = ({ token }: Props) => {
 
   console.log("Upload Status:", res.status);
 
+  
+
+
+
   const data = await res.json();
 
-  console.log("Upload Response:", data);
+if (!res.ok || !data.url) {
+  throw new Error(data.error || "Image upload failed");
+}
 
-  return data.url;
+return data.url;
 };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -77,11 +83,25 @@ const ReviewForm = ({ token }: Props) => {
 
     const result = await response.json();
 
-    console.log(result);
+console.log(result);
+
+if (response.ok && result.success) {
+  setStatus("success");
+  setMessage("✅ Thank you! Your review has been submitted successfully.");
+
+  setText("");
+  setSelectedImages([]);
+} else {
+  setStatus("error");
+  setMessage(result.error || "Failed to submit your review.");
+}
 
   } catch (err) {
-    console.error("ERROR:", err);
-  }
+  console.error("ERROR:", err);
+
+  setStatus("error");
+  setMessage("Something went wrong. Please try again.");
+}
 };
 
   return (
@@ -205,23 +225,32 @@ const ReviewForm = ({ token }: Props) => {
           )}
         </div>
 
-        <button
-          type="submit"
-          disabled={status === "submitting"}
-          style={{
-            padding: "14px 20px",
-            borderRadius: 10,
-            border: "none",
-            background: "#10b981",
-            color: "#fff",
-            fontWeight: 700,
-            cursor: "pointer",
-          }}
-        >
-          {status === "submitting"
-            ? "Submitting..."
-            : "Submit Review"}
-        </button>
+       <button
+  type="submit"
+  disabled={status === "submitting" || status === "success"}
+  style={{
+    padding: "14px 20px",
+    borderRadius: 10,
+    border: "none",
+    background: "#10b981",
+    color: "#fff",
+    fontWeight: 700,
+    cursor:
+      status === "submitting" || status === "success"
+        ? "not-allowed"
+        : "pointer",
+    opacity:
+      status === "submitting" || status === "success"
+        ? 0.7
+        : 1,
+  }}
+>
+  {status === "submitting"
+    ? "Submitting..."
+    : status === "success"
+    ? "Review Submitted ✓"
+    : "Submit Review"}
+</button>
 
         {message && (
           <div
