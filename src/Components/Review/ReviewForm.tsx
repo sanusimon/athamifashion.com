@@ -45,9 +45,7 @@ return data.url;
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
   event.preventDefault();
 
-  console.log("===== SUBMIT CLICKED =====");
-  console.log("Selected Images:", selectedImages);
-  console.log("Image Count:", selectedImages.length);
+  
 
   setStatus("submitting");
 
@@ -62,9 +60,15 @@ return data.url;
       console.log("Uploaded URL:", url);
 
       uploadedPhotos.push(url);
+      
     }
 
-    console.log("Final URLs:", uploadedPhotos);
+   console.log("Sending review:", {
+        token,
+        rating,
+        text,
+        photos: uploadedPhotos,
+        });
 
     const response = await fetch("/api/reviews/submit", {
       method: "POST",
