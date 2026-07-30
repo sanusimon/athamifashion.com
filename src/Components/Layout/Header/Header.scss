@@ -94,6 +94,9 @@ input:-webkit-autofill:active{
                 li{
                     transition: all .5s;
                     font-size: 14px;
+                    &:nth-of-type(10){
+                        display: none;
+                    }
                     a{
                         color: $color-white;
                     }
