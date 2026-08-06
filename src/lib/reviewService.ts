@@ -37,7 +37,7 @@ return existing;
 
 const now = new Date();
 const deliveryDate = new Date(input.deliveryDate);
-const sendAt = input.sendAt || formatISO(addDays(deliveryDate, 5));
+const sendAt = input.sendAt || formatISO(addDays(deliveryDate, 3));
 const token = crypto.randomUUID();
 
 const request: ReviewRequest = {
