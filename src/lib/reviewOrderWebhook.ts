@@ -2,8 +2,11 @@ import { NextResponse } from "next/server";
 import {
   createReviewRequest,
   getReviewRequestByOrderAndProduct,
+  getAllReviewRequestsByOrder,
+  markReviewRequestSent,
 } from "@/lib/reviewService";
 
+import { sendReviewRequestEmail } from "@/lib/emailService";
 const REVIEW_ELIGIBLE_STATUSES = new Set([
   "DELIVERED",
   "FULFILLED",
@@ -132,13 +135,25 @@ export async function handleOrderReviewWebhook(request: Request) {
         deliveryDate,
       });
 
-      const reviewRequest = await createReviewRequest({
+     const reviewRequest = await createReviewRequest({
         orderId,
         productId,
         customerId,
         customerEmail,
         deliveryDate,
-      });
+        sendAt: new Date().toISOString(), // send immediately
+        });
+
+        const result = await sendReviewRequestEmail([reviewRequest]);
+
+        if (result.success) {
+        await markReviewRequestSent(reviewRequest.token);
+        console.log("[review-webhook] Review email sent", reviewRequest.productId);
+        } else {
+        console.error("[review-webhook] Email sending failed", result);
+        }
+
+        createdRequests.push(reviewRequest);
 
       console.log("[review-webhook] createReviewRequest returned", {
         orderId,

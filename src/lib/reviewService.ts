@@ -59,7 +59,7 @@ return existing;
 
 const now = new Date();
 const deliveryDate = getSafeDate(input.deliveryDate, now);
-const sendAt = input.sendAt || formatISO(addDays(deliveryDate, 3));
+const sendAt = new Date().toISOString();
 const token = crypto.randomUUID();
 
 const request: ReviewRequest = {
