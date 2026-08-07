@@ -12,6 +12,12 @@ console.log("Email APP_URL:", appUrl);
 export async function sendReviewRequestEmail(
   requests: ReviewRequest[]
 ) {
+  console.log("[emailService] sendReviewRequestEmail start", {
+    requestCount: requests.length,
+    customerEmail: requests[0]?.customerEmail,
+    deliveryDate: requests[0]?.deliveryDate,
+  });
+
   if (!requests.length) {
     return {
       success: false,

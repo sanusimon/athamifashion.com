@@ -20,6 +20,13 @@ function getProductId(item: any): string | null {
   );
 }
 
+const REVIEW_ELIGIBLE_STATUSES = new Set([
+  "DELIVERED",
+  "FULFILLED",
+  "COMPLETED",
+  "DELIVERED_TO_CUSTOMER",
+]);
+
 export async function POST(req: Request) {
   try {
   const url = new URL(req.url);
@@ -68,10 +75,10 @@ export async function POST(req: Request) {
     totalOrders++;
     
    const fulfillmentStatus = String(
-  (order as any).fulfillmentStatus || ""
+  (order as any).fulfillmentStatus || order?.status || ""
 ).toUpperCase();
 
-if (fulfillmentStatus !== "FULFILLED") {
+if (!REVIEW_ELIGIBLE_STATUSES.has(fulfillmentStatus)) {
   skippedStatus++;
   continue;
 }
@@ -118,6 +125,9 @@ for (const item of lineItems) {
 
     const rawDeliveryDate =
       (order as any).fulfillment?.deliveredDate ||
+      (order as any).fulfillment?.deliveryDate ||
+      (order as any).deliveryDate ||
+      (order as any).deliveredDate ||
       order.purchasedDate ||
       order._createdDate;
 

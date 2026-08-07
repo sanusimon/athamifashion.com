@@ -21,6 +21,14 @@ export async function GET(request: Request) {
 
     const grouped = await getPendingReviewRequestsGroupedByOrder();
 
+    console.log("[reviews/send] pending grouped requests", {
+      orderCount: Object.keys(grouped).length,
+      pendingCount: Object.values(grouped).reduce(
+        (count, requests) => count + requests.length,
+        0
+      ),
+    });
+
     const pending = Object.values(grouped).reduce(
       (count, requests) => count + requests.length,
       0
@@ -31,6 +39,11 @@ export async function GET(request: Request) {
 
     for (const orderId in grouped) {
       const requests = grouped[orderId];
+
+      console.log("[reviews/send] sending review email batch", {
+        orderId,
+        requestCount: requests.length,
+      });
 
       try {
         const result = await sendReviewRequestEmail(requests);

@@ -8,6 +8,16 @@ update,
 import { Review, ReviewRequest, ReviewSummary } from "@/types/review";
 import { getAll } from "@/lib/wixReviewStore";
 
+function getSafeDate(inputDate: string | Date | undefined, fallbackDate = new Date()) {
+  if (!inputDate) {
+    return fallbackDate;
+  }
+
+  const parsed = inputDate instanceof Date ? inputDate : new Date(inputDate);
+
+  return Number.isNaN(parsed.getTime()) ? fallbackDate : parsed;
+}
+
 export async function getAllReviews(): Promise<Review[]> {
   return await getAll("Reviews");
 }
@@ -25,6 +35,13 @@ deliveryDate: string;
 sendAt?: string;
 }): Promise<ReviewRequest> {
 
+console.log("[reviewService] createReviewRequest start", {
+  orderId: input.orderId,
+  productId: input.productId,
+  customerEmail: input.customerEmail,
+  deliveryDate: input.deliveryDate,
+});
+
 const existing = await getReviewRequestByOrderAndProduct(
 input.orderId,
 input.productId
@@ -32,11 +49,16 @@ input.productId
 
 
 if (existing) {
+console.log("[reviewService] existing review request found", {
+  orderId: input.orderId,
+  productId: input.productId,
+  token: existing.token,
+});
 return existing;
 }
 
 const now = new Date();
-const deliveryDate = new Date(input.deliveryDate);
+const deliveryDate = getSafeDate(input.deliveryDate, now);
 const sendAt = input.sendAt || formatISO(addDays(deliveryDate, 3));
 const token = crypto.randomUUID();
 
@@ -55,8 +77,13 @@ updatedAt: now.toISOString(),
 };
 
 await insert("ReviewRequests", request);
-console.log("Saving Review Request");
-console.log(request);
+console.log("[reviewService] inserted ReviewRequest", {
+  orderId: input.orderId,
+  productId: input.productId,
+  token,
+  deliveryDate: request.deliveryDate,
+  sendAt,
+});
 
 return request;
 }
@@ -282,10 +309,17 @@ const requests = (await query<ReviewRequest>(
 ));
 
 const now = Date.now();
+const ready = requests.filter((r) => {
+  const sendAtTime = new Date(r.sendAt).getTime();
+  return !Number.isNaN(sendAtTime) && sendAtTime <= now;
+});
 
-return requests.filter(
-r => new Date(r.sendAt).getTime() <= now
-);
+console.log("[reviewService] getPendingReviewRequests", {
+  totalPending: requests.length,
+  readyToSend: ready.length,
+});
+
+return ready;
 }
 
 export async function getReviewRequestByOrderAndProduct(
@@ -344,6 +378,11 @@ export async function getPendingReviewRequestsGroupedByOrder(): Promise<
 
     grouped[request.orderId].push(request);
   }
+
+  console.log("[reviewService] getPendingReviewRequestsGroupedByOrder", {
+    orderCount: Object.keys(grouped).length,
+    requestCount: pending.length,
+  });
 
   return grouped;
 }
