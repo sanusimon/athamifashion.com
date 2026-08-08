@@ -2,11 +2,10 @@ import { NextResponse } from "next/server";
 import {
   createReviewRequest,
   getReviewRequestByOrderAndProduct,
-  getAllReviewRequestsByOrder,
   markReviewRequestSent,
 } from "@/lib/reviewService";
-
 import { sendReviewRequestEmail } from "@/lib/emailService";
+
 const REVIEW_ELIGIBLE_STATUSES = new Set([
   "DELIVERED",
   "FULFILLED",
@@ -14,82 +13,205 @@ const REVIEW_ELIGIBLE_STATUSES = new Set([
   "DELIVERED_TO_CUSTOMER",
 ]);
 
-function getProductIdFromLineItem(item: any): string | null {
-  return (
-    item?.rootCatalogItemId ||
-    item?.catalogReference?.catalogItemId ||
-    item?.catalogItemId ||
-    item?.productId ||
-    item?.productCatalogId ||
-    item?.catalogItem?.id ||
-    item?.product?.id ||
-    null
+function cleanString(value: unknown): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function getOrderFromPayload(body: any): any {
+  if (body?.order) return body.order;
+  if (body?.data?.order) return body.data.order;
+  if (body?.data?.resource) return body.data.resource;
+  if (body?.resource) return body.resource;
+
+  return body;
+}
+
+function getOrderId(order: any): string {
+  return cleanString(
+    order?._id ||
+      order?.id ||
+      order?.orderId ||
+      order?.order?.id
   );
 }
 
-function getDeliveryDate(order: any): string | null {
-  const candidates = [
-    order?.fulfillment?.deliveredDate,
-    order?.fulfillment?.deliveryDate,
-    order?.deliveryDate,
-    order?.deliveredDate,
-    order?.purchasedDate,
-    order?._createdDate,
+function getOrderStatus(order: any): string {
+  const values = [
+    order?.fulfillmentStatus,
+    order?.status,
+    order?.fulfillment?.status,
+    order?.fulfillments?.[0]?.status,
+    order?.fulfillment?.fulfillmentStatus,
   ];
 
-  for (const candidate of candidates) {
-    if (!candidate) continue;
+  for (const value of values) {
+    const status = cleanString(value).toUpperCase();
 
-    const parsed = new Date(candidate);
-    if (!Number.isNaN(parsed.getTime())) {
-      return parsed.toISOString();
+    if (status) {
+      return status;
+    }
+  }
+
+  return "";
+}
+
+function getCustomerEmail(order: any, body: any): string {
+  const candidates = [
+    order?.buyerInfo?.email,
+    order?.buyerInfo?.contactDetails?.email,
+    order?.contactDetails?.email,
+    order?.recipientInfo?.contactDetails?.email,
+    order?.billingInfo?.contactDetails?.email,
+    order?.shippingInfo?.contactDetails?.email,
+    order?.customer?.email,
+    order?.customerEmail,
+    body?.customerEmail,
+    body?.email,
+    body?.data?.customerEmail,
+  ];
+
+  for (const value of candidates) {
+    const email = cleanString(value);
+
+    if (email && email.includes("@")) {
+      return email;
+    }
+  }
+
+  return "";
+}
+
+function getCustomerId(order: any, body: any): string {
+  const candidates = [
+    order?.buyerInfo?.contactId,
+    order?.buyerInfo?.memberId,
+    order?.buyerInfo?.contactDetails?.contactId,
+    order?.recipientInfo?.contactDetails?.contactId,
+    order?.customer?.contactId,
+    order?.customerId,
+    body?.customerId,
+    body?.data?.customerId,
+  ];
+
+  for (const value of candidates) {
+    const id = cleanString(value);
+
+    if (id) {
+      return id;
+    }
+  }
+
+  return "";
+}
+
+function getLineItems(order: any): any[] {
+  const candidates = [
+    order?.lineItems,
+    order?.purchaseUnits?.flatMap(
+      (unit: any) => unit?.lineItems || []
+    ),
+    order?.items,
+  ];
+
+  for (const value of candidates) {
+    if (Array.isArray(value) && value.length > 0) {
+      return value;
+    }
+  }
+
+  return [];
+}
+
+function getProductIdFromLineItem(item: any): string | null {
+  const candidates = [
+    item?.rootCatalogItemId,
+    item?.catalogReference?.catalogItemId,
+    item?.catalogReference?.catalogItemId,
+    item?.catalogItemId,
+    item?.productId,
+    item?.productCatalogId,
+    item?.catalogItem?.id,
+    item?.product?.id,
+  ];
+
+  for (const value of candidates) {
+    const id = cleanString(value);
+
+    if (id) {
+      return id;
     }
   }
 
   return null;
 }
 
+function getDeliveryDate(order: any): string {
+  const candidates = [
+    order?.fulfillment?.deliveredDate,
+    order?.fulfillment?.deliveryDate,
+    order?.fulfillments?.[0]?.deliveredDate,
+    order?.fulfillments?.[0]?.deliveryDate,
+    order?.deliveryDate,
+    order?.deliveredDate,
+    order?.purchasedDate,
+    order?._createdDate,
+  ];
+
+  for (const value of candidates) {
+    if (!value) continue;
+
+    const parsed = new Date(value);
+
+    if (!Number.isNaN(parsed.getTime())) {
+      return parsed.toISOString();
+    }
+  }
+
+  return new Date().toISOString();
+}
+
 export async function handleOrderReviewWebhook(request: Request) {
   try {
     const body = await request.json();
+
     console.log("[review-webhook] request received");
-    console.log("[review-webhook] raw payload", JSON.stringify(body, null, 2));
 
-    const order = body?.order || body;
+    const order = getOrderFromPayload(body);
 
-    if (!order?._id && !order?.id) {
+    const orderId = getOrderId(order);
+    const orderStatus = getOrderStatus(order);
+    const customerEmail = getCustomerEmail(order, body);
+    const customerId = getCustomerId(order, body);
+    const lineItems = getLineItems(order);
+
+    console.log("[review-webhook] normalized order", {
+      orderId,
+      orderStatus,
+      customerEmail,
+      customerId,
+      lineItemCount: lineItems.length,
+    });
+
+    if (!orderId) {
       return NextResponse.json(
-        { success: false, error: "Missing order id" },
+        {
+          success: false,
+          error: "Missing order id",
+        },
         { status: 400 }
       );
     }
 
-    const orderId = order?._id || order?.id;
-    const orderStatus = String(
-      order?.status || order?.fulfillmentStatus || order?.fulfillment?.status || ""
-    ).toUpperCase();
-    console.log("[review-webhook] detected order status", { orderId, orderStatus });
-    const customerEmail =
-      order?.buyerInfo?.email ||
-      order?.contactDetails?.email ||
-      body?.customerEmail ||
-      "";
-    const customerId =
-      order?.buyerInfo?.contactId ||
-      order?.buyerInfo?.memberId ||
-      body?.customerId ||
-      "";
-
-    console.log("[review-webhook] order received", {
-      orderId,
-      orderStatus,
-      customerEmail,
-    });
-
     if (!REVIEW_ELIGIBLE_STATUSES.has(orderStatus)) {
+      console.log("[review-webhook] skipped status", {
+        orderId,
+        orderStatus,
+      });
+
       return NextResponse.json({
         success: true,
         created: 0,
+        sent: 0,
         skipped: true,
         reason: "status",
         orderId,
@@ -97,91 +219,149 @@ export async function handleOrderReviewWebhook(request: Request) {
       });
     }
 
-    const createdRequests: any[] = [];
-    const lineItems = Array.isArray(order?.lineItems) ? order.lineItems : [];
-    const extractedProductIds: string[] = [];
+    if (!customerEmail) {
+      console.error("[review-webhook] customer email not found", {
+        orderId,
+      });
+
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Customer email not found",
+          orderId,
+          orderStatus,
+        },
+        { status: 400 }
+      );
+    }
+
+    if (!lineItems.length) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "No line items found",
+          orderId,
+        },
+        { status: 400 }
+      );
+    }
+
+    const deliveryDate = getDeliveryDate(order);
+
+    let created = 0;
+    let sent = 0;
+    let skipped = 0;
+    let failed = 0;
 
     for (const lineItem of lineItems) {
       const productId = getProductIdFromLineItem(lineItem);
-      if (productId) {
-        extractedProductIds.push(productId);
-      }
-      console.log("[review-webhook] checking line item", {
+
+      console.log("[review-webhook] line item", {
         orderId,
         productId,
-        lineItem,
       });
 
       if (!productId) {
+        console.warn("[review-webhook] product id not found", {
+          orderId,
+          lineItem,
+        });
+
         continue;
       }
 
-      const existing = await getReviewRequestByOrderAndProduct(orderId, productId);
+      const existing =
+        await getReviewRequestByOrderAndProduct(
+          orderId,
+          productId
+        );
 
       if (existing) {
-        console.log("[review-webhook] request already exists", {
+        console.log("[review-webhook] review request already exists", {
           orderId,
           productId,
+          status: existing.status,
         });
+
+        skipped++;
         continue;
       }
 
-      const deliveryDate = getDeliveryDate(order) || new Date().toISOString();
-
-      console.log("[review-webhook] creating review request", {
-        orderId,
-        productId,
-        customerEmail,
-        deliveryDate,
-      });
-
-     const reviewRequest = await createReviewRequest({
+      const reviewRequest = await createReviewRequest({
         orderId,
         productId,
         customerId,
         customerEmail,
         deliveryDate,
-        sendAt: new Date().toISOString(), // send immediately
-        });
-
-        const result = await sendReviewRequestEmail([reviewRequest]);
-
-        if (result.success) {
-        await markReviewRequestSent(reviewRequest.token);
-        console.log("[review-webhook] Review email sent", reviewRequest.productId);
-        } else {
-        console.error("[review-webhook] Email sending failed", result);
-        }
-
-        createdRequests.push(reviewRequest);
-
-      console.log("[review-webhook] createReviewRequest returned", {
-        orderId,
-        productId,
-        reviewRequest,
+        sendAt: new Date().toISOString(),
       });
 
-      createdRequests.push(reviewRequest);
+      created++;
+
+      console.log("[review-webhook] ReviewRequest created", {
+        orderId,
+        productId,
+        token: reviewRequest.token,
+      });
+
+      try {
+        const emailResult =
+          await sendReviewRequestEmail([reviewRequest]);
+
+        if (!emailResult.success) {
+          failed++;
+
+          console.error(
+            "[review-webhook] review email failed",
+            {
+              orderId,
+              productId,
+              error: emailResult.error,
+            }
+          );
+
+          continue;
+        }
+
+        await markReviewRequestSent(
+          reviewRequest.token
+        );
+
+        sent++;
+
+        console.log(
+          "[review-webhook] review email sent",
+          {
+            orderId,
+            productId,
+            customerEmail,
+          }
+        );
+      } catch (emailError) {
+        failed++;
+
+        console.error(
+          "[review-webhook] email exception",
+          emailError
+        );
+      }
     }
-
-    console.log("[review-webhook] extracted product ids", {
-      orderId,
-      extractedProductIds,
-    });
-
-    console.log("[review-webhook] completed", {
-      orderId,
-      created: createdRequests.length,
-    });
 
     return NextResponse.json({
       success: true,
-      created: createdRequests.length,
       orderId,
       orderStatus,
+      created,
+      sent,
+      skipped,
+      failed,
     });
   } catch (error) {
-    console.error("[review-webhook] failed", error);
+    console.error(
+      "[review-webhook] failed",
+      error
+    );
+
     return NextResponse.json(
       {
         success: false,
