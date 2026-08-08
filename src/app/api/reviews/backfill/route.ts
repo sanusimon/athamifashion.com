@@ -8,6 +8,7 @@ import {
 import { sendReviewRequestEmail } from "@/lib/emailService";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 const REVIEW_ELIGIBLE_STATUSES = new Set([
   "DELIVERED",
@@ -15,6 +16,8 @@ const REVIEW_ELIGIBLE_STATUSES = new Set([
   "COMPLETED",
   "DELIVERED_TO_CUSTOMER",
 ]);
+
+const BATCH_SIZE = 15;
 
 function cleanString(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
@@ -33,10 +36,7 @@ function getProductId(item: any): string | null {
 
   for (const value of candidates) {
     const id = cleanString(value);
-
-    if (id) {
-      return id;
-    }
+    if (id) return id;
   }
 
   return null;
@@ -80,9 +80,7 @@ function getCustomerId(order: any): string {
   for (const value of candidates) {
     const id = cleanString(value);
 
-    if (id) {
-      return id;
-    }
+    if (id) return id;
   }
 
   return "";
@@ -99,9 +97,7 @@ function getStatus(order: any): string {
   for (const value of candidates) {
     const status = cleanString(value).toUpperCase();
 
-    if (status) {
-      return status;
-    }
+    if (status) return status;
   }
 
   return "";
@@ -120,9 +116,7 @@ function getDeliveryDate(order: any): string {
   ];
 
   for (const value of candidates) {
-    if (!value) {
-      continue;
-    }
+    if (!value) continue;
 
     const date = new Date(value);
 
@@ -159,11 +153,13 @@ function getLineItems(order: any): any[] {
 }
 
 export async function POST(request: Request) {
+  const startedAt = Date.now();
+
   try {
     /*
-     * ---------------------------------------------------------
-     * AUTHENTICATION
-     * ---------------------------------------------------------
+     * -------------------------------------------------------
+     * AUTH
+     * -------------------------------------------------------
      */
 
     const url = new URL(request.url);
@@ -186,17 +182,28 @@ export async function POST(request: Request) {
     }
 
     /*
-     * ---------------------------------------------------------
-     * WIX ADMIN CLIENT
-     * ---------------------------------------------------------
+     * -------------------------------------------------------
+     * CURSOR
+     * -------------------------------------------------------
+     */
+
+    const cursorParam = url.searchParams.get("cursor");
+
+    let cursor: string | undefined =
+      cursorParam || undefined;
+
+    /*
+     * -------------------------------------------------------
+     * WIX CLIENT
+     * -------------------------------------------------------
      */
 
     const wixClient = await wixClientServer();
 
     /*
-     * ---------------------------------------------------------
+     * -------------------------------------------------------
      * COUNTERS
-     * ---------------------------------------------------------
+     * -------------------------------------------------------
      */
 
     let totalOrders = 0;
@@ -214,483 +221,333 @@ export async function POST(request: Request) {
     const results: any[] = [];
 
     /*
-     * ---------------------------------------------------------
-     * FETCH ALL ORDERS
-     * ---------------------------------------------------------
-     *
-     * We intentionally fetch pages of orders.
+     * -------------------------------------------------------
+     * FETCH ONE BATCH ONLY
+     * -------------------------------------------------------
      */
 
-    let cursor: string | undefined;
-
-    do {
-      console.log("[reviews/backfill] fetching orders", {
-        cursor: cursor || "first-page",
-      });
-
-      const searchOptions: any = {
-        cursorPaging: {
-          limit: 100,
-        },
-      };
-
-      if (cursor) {
-        searchOptions.cursorPaging.cursor = cursor;
-      }
-
-      const response: any =
-        await wixClient.orders.searchOrders(
-          searchOptions
-        );
-
-      const orders = Array.isArray(response?.orders)
-        ? response.orders
-        : [];
-
-      console.log("[reviews/backfill] orders received", {
-        count: orders.length,
-      });
-
-      const nextCursor =
-        response?.metadata?.cursors?.next;
-
-      cursor = nextCursor || undefined;
-
-
-      /*
-       * -------------------------------------------------------
-       * PROCESS ORDERS
-       * -------------------------------------------------------
-       */
-
-      for (const order of orders) {
-        totalOrders++;
-
-        const orderId = cleanString(
-          order?._id ||
-            order?.id ||
-            order?.orderId
-        );
-
-        if (!orderId) {
-          console.warn(
-            "[reviews/backfill] order has no ID"
-          );
-
-          continue;
-        }
-
-        const status = getStatus(order);
-
-        console.log(
-          "[reviews/backfill] checking order",
-          {
-            orderId,
-            status,
-          }
-        );
-
-        /*
-         * -----------------------------------------------------
-         * ONLY FULFILLED / ELIGIBLE ORDERS
-         * -----------------------------------------------------
-         */
-
-        if (!REVIEW_ELIGIBLE_STATUSES.has(status)) {
-          skippedStatus++;
-          continue;
-        }
-
-        eligibleOrders++;
-
-        /*
-         * -----------------------------------------------------
-         * CUSTOMER EMAIL
-         * -----------------------------------------------------
-         */
-
-        const email = getEmail(order);
-
-        if (!email) {
-          skippedNoEmail++;
-
-          console.warn(
-            "[reviews/backfill] customer email not found",
-            {
-              orderId,
-              status,
-            }
-          );
-
-          results.push({
-            orderId,
-            status,
-            result: "missing-email",
-          });
-
-          continue;
-        }
-
-        /*
-         * -----------------------------------------------------
-         * CUSTOMER ID
-         * -----------------------------------------------------
-         */
-
-        const customerId =
-          getCustomerId(order);
-
-        /*
-         * -----------------------------------------------------
-         * LINE ITEMS
-         * -----------------------------------------------------
-         */
-
-        const lineItems =
-          getLineItems(order);
-
-        console.log(
-          "[reviews/backfill] line items",
-          {
-            orderId,
-            count: lineItems.length,
-          }
-        );
-
-        if (!lineItems.length) {
-          console.warn(
-            "[reviews/backfill] no line items",
-            {
-              orderId,
-            }
-          );
-
-          results.push({
-            orderId,
-            status,
-            result: "no-line-items",
-          });
-
-          continue;
-        }
-
-        /*
-         * -----------------------------------------------------
-         * DELIVERY DATE
-         * -----------------------------------------------------
-         */
-
-        const deliveryDate =
-          getDeliveryDate(order);
-
-        /*
-         * -----------------------------------------------------
-         * PROCESS EACH PRODUCT
-         * -----------------------------------------------------
-         */
-
-        for (const lineItem of lineItems) {
-          const productId =
-            getProductId(lineItem);
-
-          if (!productId) {
-            skippedNoProduct++;
-
-            console.warn(
-              "[reviews/backfill] product ID not found",
-              {
-                orderId,
-                lineItem,
-              }
-            );
-
-            continue;
-          }
-
-          console.log(
-            "[reviews/backfill] processing product",
-            {
-              orderId,
-              productId,
-              email,
-            }
-          );
-
-          /*
-           * ---------------------------------------------------
-           * CHECK DUPLICATE
-           * ---------------------------------------------------
-           */
-
-          const existing =
-            await getReviewRequestByOrderAndProduct(
-              orderId,
-              productId
-            );
-
-          if (existing) {
-            skippedExisting++;
-
-            console.log(
-              "[reviews/backfill] review request already exists",
-              {
-                orderId,
-                productId,
-                status: existing.status,
-                token: existing.token,
-              }
-            );
-
-            /*
-             * If the request exists but is still pending,
-             * send it now.
-             */
-
-            if (
-              existing.status === "pending" &&
-              existing.customerEmail
-            ) {
-              try {
-                console.log(
-                  "[reviews/backfill] sending existing pending request",
-                  {
-                    orderId,
-                    productId,
-                  }
-                );
-
-                const emailResult =
-                  await sendReviewRequestEmail([
-                    existing,
-                  ]);
-
-                if (emailResult.success) {
-                  await markReviewRequestSent(
-                    existing.token
-                  );
-
-                  sent++;
-
-                  console.log(
-                    "[reviews/backfill] existing request sent",
-                    {
-                      orderId,
-                      productId,
-                    }
-                  );
-                } else {
-                  failed++;
-
-                  console.error(
-                    "[reviews/backfill] existing request email failed",
-                    {
-                      orderId,
-                      productId,
-                      error:
-                        emailResult.error,
-                    }
-                  );
-                }
-              } catch (error) {
-                failed++;
-
-                console.error(
-                  "[reviews/backfill] existing request email exception",
-                  {
-                    orderId,
-                    productId,
-                    error,
-                  }
-                );
-              }
-            }
-
-            continue;
-          }
-
-          /*
-           * ---------------------------------------------------
-           * CREATE REVIEW REQUEST
-           * ---------------------------------------------------
-           *
-           * IMPORTANT:
-           * sendAt is NOW.
-           *
-           * There is NO 3-day delay.
-           */
-
-          let reviewRequest;
-
-          try {
-            reviewRequest =
-              await createReviewRequest({
-                orderId,
-                productId,
-                customerId,
-                customerEmail: email,
-                deliveryDate,
-                sendAt:
-                  new Date().toISOString(),
-              });
-
-            created++;
-
-            console.log(
-              "[reviews/backfill] ReviewRequest created",
-              {
-                orderId,
-                productId,
-                token:
-                  reviewRequest.token,
-              }
-            );
-          } catch (error) {
-            failed++;
-
-            console.error(
-              "[reviews/backfill] createReviewRequest failed",
-              {
-                orderId,
-                productId,
-                error,
-              }
-            );
-
-            results.push({
-              orderId,
-              productId,
-              email,
-              status,
-              result: "create-failed",
-              error: String(error),
-            });
-
-            continue;
-          }
-
-          /*
-           * ---------------------------------------------------
-           * SEND EMAIL IMMEDIATELY
-           * ---------------------------------------------------
-           */
-
-          try {
-            console.log(
-              "[reviews/backfill] sending email",
-              {
-                orderId,
-                productId,
-                email,
-              }
-            );
-
-            const emailResult =
-              await sendReviewRequestEmail([
-                reviewRequest,
-              ]);
-
-            if (emailResult.success) {
-              /*
-               * Only mark as sent after the email
-               * service reports success.
-               */
-
-              await markReviewRequestSent(
-                reviewRequest.token
-              );
-
-              sent++;
-
-              console.log(
-                "[reviews/backfill] email sent successfully",
-                {
-                  orderId,
-                  productId,
-                  email,
-                }
-              );
-
-              results.push({
-                orderId,
-                productId,
-                email,
-                status,
-                result:
-                  "created-and-sent",
-              });
-            } else {
-              failed++;
-
-              console.error(
-                "[reviews/backfill] email failed",
-                {
-                  orderId,
-                  productId,
-                  email,
-                  error:
-                    emailResult.error,
-                }
-              );
-
-              results.push({
-                orderId,
-                productId,
-                email,
-                status,
-                result: "email-failed",
-                error:
-                  emailResult.error,
-              });
-            }
-          } catch (error) {
-            failed++;
-
-            console.error(
-              "[reviews/backfill] email exception",
-              {
-                orderId,
-                productId,
-                error,
-              }
-            );
-
-            results.push({
-              orderId,
-              productId,
-              email,
-              status,
-              result:
-                "email-exception",
-              error: String(error),
-            });
-          }
-        }
-      }
-    } while (cursor);
+    console.log("[reviews/backfill] fetching batch", {
+      cursor: cursor || "first-page",
+      batchSize: BATCH_SIZE,
+    });
+
+    const searchOptions: any = {
+      cursorPaging: {
+        limit: BATCH_SIZE,
+      },
+    };
+
+    if (cursor) {
+      searchOptions.cursorPaging.cursor = cursor;
+    }
+
+    const response: any =
+      await wixClient.orders.searchOrders(searchOptions);
+
+    const orders = Array.isArray(response?.orders)
+      ? response.orders
+      : [];
+
+    const nextCursor =
+      response?.metadata?.cursors?.next || undefined;
+
+    console.log("[reviews/backfill] batch received", {
+      count: orders.length,
+      hasNextCursor: !!nextCursor,
+    });
 
     /*
-     * ---------------------------------------------------------
-     * FINAL RESPONSE
-     * ---------------------------------------------------------
+     * -------------------------------------------------------
+     * PROCESS BATCH
+     * -------------------------------------------------------
      */
 
-    console.log(
-      "[reviews/backfill] completed",
-      {
-        totalOrders,
-        eligibleOrders,
-        created,
-        sent,
-        failed,
-        skippedExisting,
-        skippedStatus,
-        skippedNoEmail,
-        skippedNoProduct,
+    for (const order of orders) {
+      totalOrders++;
+
+      const orderId = cleanString(
+        order?._id ||
+          order?.id ||
+          order?.orderId
+      );
+
+      if (!orderId) {
+        continue;
       }
-    );
+
+      const status = getStatus(order);
+
+      console.log("[reviews/backfill] checking order", {
+        orderId,
+        status,
+      });
+
+      /*
+       * Only eligible orders
+       */
+
+      if (!REVIEW_ELIGIBLE_STATUSES.has(status)) {
+        skippedStatus++;
+
+        results.push({
+          orderId,
+          status,
+          result: "skipped-status",
+        });
+
+        continue;
+      }
+
+      eligibleOrders++;
+
+      /*
+       * Email
+       */
+
+      const email = getEmail(order);
+
+      if (!email) {
+        skippedNoEmail++;
+
+        results.push({
+          orderId,
+          status,
+          result: "missing-email",
+        });
+
+        continue;
+      }
+
+      /*
+       * Customer
+       */
+
+      const customerId = getCustomerId(order);
+
+      /*
+       * Items
+       */
+
+      const lineItems = getLineItems(order);
+
+      if (!lineItems.length) {
+        results.push({
+          orderId,
+          status,
+          result: "no-line-items",
+        });
+
+        continue;
+      }
+
+      /*
+       * Delivery date
+       */
+
+      const deliveryDate = getDeliveryDate(order);
+
+      /*
+       * -----------------------------------------------------
+       * EACH PRODUCT
+       * -----------------------------------------------------
+       */
+
+      for (const lineItem of lineItems) {
+        const productId = getProductId(lineItem);
+
+        if (!productId) {
+          skippedNoProduct++;
+
+          results.push({
+            orderId,
+            email,
+            result: "missing-product-id",
+          });
+
+          continue;
+        }
+
+        /*
+         * ---------------------------------------------------
+         * DUPLICATE CHECK
+         * ---------------------------------------------------
+         */
+
+        const existing =
+          await getReviewRequestByOrderAndProduct(
+            orderId,
+            productId
+          );
+
+        if (existing) {
+          skippedExisting++;
+
+          /*
+           * Existing pending request:
+           * send it now.
+           */
+
+          if (
+            existing.status === "pending" &&
+            existing.customerEmail
+          ) {
+            try {
+              const emailResult =
+                await sendReviewRequestEmail([
+                  existing,
+                ]);
+
+              if (emailResult.success) {
+                await markReviewRequestSent(
+                  existing.token
+                );
+
+                sent++;
+
+                results.push({
+                  orderId,
+                  productId,
+                  email: existing.customerEmail,
+                  result: "existing-pending-sent",
+                });
+              } else {
+                failed++;
+
+                results.push({
+                  orderId,
+                  productId,
+                  email: existing.customerEmail,
+                  result: "existing-pending-email-failed",
+                  error: emailResult.error,
+                });
+              }
+            } catch (error) {
+              failed++;
+
+              results.push({
+                orderId,
+                productId,
+                email: existing.customerEmail,
+                result: "existing-pending-email-exception",
+                error: String(error),
+              });
+            }
+          } else {
+            results.push({
+              orderId,
+              productId,
+              result: "already-exists",
+              existingStatus: existing.status,
+            });
+          }
+
+          continue;
+        }
+
+        /*
+         * ---------------------------------------------------
+         * CREATE
+         * ---------------------------------------------------
+         */
+
+        let reviewRequest;
+
+        try {
+          reviewRequest =
+            await createReviewRequest({
+              orderId,
+              productId,
+              customerId,
+              customerEmail: email,
+              deliveryDate,
+              sendAt: new Date().toISOString(),
+            });
+
+          created++;
+        } catch (error) {
+          failed++;
+
+          results.push({
+            orderId,
+            productId,
+            email,
+            result: "create-failed",
+            error: String(error),
+          });
+
+          continue;
+        }
+
+        /*
+         * ---------------------------------------------------
+         * SEND IMMEDIATELY
+         * ---------------------------------------------------
+         */
+
+        try {
+          const emailResult =
+            await sendReviewRequestEmail([
+              reviewRequest,
+            ]);
+
+          if (emailResult.success) {
+            await markReviewRequestSent(
+              reviewRequest.token
+            );
+
+            sent++;
+
+            results.push({
+              orderId,
+              productId,
+              email,
+              result: "created-and-sent",
+            });
+          } else {
+            failed++;
+
+            results.push({
+              orderId,
+              productId,
+              email,
+              result: "email-failed",
+              error: emailResult.error,
+            });
+          }
+        } catch (error) {
+          failed++;
+
+          results.push({
+            orderId,
+            productId,
+            email,
+            result: "email-exception",
+            error: String(error),
+          });
+        }
+      }
+    }
+
+    const elapsedMs = Date.now() - startedAt;
+
+    console.log("[reviews/backfill] batch complete", {
+      totalOrders,
+      eligibleOrders,
+      created,
+      sent,
+      failed,
+      skippedExisting,
+      skippedStatus,
+      skippedNoEmail,
+      skippedNoProduct,
+      elapsedMs,
+      hasNextCursor: !!nextCursor,
+    });
 
     return NextResponse.json({
       success: true,
+
+      batchSize: BATCH_SIZE,
 
       totalOrders,
       eligibleOrders,
@@ -703,6 +560,11 @@ export async function POST(request: Request) {
       skippedStatus,
       skippedNoEmail,
       skippedNoProduct,
+
+      hasMore: !!nextCursor,
+      nextCursor: nextCursor || null,
+
+      elapsedMs,
 
       results,
     });
