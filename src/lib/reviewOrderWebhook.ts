@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
+import wixClientServer from "@/lib/wixClientServer";
+
 import {
   createReviewRequest,
   getReviewRequestByOrderAndProduct,
   markReviewRequestSent,
 } from "@/lib/reviewService";
+
 import { sendReviewRequestEmail } from "@/lib/emailService";
 
 const REVIEW_ELIGIBLE_STATUSES = new Set([
@@ -17,16 +20,14 @@ function cleanString(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
-function getOrderFromPayload(body: any): any {
-  if (body?.order) return body.order;
-  if (body?.data?.order) return body.data.order;
-  if (body?.data?.resource) return body.data.resource;
-  if (body?.resource) return body.resource;
+function getOrderId(body: any): string {
+  const order =
+    body?.order ||
+    body?.data?.order ||
+    body?.data?.resource ||
+    body?.resource ||
+    body;
 
-  return body;
-}
-
-function getOrderId(order: any): string {
   return cleanString(
     order?._id ||
       order?.id ||
@@ -36,15 +37,16 @@ function getOrderId(order: any): string {
 }
 
 function getOrderStatus(order: any): string {
-  const values = [
+  const candidates = [
     order?.fulfillmentStatus,
     order?.status,
     order?.fulfillment?.status,
-    order?.fulfillments?.[0]?.status,
     order?.fulfillment?.fulfillmentStatus,
+    order?.fulfillments?.[0]?.status,
+    order?.fulfillments?.[0]?.fulfillmentStatus,
   ];
 
-  for (const value of values) {
+  for (const value of candidates) {
     const status = cleanString(value).toUpperCase();
 
     if (status) {
@@ -55,19 +57,17 @@ function getOrderStatus(order: any): string {
   return "";
 }
 
-function getCustomerEmail(order: any, body: any): string {
+function getCustomerEmail(order: any): string {
   const candidates = [
     order?.buyerInfo?.email,
     order?.buyerInfo?.contactDetails?.email,
     order?.contactDetails?.email,
     order?.recipientInfo?.contactDetails?.email,
+    order?.recipientInfo?.email,
     order?.billingInfo?.contactDetails?.email,
     order?.shippingInfo?.contactDetails?.email,
     order?.customer?.email,
     order?.customerEmail,
-    body?.customerEmail,
-    body?.email,
-    body?.data?.customerEmail,
   ];
 
   for (const value of candidates) {
@@ -81,16 +81,15 @@ function getCustomerEmail(order: any, body: any): string {
   return "";
 }
 
-function getCustomerId(order: any, body: any): string {
+function getCustomerId(order: any): string {
   const candidates = [
     order?.buyerInfo?.contactId,
     order?.buyerInfo?.memberId,
     order?.buyerInfo?.contactDetails?.contactId,
     order?.recipientInfo?.contactDetails?.contactId,
+    order?.recipientInfo?.contactId,
     order?.customer?.contactId,
     order?.customerId,
-    body?.customerId,
-    body?.data?.customerId,
   ];
 
   for (const value of candidates) {
@@ -105,33 +104,38 @@ function getCustomerId(order: any, body: any): string {
 }
 
 function getLineItems(order: any): any[] {
-  const candidates = [
-    order?.lineItems,
-    order?.purchaseUnits?.flatMap(
-      (unit: any) => unit?.lineItems || []
-    ),
-    order?.items,
-  ];
+  if (Array.isArray(order?.lineItems)) {
+    return order.lineItems;
+  }
 
-  for (const value of candidates) {
-    if (Array.isArray(value) && value.length > 0) {
-      return value;
+  if (Array.isArray(order?.items)) {
+    return order.items;
+  }
+
+  if (Array.isArray(order?.purchaseUnits)) {
+    const items: any[] = [];
+
+    for (const unit of order.purchaseUnits) {
+      if (Array.isArray(unit?.lineItems)) {
+        items.push(...unit.lineItems);
+      }
     }
+
+    return items;
   }
 
   return [];
 }
 
-function getProductIdFromLineItem(item: any): string | null {
+function getProductId(lineItem: any): string | null {
   const candidates = [
-    item?.rootCatalogItemId,
-    item?.catalogReference?.catalogItemId,
-    item?.catalogReference?.catalogItemId,
-    item?.catalogItemId,
-    item?.productId,
-    item?.productCatalogId,
-    item?.catalogItem?.id,
-    item?.product?.id,
+    lineItem?.rootCatalogItemId,
+    lineItem?.catalogReference?.catalogItemId,
+    lineItem?.catalogItemId,
+    lineItem?.productId,
+    lineItem?.productCatalogId,
+    lineItem?.catalogItem?.id,
+    lineItem?.product?.id,
   ];
 
   for (const value of candidates) {
@@ -160,37 +164,38 @@ function getDeliveryDate(order: any): string {
   for (const value of candidates) {
     if (!value) continue;
 
-    const parsed = new Date(value);
+    const date = new Date(value);
 
-    if (!Number.isNaN(parsed.getTime())) {
-      return parsed.toISOString();
+    if (!Number.isNaN(date.getTime())) {
+      return date.toISOString();
     }
   }
 
   return new Date().toISOString();
 }
 
-export async function handleOrderReviewWebhook(request: Request) {
+export async function handleOrderReviewWebhook(
+  request: Request
+) {
   try {
     const body = await request.json();
 
-    console.log("[review-webhook] request received");
+    console.log(
+      "[review-webhook] webhook received"
+    );
 
-    const order = getOrderFromPayload(body);
+    /*
+     * --------------------------------------------------
+     * 1. GET ORDER ID FROM WEBHOOK
+     * --------------------------------------------------
+     */
 
-    const orderId = getOrderId(order);
-    const orderStatus = getOrderStatus(order);
-    const customerEmail = getCustomerEmail(order, body);
-    const customerId = getCustomerId(order, body);
-    const lineItems = getLineItems(order);
+    const orderId = getOrderId(body);
 
-    console.log("[review-webhook] normalized order", {
-      orderId,
-      orderStatus,
-      customerEmail,
-      customerId,
-      lineItemCount: lineItems.length,
-    });
+    console.log(
+      "[review-webhook] webhook order id:",
+      orderId
+    );
 
     if (!orderId) {
       return NextResponse.json(
@@ -202,38 +207,144 @@ export async function handleOrderReviewWebhook(request: Request) {
       );
     }
 
-    if (!REVIEW_ELIGIBLE_STATUSES.has(orderStatus)) {
-      console.log("[review-webhook] skipped status", {
+    /*
+     * --------------------------------------------------
+     * 2. GET LATEST ORDER FROM WIX
+     * --------------------------------------------------
+     *
+     * This is the important change.
+     */
+
+    const wixClient = await wixClientServer();
+
+    let order: any = null;
+
+    try {
+      order =
+        await wixClient.orders.getOrder(
+          orderId
+        );
+    } catch (error) {
+      console.error(
+        "[review-webhook] failed to fetch order from Wix",
+        {
+          orderId,
+          error,
+        }
+      );
+
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Unable to fetch order from Wix",
+          orderId,
+        },
+        { status: 500 }
+      );
+    }
+
+    /*
+     * Some Wix responses may wrap the order.
+     */
+
+    order =
+      order?.order ||
+      order?.data ||
+      order;
+
+    /*
+     * --------------------------------------------------
+     * 3. GET LATEST STATUS
+     * --------------------------------------------------
+     */
+
+    const orderStatus =
+      getOrderStatus(order);
+
+    console.log(
+      "[review-webhook] latest Wix order status",
+      {
         orderId,
         orderStatus,
-      });
+      }
+    );
+
+    /*
+     * --------------------------------------------------
+     * 4. ONLY FULFILLED ORDERS
+     * --------------------------------------------------
+     */
+
+    if (
+      !REVIEW_ELIGIBLE_STATUSES.has(
+        orderStatus
+      )
+    ) {
+      console.log(
+        "[review-webhook] order not eligible",
+        {
+          orderId,
+          orderStatus,
+        }
+      );
 
       return NextResponse.json({
         success: true,
-        created: 0,
-        sent: 0,
         skipped: true,
-        reason: "status",
+        reason: "order-status",
         orderId,
         orderStatus,
+        created: 0,
+        sent: 0,
       });
     }
 
+    /*
+     * --------------------------------------------------
+     * 5. CUSTOMER INFORMATION
+     * --------------------------------------------------
+     */
+
+    const customerEmail =
+      getCustomerEmail(order);
+
+    const customerId =
+      getCustomerId(order);
+
     if (!customerEmail) {
-      console.error("[review-webhook] customer email not found", {
-        orderId,
-      });
+      console.error(
+        "[review-webhook] customer email missing",
+        {
+          orderId,
+        }
+      );
 
       return NextResponse.json(
         {
           success: false,
           error: "Customer email not found",
           orderId,
-          orderStatus,
         },
         { status: 400 }
       );
     }
+
+    /*
+     * --------------------------------------------------
+     * 6. GET PRODUCTS
+     * --------------------------------------------------
+     */
+
+    const lineItems =
+      getLineItems(order);
+
+    console.log(
+      "[review-webhook] line items",
+      {
+        orderId,
+        count: lineItems.length,
+      }
+    );
 
     if (!lineItems.length) {
       return NextResponse.json(
@@ -246,29 +357,49 @@ export async function handleOrderReviewWebhook(request: Request) {
       );
     }
 
-    const deliveryDate = getDeliveryDate(order);
+    const deliveryDate =
+      getDeliveryDate(order);
 
     let created = 0;
     let sent = 0;
     let skipped = 0;
     let failed = 0;
 
-    for (const lineItem of lineItems) {
-      const productId = getProductIdFromLineItem(lineItem);
+    /*
+     * --------------------------------------------------
+     * 7. PROCESS EVERY PRODUCT
+     * --------------------------------------------------
+     */
 
-      console.log("[review-webhook] line item", {
-        orderId,
-        productId,
-      });
+    for (const lineItem of lineItems) {
+      const productId =
+        getProductId(lineItem);
 
       if (!productId) {
-        console.warn("[review-webhook] product id not found", {
-          orderId,
-          lineItem,
-        });
+        console.warn(
+          "[review-webhook] product id missing",
+          {
+            orderId,
+          }
+        );
 
         continue;
       }
+
+      console.log(
+        "[review-webhook] processing",
+        {
+          orderId,
+          productId,
+          customerEmail,
+        }
+      );
+
+      /*
+       * ------------------------------------------------
+       * 8. DUPLICATE CHECK
+       * ------------------------------------------------
+       */
 
       const existing =
         await getReviewRequestByOrderAndProduct(
@@ -277,51 +408,144 @@ export async function handleOrderReviewWebhook(request: Request) {
         );
 
       if (existing) {
-        console.log("[review-webhook] review request already exists", {
-          orderId,
-          productId,
-          status: existing.status,
-        });
+        console.log(
+          "[review-webhook] request already exists",
+          {
+            orderId,
+            productId,
+            status: existing.status,
+          }
+        );
 
-        skipped++;
+        /*
+         * If an old request is pending,
+         * send it now.
+         */
+
+        if (
+          existing.status === "pending"
+        ) {
+          try {
+            const emailResult =
+              await sendReviewRequestEmail([
+                existing,
+              ]);
+
+            if (
+              emailResult.success
+            ) {
+              await markReviewRequestSent(
+                existing.token
+              );
+
+              sent++;
+
+              console.log(
+                "[review-webhook] existing pending request sent",
+                {
+                  orderId,
+                  productId,
+                }
+              );
+            } else {
+              failed++;
+            }
+          } catch (error) {
+            failed++;
+
+            console.error(
+              "[review-webhook] existing request failed",
+              {
+                orderId,
+                productId,
+                error,
+              }
+            );
+          }
+        } else {
+          skipped++;
+        }
+
         continue;
       }
 
-      const reviewRequest = await createReviewRequest({
-        orderId,
-        productId,
-        customerId,
-        customerEmail,
-        deliveryDate,
-        sendAt: new Date().toISOString(),
-      });
+      /*
+       * ------------------------------------------------
+       * 9. CREATE REVIEW REQUEST
+       * ------------------------------------------------
+       */
 
-      created++;
+      let reviewRequest;
 
-      console.log("[review-webhook] ReviewRequest created", {
-        orderId,
-        productId,
-        token: reviewRequest.token,
-      });
+      try {
+        reviewRequest =
+          await createReviewRequest({
+            orderId,
+            productId,
+            customerId,
+            customerEmail,
+            deliveryDate,
+            sendAt:
+              new Date().toISOString(),
+          });
+
+        created++;
+
+        console.log(
+          "[review-webhook] ReviewRequest created",
+          {
+            orderId,
+            productId,
+            token:
+              reviewRequest.token,
+          }
+        );
+      } catch (error) {
+        failed++;
+
+        console.error(
+          "[review-webhook] create request failed",
+          {
+            orderId,
+            productId,
+            error,
+          }
+        );
+
+        continue;
+      }
+
+      /*
+       * ------------------------------------------------
+       * 10. SEND EMAIL IMMEDIATELY
+       * ------------------------------------------------
+       */
 
       try {
         const emailResult =
-          await sendReviewRequestEmail([reviewRequest]);
+          await sendReviewRequestEmail([
+            reviewRequest,
+          ]);
 
         if (!emailResult.success) {
           failed++;
 
           console.error(
-            "[review-webhook] review email failed",
+            "[review-webhook] email failed",
             {
               orderId,
               productId,
-              error: emailResult.error,
+              error:
+                emailResult.error,
             }
           );
 
           continue;
         }
+
+        /*
+         * Only mark as sent AFTER email success.
+         */
 
         await markReviewRequestSent(
           reviewRequest.token
@@ -330,22 +554,32 @@ export async function handleOrderReviewWebhook(request: Request) {
         sent++;
 
         console.log(
-          "[review-webhook] review email sent",
+          "[review-webhook] email sent successfully",
           {
             orderId,
             productId,
             customerEmail,
           }
         );
-      } catch (emailError) {
+      } catch (error) {
         failed++;
 
         console.error(
           "[review-webhook] email exception",
-          emailError
+          {
+            orderId,
+            productId,
+            error,
+          }
         );
       }
     }
+
+    /*
+     * --------------------------------------------------
+     * 11. FINAL RESPONSE
+     * --------------------------------------------------
+     */
 
     return NextResponse.json({
       success: true,
@@ -358,7 +592,7 @@ export async function handleOrderReviewWebhook(request: Request) {
     });
   } catch (error) {
     console.error(
-      "[review-webhook] failed",
+      "[review-webhook] fatal error",
       error
     );
 
