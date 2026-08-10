@@ -155,7 +155,7 @@ if (!request) {
 throw new Error("Invalid review token.");
 }
 if (request.status === "reviewed") {
-throw new Error("A review has already been submitted for this request.");
+throw new Error("This review link is no longer active. Thank you for your interest in sharing your feedback.");
 }
 const now = new Date();
 const review: Review = {
